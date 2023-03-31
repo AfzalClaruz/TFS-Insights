@@ -1,0 +1,268 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "Incentive_Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden{
+        display:none;
+    }
+</style>
+
+<div class="abc">
+    <h2 style="margin-bottom:30px; display:flex; justify-content:space-between">Employee - Orders Monthly Report <span class="refreshicon"><i class="fa fa-refresh " aria-hidden="true" onclick="refreshPage();"></i> </span></h2>
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+
+
+    @using (Html.BeginForm("Incentive_Report", "Home", FormMethod.Post, new { @class = "col-md-9", style = "display:contents;", name = "frm", id = "frm", onsubmit = "loadergif(1);" }))
+    {
+        <div class="col-md-12">
+            <div class="row" style="margin-bottom:40px;">
+                <div class="col-md-3">
+                    <label>From Date</label>
+                    <div id="date-form" class="input-group date txtfromdate">
+                        @Html.TextBoxFor(a => a.StartDate, new { @class = "form-control dateProp", id = "txtfromdate", placeholder = "StartDate", autocomplete = "off", required = "" })
+                        @*<input type="text" id="txtfromdate" class="form-control" />*@
+                        <span class="input-group-addon input-group-append border-left">
+                            <span class="ti-calendar input-group-text">
+                            </span>
+                        </span>
+                        @Html.ValidationMessageFor(a => a.StartDate)
+                    </div>
+                    <label style="font: italic 13px/21px serif; color: #9d9d9d;">(DD / MM / YYYY)</label>
+                </div>
+                <div class="col-md-3">
+                    <label>To Date</label>
+                    <div id="to-date-form" class="input-group date txttodate">
+                        @Html.TextBoxFor(a => a.EndDate, new { @class = "form-control icon dateProp", id = "txttodate", placeholder = "EndDate", autocomplete = "off", required = "" })
+                        @*<input type="text" id="txttodate" class="form-control" />*@
+                        <span class="input-group-addon input-group-append border-left">
+                            <span class="ti-calendar input-group-text"></span>
+                        </span>
+                        @Html.ValidationMessageFor(a => a.EndDate)
+                    </div>
+                    <label style="font: italic 13px/21px serif; color: #9d9d9d;">(DD / MM / YYYY)</label>
+                </div>
+                <div class="col-md-3">
+                    <label><br /></label>
+                    <div class="md-form mb-5">
+                        <button type="submit" class="btn btn-primary" title="Generate Report"><i class="fa fa-cogs" style="margin-right: 5px;" aria-hidden="true"></i> Generate Report </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+    @*<div class="col-sm-12 hidden" id="hiddenTable_incentive">
+        <table id="Incentive_by_month" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Sl.No</th>
+                    <th>Employee Name</th>
+                    <th>Designation</th>
+                    <th>Order Count</th>
+                    <th>Incentive</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>*@
+
+    <div class="col-sm-12 hidden" id="hiddenTable_employee_incentive">
+        <table id="employee_incentive_by_month" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    @*<th>Sl.No</th>*@
+                    <th>Employee Name</th>
+                    <th>Designation</th>
+                    <th>Order Count</th>
+                    <th>Incentive ₹</th>
+
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/JavaScript" src="https://MomentJS.com/downloads/moment-with-locales.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+
+<script>
+
+
+
+    $(document).ready(function () {
+
+        var cudt = new Date();
+
+        $('#date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        $('#to-date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        //var cudate = GetDateFormat(cudt, 'mm/dd/yy');
+
+        var startDate = "@TempData["StartDate"].ToString()";
+
+        var startSplit = startDate.split(" ");
+
+        startDate = startSplit[0];
+
+        var endDate = "@TempData["EndDate"].ToString()";
+
+        var endSplit = endDate.split(" ");
+
+        endDate = endSplit[0];
+
+        $("#txttodate").val(endDate);
+        $("#txtfromdate").val(startDate);
+
+
+        
+        generatetable();
+        //main()
+    });
+
+    function generatetable() {
+
+        var  Result = @Html.Raw(Json.Encode(ViewBag.Data));
+        var  StartDate = @Html.Raw(Json.Encode(ViewBag.fromDate));
+        var  EndDate = @Html.Raw(Json.Encode(ViewBag.toDate));
+
+        Result = Result.Data;
+        //var sEmployee = $("#ddlEmployee").val();
+
+
+        if(Result !=null )
+        {
+            $('#hiddenTable_employee_incentive').removeClass('hidden');
+            $('#employee_incentive_by_month').DataTable().clear().destroy();
+
+            Data = Result;
+
+            Datas = jQuery.parseJSON(Data);
+
+            var length = Datas.length;
+
+            var table = document.getElementById('employee_incentive_by_month');
+
+            for (var i = table.rows.length - 1; i > 0; i--) {
+                table.deleteRow(i);
+            }
+
+            for (var i = 0; i < length; i++) {
+                //if (Datas[i].weightage_value == undefined)
+                //    Datas[i].weightage_value = "-";
+                //if (Datas[i].initial_value == undefined)
+                //    Datas[i].initial_value = "-";
+                //if (Datas[i].final_value == undefined)
+                //    Datas[i].final_value = "-";
+                //if (Datas[i].amount < 0)
+                //    Datas[i].amount = "0";
+
+                //var final_value = Datas[i].final_value;
+                //var amount = Datas[i].amount;
+
+                ////var initial_value = Datas[i].initial_value;
+
+                //if(Datas[i].amount>0)
+                //{
+                //    amount="<span style='color:red;'>"+Datas[i].amount+"</span>"
+                //}
+
+                ////if(Datas[i].initial_value>Datas[i].final_value)
+                ////{
+                ////    final_value="<span style='color:red;'>"+Datas[i].final_value+"</span>"
+                ////}
+
+                $('#employee_incentive_by_month').append(
+                    '<tr id="' + i + '">' +
+                        '<td>' + Datas[i].Sl_no + '</td>' +
+                        '<td>' + Datas[i].emp_name + '</td>' +
+                        '<td>' + Datas[i].designation + '</td>' +
+                        '<td>' + Datas[i].totalCount + '</td>' +
+                        '<td>' + Datas[i].totalAmount + '</td>' +
+                   '</tr>');
+                    
+            }
+
+
+            //setTimeout(function () {
+            $('#employee_incentive_by_month').DataTable({
+
+                "bpaging": false,
+                "bDestroy": true,
+                dom: 'Blfrtip',
+                buttons: [
+                       {
+                           extend: 'pdf',
+                           footer: true,
+                           exportOptions: {
+                               columns: [0, 1, 2, 3, 4],
+                               orthogonal: "export",
+                               rows: function (idx, data, node) {
+                                   number = 1;
+                                   return true;
+                               }
+                           }
+                       },
+                           {
+                               extend: 'csv',
+                               footer: false
+
+                           },
+                           {
+                               extend: 'excelHtml5',
+                               footer: false,
+                               exportOptions: {
+                                   columns: [0, 1, 2, 3, 4]
+                               }
+                           }
+                ],
+                columnDefs: [
+                        { orderable: false, targets: [7] }
+                ]
+
+            })
+
+            $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+            $(".dt-button").removeClass("dt-button");
+
+        }
+
+    }
+
+
+
+    </script>

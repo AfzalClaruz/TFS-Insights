@@ -1,0 +1,1920 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "Weightage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int roleId = Convert.ToInt16(ViewBag.role);
+}
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .hides {
+        display: none;
+    }
+
+    .addbtn {
+        justify-content: flex-end;
+        display: flex;
+    }
+
+        /*th .sorting {
+            display: flex;
+        }*/
+
+    /*.dt-buttons a {
+        width: 32px;
+        line-height: 0;
+        margin-top: 20px;
+    }
+
+    .dt-buttons span {
+        font-size: 14px;
+        margin-left: -13px;
+    }*/
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    /* Chrome/Opera/Safari */
+    ::-webkit-input-placeholder { 
+  color: #999 !important;
+}
+
+     .dt-buttons a {
+        width: 32px;
+        line-height: 0;
+        margin-top: 20px;
+        border-radius:10px!important;
+    }
+
+    .dt-buttons span {
+        font-size: 14px;
+        margin-left: -13px;
+    }
+
+    .mistake {
+        border: 1px solid #cc0033 !important;
+    }
+
+    /* Firefox 19+ */
+    /*::-moz-placeholder { 
+  color: pink !important;
+}*/
+
+     /* IE 10+ */
+/*:-ms-input-placeholder {
+  color: pink !important;
+}*/
+
+/* Firefox 18- */
+/*:-moz-placeholder { 
+  color: pink !important;
+}*/
+
+</style>
+@*<h1>@Html.Raw(Json.Encode(ViewBag.WeightageData));</h1>*@
+@*<h1>@roleId</h1>*@
+<div class="abc">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Order Weightage </h2>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4 addbtn">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" class="btn btn-primary" data-toggle="modal" data-target="#modalRegisterForm"><i class="fa fa-plus" style="margin-right: 5px;" aria-hidden="true"></i> Add Weightage </button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    @using (Html.BeginForm("Weightage", "Home", FormMethod.Post, new { name = "frm", id = "frm", onsubmit = "loadergif(1);" }))
+{
+    <div class="row" >
+        <div class="col-md-3">
+            <div class="md-form mb-5">
+                <label>Select Role</label>
+                <select name="role" class="form-control validate" id="ddlRole">
+                    @if (roleId == 5 && roleId == 0)
+                    {
+                        <option selected="selected" value="5">Researcher</option>
+                    }
+                    else
+                    {
+                        <option value="5">Researcher</option>
+                    }
+                    @if (roleId == 6)
+                    {
+                        <option selected="selected" value="6">Data Entry</option>
+                    }
+                    else
+                    {
+                        <option value="6">Data Entry</option>
+                    }
+                    <option value="3">Revision</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" type="submit" class="btn btn-primary" id="btngenerate"><i class="fa fa-cogs" style="margin-right: 5px;" aria-hidden="true"></i> Generate </button>
+                @*onclick="generatetable()"*@
+            </div>
+        </div>
+
+
+    </div>
+}
+
+
+    <div class="modal fade" id="modalRegisterForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold">Add Weightage</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="removeDetails();">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="col-md-12">
+                        <div class="row" style="justify-content: center;">
+
+                            <div class="col-md-5">
+                                <div class="md-form mb-5">
+                                    <label>Select Role <span style='color:red;'>&#42;</span> : </label>
+                                    <select name="role" class="form-control validate " id="ddllUserRole">
+                                        @*<option selected="selected" value="5">Researcher</option>*@
+                                        <option value="3">Researcher</option>
+                                        @*<option selected="selected" value="6">Data Entry</option>*@
+                                        <option value="5">Data Entry</option>
+                                    </select>
+                                </div>
+                            </div>
+                            @*<div class="col-md-2"></div>
+            <div class="col-md-5">
+                <div class="md-form mb-5">
+                    <label>Select MLS / Other Options : </label>
+                    <select class="form-control validate js-example-basic-single w-100" id="ddlTypes"><option></option></select>
+                </div>
+            </div>*@
+                        </div>
+                        <div class="row" style="display: flex;justify-content: space-around;">
+
+
+                            <div class="col-md-4" id="mlsname">
+                                <div class="md-form mb-5">
+                                    <label>Select mls name : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlMlsname"><option></option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <label>Select platform : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlPlatform"><option></option></select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row" style="display: flex;justify-content: space-around;">
+                            <div class=" col-md-4" id="hclient">
+                                <div class="form-group">
+                                    <div class="md-form mb-5">
+                                        <label>Select Client : </label>
+                                        <select class="form-control validate js-example-basic-single w-100" id="ddlClient"><option></option></select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-4" id="hportal">
+                                <div class="md-form mb-5">
+                                    <label>Select Portal : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlPortal"><option></option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <label>Select Order Type <span style='color:red;'>&#42;</span> : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlorderType"><option></option></select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row" style="display: flex;justify-content: space-around;">
+
+                            <div class="col-md-4" id="hstate">
+                                <div class="md-form mb-5">
+                                    <label>Select State : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlState"><option></option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="hsoftware">
+                                <div class="md-form mb-5">
+                                    <label>Select Software <span style='color:red;'>&#42;</span> : </label>
+                                    <select class="form-control validate" id="ddlSoftware">
+                                        <option></option>
+                                        <option value="1">With Software</option>
+                                        <option value="2">Without Software</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <label>Enter Weightage <span style='color:red;'>&#42;</span> : </label>
+                                    <input type="number" id="txtWeightage" class="form-control validate" placeholder="Weightage" style="border: 1px solid #aaa;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12" style="display: flex;justify-content: center;">
+                                <span id="errorMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @*<div class="row">
+
+                        </div>*@
+
+
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="create()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Create </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*id="modalEditForm"
+        <button class="btn btn-primary" onclick="updatedata()">Update</button>*@
+
+    
+    @*Edit Form*@
+    <div class="modal fade" id="modalEditForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold" name="editRoleName" id="editRoleName"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="col-md-12">
+                        @*<div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <div class="md-form mb-5">
+                                        <select class="form-control validate js-example-basic-single w-100" id="ddlEditUserRole"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>*@
+
+                        @*<div class="row" style="display: flex;align-items: center;flex-direction: column;">*@
+
+                        @*<div class="col-md-5">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditUserRole"></select>
+                                </div>
+                            </div>*@
+                        @*<div class="col-md-5">
+                                <div class="md-form mb-5">
+                                    <label>Select Role</label>
+                                    <select name="role" class="form-control validate js-example-basic-single w-100" id="ddllEUserRole">
+                                        <option value="3">Researcher</option>
+                                        <option value="5">Data Entry</option>
+                                    </select>
+                                </div>
+                            </div>*@
+                        @*<div class="col-md-2"></div>
+                                <div class="col-md-5">
+                                    <div class="md-form mb-5">
+                                        <label>Select MLS / Other Options : </label>
+                                        <select class="form-control validate js-example-basic-single w-100" id="ddlEditTypes"><option></option></select>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="row" style="display: flex;justify-content: space-around;">
+
+
+                            <div class="col-md-4" id="mlsname">
+                                <div class="md-form mb-5">
+                                    <label>Select mls name : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditMlsname"><option></option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <label>Select platform : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditPlatform"><option></option></select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row" style="display: flex;justify-content: space-around;">
+
+                            <div class="col-md-4" id="edclient">
+                                <div class="md-form mb-5">
+                                    <label>Select Client : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditClient"><option></option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="edportal">
+                                <div class="md-form mb-5">
+                                    <label>Select Portal : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditPortal"><option></option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <label>Select Order Type <span style='color:red;'>&#42;</span> : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditorderType"><option></option></select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row" style="display: flex;justify-content: space-around;">
+
+                            <div class="col-md-4" id="edstate">
+                                <div class="md-form mb-5">
+                                    <label>Select State : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditState"><option></option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="edsoftware">
+                                <div class="md-form mb-5">
+                                    <label>Select Software <span style='color:red;'>&#42;</span> : </label>
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditSoftware">
+                                        <option></option>
+                                        <option value="1">With Software</option>
+                                        <option value="2">Without Software</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <label>Enter Weightage <span style='color:red;'>&#42;</span> : </label>
+                                    <input type="number" id="txtEditWeightage" class="form-control validate " placeholder="Weightage" style="border: 1px solid #aaa;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12" style="display: flex;justify-content: center;">
+                                <span id="errorEditMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                            </div>
+                        </div>
+
+
+                        @*<div class="row">
+
+                            </div>*@
+                    </div>
+
+
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="updatedata()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Update </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12" id="hiddenTable_R">
+        <table id="tblOrderDetails_R" class="table dataTable no-footer" style="width:100%">
+            @if (roleId == 5)
+            {
+                <thead>
+                    <tr>
+                        <th class="hidden">ID</th>
+                        <th class="hidden">ROLE</th>
+                        <th>SL.NO</th>
+                        <th id="tState">STATE</th>
+                        <th id="tClient">CLIENT</th>
+                        <th>ORDER TYPE</th>
+                        <th>PLATFORM</th>
+                        <th>MLS</th>
+                        <th>WEIGHTAGE</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            }
+            @if (roleId == 6)
+            {
+                <thead>
+                    <tr>
+                        <th class="hidden">ID</th>
+                        <th class="hidden">ROLE</th>
+                        <th>SL.NO</th>
+                        <th>ORDER TYPE</th>
+                        <th id="tPortal">PORTAL</th>
+                        <th>PLATFORM</th>
+                        <th>MLS</th>
+                        <th id="tSoftware">SOFTWARE</th>
+                        <th>WEIGHTAGE</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            }
+
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+<script>
+
+
+    document.getElementById("txtWeightage").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    var eClient,eState,ePortal,eType,eRole,eOtherType,eMlsNames,ePlatform,optionValues,optionValuess=[];
+    var rolename;
+    var a = [];
+
+    //$("#ddlClient").select2({
+    //    placeholder: "-Select Client-",
+    //    allowClear: true
+    //});
+
+    $('select').select2({
+        placeholder: "-Select an option-",
+        allowClear: true
+    });
+
+    var a = $('ddlEditState').select2({
+        allowClear: true
+    });
+
+    $('#ddlRole').select2({
+        allowClear: false
+    });
+
+    if($('#ddllUserRole').val()==3){
+        $('#hportal').addClass('hidden')
+        $('#hsoftware').addClass('hidden')
+    }
+
+    $("#ddllUserRole").change(function() {
+        $('.mistake').removeClass('mistake');
+        $('#errorMsg').text('')
+        var status=$('#ddllUserRole').val();
+        if(status == 5){
+            $('#hportal').removeClass('hidden')
+            $('#hsoftware').removeClass('hidden')
+            $('#hstate').addClass('hidden')
+            $('#hclient').addClass('hidden')
+        }
+        if(status == 3){
+            $('#hportal').addClass('hidden')
+            $('#hsoftware').addClass('hidden')
+            $('#hstate').removeClass('hidden')
+            $('#hclient').removeClass('hidden')
+        }
+    })
+
+
+    //var setValue = 3;
+
+    //if($("#ddlRole").val()==5)
+    //    setValue=3
+    //else if($("#ddlRole").val()==6)
+    //    setValue=3
+    //$("#ddllUserRole").val(setValue).change();
+    //$("#ddlRole").change(function() {
+    //    $("#ddllUserRole").val(setValue).change();
+    //})
+
+
+
+
+    
+
+    //$('#ddlEditSoftware').select2({
+    //    allowClear: false
+    //});
+
+    //$('#ddlClient,#ddlPortal,#ddlorderType,#ddlState,#ddlTypes').select2({
+    //    dropdownParent: $('#modalRegisterForm')
+    //});
+
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+
+    $(document).ready(function () {
+
+        //$.fn.modal.Constructor.prototype._enforceFocus = function() {};
+        LoadTableData();
+        main();
+
+        //var setValue = 3;
+
+        //if($("#ddlRole").val()==5)
+        //    setValue=3
+        //else if($("#ddlRole").val()==6)
+        //    setValue=3
+        //$("#ddllUserRole").val(setValue).change();
+        //$("#ddlRole").change(function() {
+        //    $("#ddllUserRole").val(setValue).change();
+        //})
+
+    });
+
+    $('#ddlMlsname').change(function() {
+        $('#ddlPlatform').val('');
+        $('#ddlPlatform').text('');
+        var mls_id = $('#ddlMlsname').val();
+        //ResultPlatformMlsMap
+        if (ResultPlatformMlsMap != "" && ResultPlatformMlsMap != null) {
+            for (var i = 0; i < ResultPlatformMlsMap.length; i++) {
+                if (ResultPlatformMlsMap[i]["mls_id"] == mls_id) {
+                    $('#ddlPlatform').append('<option value="' + ResultPlatformMlsMap[i]["platform_id"] + '">' + ResultPlatformMlsMap[i]["platform_name"] + '</option>');
+                    //$('#ddlEditPlatform').append('<option value="' + ResultPlatformMlsMap[i]["platform_id"] + '">' + ResultPlatformMlsMap[i]["platform_name"] + '</option>');
+                }
+            }
+
+        }
+    })
+
+    $('#ddlEditMlsname').change(function() {
+        $('#ddlEditPlatform').val('');
+        $('#ddlEditPlatform').text('');
+        var mls_id = $('#ddlEditMlsname').val();
+        //ResultPlatformMlsMap
+        if (ResultPlatformMlsMap != "" && ResultPlatformMlsMap != null) {
+            for (var i = 0; i < ResultPlatformMlsMap.length; i++) {
+                if (ResultPlatformMlsMap[i]["mls_id"] == mls_id) {
+                    $('#ddlEditPlatform').append('<option value="' + ResultPlatformMlsMap[i]["platform_id"] + '">' + ResultPlatformMlsMap[i]["platform_name"] + '</option>');
+                }
+            }
+
+        }
+    })
+
+    var strJsonData = eval({ CurrentUser: 1, EmployeeId: 1 });
+    function LoadTableData() {
+
+        var Result = "";
+        $.ajax({
+            url: "LoadTableData",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+
+
+                ResultClientList = jQuery.parseJSON(data.strClientList);
+                ResultPortalList = jQuery.parseJSON(data.strPortalList);
+                ResultOrderTypeList = jQuery.parseJSON(data.strOrderTypeList);
+                ResultStateList = jQuery.parseJSON(data.strStateList);
+                ResultRoleList = jQuery.parseJSON(data.strEmployeeRoleList);
+                ResultOtherTypes = jQuery.parseJSON(data.strOtherTypesList);
+                ResultMlsNames = jQuery.parseJSON(data.strMlsNames);
+                ResultPlatform = jQuery.parseJSON(data.strPlatform);
+                ResultPlatformMlsMap = jQuery.parseJSON(data.strMlsPlatformMap);
+
+                eOtherType=ResultOtherTypes;
+                ePlatform=ResultPlatform;
+
+                if (ResultClientList != "" && ResultClientList != null) {
+
+                    eClient=ResultClientList;
+
+                    //$('#ddlClient').empty().append('<option value="-1">-Select Client-</option>');
+                    //$('#ddlEditClient').empty().append('<option value="-1">-Select Client-</option>');
+
+                    var data = [];
+
+                    var j = 0;
+
+
+                    for (var i = 0; i < ResultClientList.length; i++) {
+
+
+                        $('#ddlClient').append('<option value="' + ResultClientList[i]["ref_no"] + '">' + ResultClientList[i]["full_name"] + '</option>');
+                        $('#ddlEditClient').append('<option value="' + ResultClientList[i]["ref_no"] + '">' + ResultClientList[i]["full_name"] + '</option>');
+
+                    }
+                }
+
+                if (ResultPortalList != "" && ResultPortalList != null) {
+
+                    ePortal=ResultPortalList;
+
+                    //$('#ddlPortal').empty().append('<option value="-1">-Select Portal-</option>');
+                    //$('#ddlEditPortal').empty().append('<option value="-1">-Select Portal-</option>');
+
+                    for (var i = 0; i < ResultPortalList.length; i++) {
+
+                        $('#ddlPortal').append('<option value="' + ResultPortalList[i]["portal_id"] + '">' + ResultPortalList[i]["portal_name"] + '</option>');
+                        $('#ddlEditPortal').append('<option value="' + ResultPortalList[i]["portal_id"] + '">' + ResultPortalList[i]["portal_name"] + '</option>');
+                    }
+                }
+
+
+                if (ResultOrderTypeList != "" && ResultOrderTypeList != null) {
+
+                    eType=ResultOrderTypeList;
+
+                    //$('#ddlorderType').empty().append('<option value="-1">-Select Order type-</option>');
+                    //$('#ddlEditorderType').empty().append('<option value="-1">-Select Order type-</option>');
+
+                    for (var i = 0; i < ResultOrderTypeList.length; i++) {
+
+                        $('#ddlorderType').append('<option value="' + ResultOrderTypeList[i]["value"] + '">' + ResultOrderTypeList[i]["display_value"] + '</option>');
+                        $('#ddlEditorderType').append('<option value="' + ResultOrderTypeList[i]["value"] + '">' + ResultOrderTypeList[i]["display_value"] + '</option>');
+                    }
+                }
+
+
+                if (ResultStateList != "" && ResultStateList != null) {
+
+                    eState=ResultStateList;
+
+                    //$('#ddlState').empty().append('<option value="-1">-Select State-</option>');
+                    //$('#ddlEditState').empty().append('<option value="-1">-Select State-</option>');
+
+                    for (var i = 0; i < ResultStateList.length; i++) {
+
+                        $('#ddlState').append('<option value="' + ResultStateList[i]["state_id"] + '">' + ResultStateList[i]["state_name"] + '</option>');
+                        $('#ddlEditState').append('<option value="' + ResultStateList[i]["state_id"] + '">' + ResultStateList[i]["state_name"] + '</option>');
+                    }
+                }
+
+                if (ResultRoleList != "" && ResultRoleList != null) {
+
+                    eRole=ResultRoleList;
+
+                    //$('#ddlUserRole').empty().append('<option value="-1">-Select Role-</option>');
+                    //$('#ddlEditUserRole').empty().append('<option value="-1">-Select Role-</option>');
+
+                    for (var i = 0; i < ResultRoleList.length; i++) {
+
+                        $('#ddlUserRole').append('<option value="' + ResultRoleList[i]["status_role_id"] + '">' + ResultRoleList[i]["role_name"] + '</option>');
+                        $('#ddlEditUserRole').append('<option value="' + ResultRoleList[i]["status_role_id"] + '">' + ResultRoleList[i]["role_name"] + '</option>');
+                    }
+                }
+
+                //if (ResultOtherTypes != "" && ResultOtherTypes != null) {
+
+                //    eOtherType=ResultOtherTypes;
+
+                //    //$('#ddlTypes').empty().append('<option value="-1">-Select Type-</option>');
+                //    //$('#ddlEditTypes').empty().append('<option value="-1">-Select Type-</option>');
+
+                //    for (var i = 0; i < ResultOtherTypes.length; i++) {
+
+                //        $('#ddlTypes').append('<option value="' + ResultOtherTypes[i]["platform_id"] + '">' + ResultOtherTypes[i]["platform_name"] + '</option>');
+                //        $('#ddlEditTypes').append('<option value="' + ResultOtherTypes[i]["platform_id"] + '">' + ResultOtherTypes[i]["platform_name"] + '</option>');
+                //    }
+                //}
+
+                if (ResultMlsNames != "" && ResultMlsNames != null) {
+
+                    eMlsNames=ResultMlsNames;
+
+                    //$('#ddlTypes').empty().append('<option value="-1">-Select Type-</option>');
+                    //$('#ddlEditTypes').empty().append('<option value="-1">-Select Type-</option>');
+
+                    for (var i = 0; i < ResultMlsNames.length; i++) {
+
+                        $('#ddlMlsname').append('<option value="' + ResultMlsNames[i]["mls_id"] + '">' + ResultMlsNames[i]["mls_name"] + '</option>');
+                        $('#ddlEditMlsname').append('<option value="' + ResultMlsNames[i]["mls_id"] + '">' + ResultMlsNames[i]["mls_name"] + '</option>');
+                    }
+                }
+
+                if (ResultPlatform != "" && ResultPlatform != null) {
+
+                    ePlatform=ResultPlatform;
+
+                    //$('#ddlTypes').empty().append('<option value="-1">-Select Type-</option>');
+                    //$('#ddlEditTypes').empty().append('<option value="-1">-Select Type-</option>');
+
+                    for (var i = 0; i < ResultPlatform.length; i++) {
+
+                        //$('#ddlPlatform').append('<option value="' + ResultPlatform[i]["platform_id"] + '">' + ResultPlatform[i]["platform_name"] + '</option>');
+                        //$('#ddlEditPlatform').append('<option value="' + ResultPlatform[i]["platform_id"] + '">' + ResultPlatform[i]["platform_name"] + '</option>');
+                    }
+                }
+            }
+        });
+    }
+
+    function main() {
+
+        loadergif(1);
+        var  Result = @Html.Raw(Json.Encode(ViewBag.WeightageData));
+
+        if(@roleId==5 )
+        {
+            if (Result != '' && Result != null) {
+
+                $('#tblOrderDetails_R').DataTable().clear().destroy();
+
+                Data = Result.Data;
+
+                Datas = jQuery.parseJSON(Data);
+
+                var length = Datas.length;
+
+                var table = document.getElementById('tblOrderDetails_R');
+
+                    for (var i = 0; i < length; i++) {
+
+                        if (Datas[i].order_type == undefined)
+                            Datas[i].order_type = "-";
+                        if (Datas[i].software == 1)
+                            Datas[i].software = "WS";
+                            Datas[i].software = "-";
+                        if (Datas[i].state_name == undefined)
+                            Datas[i].state_name = "-";
+                        if (Datas[i].full_name == undefined)
+                            Datas[i].full_name = "-";
+                        if (Datas[i].platform_name == undefined)
+                            Datas[i].platform_name = "-";
+                        if (Datas[i].platform_name == null)
+                            Datas[i].types = "-";
+                        if (Datas[i].mls_name == undefined)
+                            Datas[i].mls_name = "-";
+                        if (Datas[i].mls_name == null)
+                            Datas[i].mls_name = "-";
+
+                        $('#tblOrderDetails_R').append(
+                            '<tr id="' + i + '">' +
+
+                                '<td class="hidden">' + Datas[i].wid + '</td>' +
+                                '<td class="hidden">' + Datas[i].status_role_id + '</td>' +
+                                '<td>' + Datas[i].Sl_no + '</td>' +
+                                '<td>' + Datas[i].state_name + '</td>' +
+                                '<td>' + Datas[i].full_name + '</td>' +
+                                '<td>' + Datas[i].order_type + '</td>' +
+                                '<td>' + Datas[i].platform_name + '</td>' +
+                                '<td>' + Datas[i].mls_name + '</td>' +
+                                '<td align="center">' + Datas[i].weightage + '</td>' +
+                                '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                                '<td><a href="#" onclick="deleteId(' + i + ') "><i class="fa fa-trash" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                           '</tr>');
+
+                    }
+
+
+
+
+                //setTimeout(function () {
+                $('#tblOrderDetails_R').DataTable({
+                    "bpaging": false,
+                    "bDestroy": true,
+                    "scrollX": true,
+                    //"autoWidth" : false,
+                    //bAutoWidth: false,
+                    //aoColumns : [
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '10%' }
+                    //],
+                    dom: 'Blfrtip',
+                    buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [2, 3, 4, 5, 6, 7, 8],
+                                       orthogonal: "export",
+                                       //rows: function (idx, data, node) {
+                                       //    number = 1;
+                                       //    return true;
+                                       //}
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [2, 3, 4, 5, 6, 7, 8]
+                                       }
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [2, 3, 4, 5, 6, 7, 8]
+                                       }
+                                   }
+                    ],
+
+                    columnDefs: [
+                                { orderable: false, targets: [9] },
+                                { orderable: false, targets: [10] },
+                                {
+                                    render: function (data, type, full, meta) {
+                                        return "<div class='text-wrap width-50'>" + data + "</div>";
+                                    },
+                                    targets: [4,5,6,7]
+                                }
+                  
+                    ]
+                })
+            }
+        }
+        if(@roleId==6){
+            if (Result != '' && Result != null) {
+
+                $('#tblOrderDetails_R').DataTable().clear().destroy();
+
+                Data = Result.Data;
+
+                Datas = jQuery.parseJSON(Data);
+
+                var length = Datas.length;
+
+                var table = document.getElementById('tblOrderDetails_R');
+
+
+
+                for (var i = 0; i < length; i++) {
+
+                    if (Datas[i].order_type == undefined)
+                        Datas[i].order_type = "-";
+                    if (Datas[i].software == 1)
+                        Datas[i].software = "WS";
+                    else if (Datas[i].software == 2)
+                        Datas[i].software = "WOS";
+                    else if (Datas[i].software == undefined)
+                        Datas[i].software = "-";
+                    else if (Datas[i].software == 0)
+                        Datas[i].software = "-";
+                    if (Datas[i].portal_name == undefined)
+                        Datas[i].portal_name = "-";
+                    if (Datas[i].platform_name == undefined)
+                        Datas[i].platform_name = "-";
+                    if (Datas[i].platform_name == null)
+                        Datas[i].platform_name = "-";
+                    if (Datas[i].mls_name == undefined)
+                        Datas[i].mls_name = "-";
+                    if (Datas[i].mls_name == null)
+                        Datas[i].mls_name = "-";
+
+                    $('#tblOrderDetails_R').append(
+                        '<tr id="' + i + '">' +
+
+                            '<td class="hidden">' + Datas[i].wid + '</td>' +
+                            '<td class="hidden">' + Datas[i].status_role_id + '</td>' +
+                            '<td>' + Datas[i].Sl_no + '</td>' +
+                            '<td>' + Datas[i].order_type + '</td>' +
+                            '<td>' + Datas[i].portal_name + '</td>' +
+                            '<td>' + Datas[i].platform_name + '</td>' +
+                            '<td>' + Datas[i].mls_name + '</td>' +
+                            '<td align="center">' + Datas[i].software + '</td>' +
+                            '<td align="center">' + Datas[i].weightage + '</td>' +
+                            '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                            '<td><a href="#" onclick="deleteId(' + i + ') "><i class="fa fa-trash" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                       '</tr>');
+
+                }
+
+
+
+                //setTimeout(function () {
+                $('#tblOrderDetails_R').DataTable({
+                    "bpaging": false,
+                    "bDestroy": true,
+                    "scrollX": true,
+                    //"autoWidth" : false,
+                    //bAutoWidth: false,
+                    //aoColumns : [
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '15%' },
+                    //  { sWidth: '10%' }
+                    //],
+                    dom: 'Blfrtip',
+                    buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [2, 3, 4, 5, 6, 7, 8],
+                                       orthogonal: "export",
+                                       //rows: function (idx, data, node) {
+                                       //    number = 1;
+                                       //    return true;
+                                       //}
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [2, 3, 4, 5, 6, 7, 8]
+                                       }
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [2, 3, 4, 5, 6, 7, 8]
+                                       }
+                                   }
+                    ],
+
+                    columnDefs: [
+                                { width: "5%", targets: 2 },
+                                { orderable: false, targets: [9] },
+                                { orderable: false, targets: [10] },
+                                {
+                                    render: function (data, type, full, meta) {
+                                        return "<div class='text-wrap width-50'>" + data + "</div>";
+                                    },
+                                    targets: [3,4,5,6]
+                                }
+                    ]
+                })
+            }
+        }
+
+
+        loadergif(0);
+
+        $(".dt-button").addClass("btn btn-outline-primary btn-fw")
+        $(".dt-button").removeClass("dt-button")
+    }
+
+
+
+    function create() {
+
+        $(".mistake").removeClass('mistake');
+        $("#errorMsg").text('');
+
+        var sRole = $("#ddllUserRole").val();
+        var state = $("#ddlState").val();
+        var client = $("#ddlClient").val();
+        var portal = $("#ddlPortal").val();
+        var type = $("#ddlorderType").val();
+        var software = $("#ddlSoftware").val();
+        var weightage = $("#txtWeightage").val();
+        var sOtherType = $("#ddlPlatform").val();
+        var mls_id = $("#ddlMlsname").val();
+
+        //if( state =='' && client =='' && state =='' && portal =='' && type =='' && software =='' && weightage =='' && sOtherType =='' && mls_id ==''){
+        //    $("body").find("[aria-labelledby='select2-ddlState-container']").addClass('mistake');
+        //    $("body").find("[aria-labelledby='select2-ddlClient-container']").addClass('mistake');
+        //    $("body").find("[aria-labelledby='select2-ddlorderType-container']").addClass('mistake');
+        //    $("body").find("[aria-labelledby='select2-ddlSoftware-container']").addClass('mistake');
+        //    $("body").find("[aria-labelledby='select2-ddlPortal-container']").addClass('mistake');
+        //    $("body").find("[aria-labelledby='select2-ddlPlatform-container']").addClass('mistake');
+        //    $("body").find("[aria-labelledby='select2-ddlMlsname-container']").addClass('mistake');
+        //    $("#txtWeightage").addClass('mistake');
+        //    $("#errorMsg").text('Please fill values');
+        //}
+
+        if( sRole==null && type =='' && weightage =='' && software=='' ){
+            $("body").find("[aria-labelledby='select2-ddllUserRole-container']").addClass('mistake');
+            $("body").find("[aria-labelledby='select2-ddlorderType-container']").addClass('mistake');
+            $("body").find("[aria-labelledby='select2-ddlSoftware-container']").addClass('mistake');
+            $("#txtWeightage").addClass('mistake');
+            $("#errorMsg").text('Please fill the mandatory fields');
+            return;
+        }
+        //else{
+        //    $("body").find("[aria-labelledby='select2-ddllUserRole-container']").removeClass('mistake');
+        //    $("body").find("[aria-labelledby='select2-ddlorderType-container']").removeClass('mistake');
+        //    $("body").find("[aria-labelledby='select2-ddlSoftware-container']").removeClass('mistake');
+        //    $("#txtWeightage").removeClass('mistake');
+        //    $("#errorMsg").text('');
+        //}
+
+        if( sRole==null){
+            $("body").find("[aria-labelledby='select2-ddllUserRole-container']").addClass('mistake');
+            $("#errorMsg").text('Please choose a role');
+            return;
+        }
+
+        if(sRole==5){
+            if(  type =='' && weightage =='' && software=='' ){
+                $("body").find("[aria-labelledby='select2-ddlorderType-container']").addClass('mistake');
+                $("body").find("[aria-labelledby='select2-ddlSoftware-container']").addClass('mistake');
+                $("#txtWeightage").addClass('mistake');
+                $("#errorMsg").text('Please fill the mandatory fields');
+                return;
+            }
+            //else{
+            //    $("body").find("[aria-labelledby='select2-ddlorderType-container']").removeClass('mistake');
+            //    $("body").find("[aria-labelledby='select2-ddlSoftware-container']").removeClass('mistake');
+            //    $("#txtWeightage").removeClass('mistake');
+            //    $("#errorMsg").text('');
+            //}
+
+            if(software==''){
+                $("body").find("[aria-labelledby='select2-ddlSoftware-container']").addClass('mistake');
+                $("#errorMsg").text('Please choose software type');
+                return;
+            }
+        }else if(sRole==3){
+            if(  type =='' && weightage =='' ){
+                $("body").find("[aria-labelledby='select2-ddlorderType-container']").addClass('mistake');
+                $("#txtWeightage").addClass('mistake');
+                $("#errorMsg").text('Please fill the mandatory fields');
+                return;
+            }
+            //else{
+            //    $("body").find("[aria-labelledby='select2-ddlorderType-container']").removeClass('mistake');
+            //    $("#txtWeightage").removeClass('mistake');
+            //    $("#errorMsg").text('');
+            //}
+        }
+
+        if(mls_id != '' && mls_id != null){
+            if(sOtherType=='' || sOtherType==null){
+                $("body").find("[aria-labelledby='select2-ddlPlatform-container']").addClass('mistake');
+                $("#errorMsg").text('Please choose platform');
+                return
+            }
+            //else{
+            //    $("body").find("[aria-labelledby='select2-ddlPlatform-container']").removeClass('mistake');
+            //    $("#errorMsg").text('Please choose platform');
+            //}
+        }
+
+        if(type==''){
+            $("body").find("[aria-labelledby='select2-ddlorderType-container']").addClass('mistake');
+            $("#errorMsg").text('Please choose order type');
+            return;
+        }
+
+        if(weightage==''){
+            $("#txtWeightage").addClass('mistake');
+            $("#errorMsg").text('Please give weightage value');
+            return;
+        }else if(weightage>=10 || weightage<0){
+            $("#txtWeightage").addClass('mistake');
+            $("#errorMsg").text('Please enter valid digit. Weightage value should be less than 10 and greater than 0');
+            return;
+        }
+
+
+        
+
+        //if (weightage > 10) {
+        //    alert("weightage value exceeded the limit")
+        //    return;
+        //}
+
+        //if (weightage == "") {
+        //    alert("There is no value for weightage");
+        //    return;
+        //}
+        ////if (type == "-1") {
+        ////    alert("Please choose Order type ");
+        ////    return;
+        ////}
+        //if (weightage == "") {
+        //    alert("Please type weightage ");
+        //    return;
+        //}
+
+        //if(sRole==-1){
+        //    alert("Please select the role ");
+        //    return;
+        //}
+
+        //if(sRole==null){
+        //    alert("Please select the role ");
+        //    return;
+        //}
+
+        if(sRole==""){
+
+            sRole = 0;
+        }
+        if(state==""){
+
+            state=0;
+        }
+        if(client==""){
+
+            client=0;
+        }
+        if(portal==""){
+
+            portal=0;
+        }
+        if(type==""){
+
+            type=0;
+        }
+        if(software==null || software == ""){
+
+            software=0
+        }
+        if(sOtherType==""){
+
+            sOtherType=0
+        }
+        if(mls_id=="" || mls_id == null){
+
+            mls_id=0
+        }
+
+        var strJsonDatas = eval({ client: client, state: state, portal: portal, type: type, software: software, weightage: weightage, role: sRole ,otherTypes : sOtherType , 
+            mls_id : mls_id });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "insertalldetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                if(data!=undefined)
+                {
+                    if(data=="exists"){
+                        swal({
+                            title: 'Error',
+                            text: 'Weightage already presented',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            //location.reload();
+                        })
+                    }
+                    if(data=="Error")
+                    {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Development team',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            //location.reload();
+                        })
+                    }
+                    if(data=="success")
+                    {
+                        //Result = jQuery.parseJSON(data);
+                        //Result=data;
+                        //console.log(Result);
+                        swal({
+                            title: 'Success!',
+                            text: 'New weightage added.',
+                            icon: 'success',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            location.reload();
+                        }
+                        )
+                    }
+                }
+                else{
+                    //Result = jQuery.parseJSON(data);
+                    //Result=data;
+                    ////console.log(Result);
+                    //swal({
+                    //    title: 'Congratulations!',
+                    //    text: 'New weightage added.',
+                    //    icon: 'success',
+                    //    button: {
+                    //        text: "Continue",
+                    //        value: true,
+                    //        visible: true,
+                    //        className: "btn btn-primary",
+                    //        timer: 1000,
+                    //    }
+                    //}).then(
+                    //function(){
+                    //    location.reload();
+                    //}
+                    //)
+                }
+
+
+            }
+        });
+    }
+
+    function updatedata() {
+        $(".mistake").removeClass('mistake');
+        $("#errorEditMsg").text('');
+        $("#errorMsg").text('');
+        //var $newOption = $("<option selected='selected'></option>").val("TheID").text("The text")
+
+        //$("#myMultipleSelect2").append($newOption).trigger('change');
+
+        //var state = $("#ddlEditState").val(2).trigger('change');
+        //var state = $("#ddlEditState").select2("val", "0");
+        //alert($("#ddlEditMlsname").val());
+        //alert($("#ddlEditSoftware").val());
+        //alert($("#ddlEditPlatform").val());
+        var role= roleid;
+        var state = $("#ddlEditState").val();
+        var client = $("#ddlEditClient").val();
+        var portal = $("#ddlEditPortal").val();
+        var type = $("#ddlEditorderType").val();
+        var othertype = $("#ddlEditPlatform").val();
+        var mls_id = $("#ddlEditMlsname").val();
+        var software = $("#ddlEditSoftware").val();
+        var weightage = $("#txtEditWeightage").val();
+
+
+        if(role==5){
+            if(  type =='' && weightage =='' && software=='' ){
+                $("body").find("[aria-labelledby='select2-ddlEditorderType-container']").addClass('mistake');
+                $("body").find("[aria-labelledby='select2-ddlEditSoftware-container']").addClass('mistake');
+                $("#txtEditWeightage").addClass('mistake');
+                $("#errorEditMsg").text('Please fill the mandatory fields');
+                return;
+            }else{
+                $("body").find("[aria-labelledby='select2-ddlEditorderType-container']").removeClass('mistake');
+                $("body").find("[aria-labelledby='select2-ddlEditSoftware-container']").removeClass('mistake');
+                $("#txtEditWeightage").removeClass('mistake');
+                $("#errorEditMsg").text('');
+            }
+
+            if(software==''){
+                $("body").find("[aria-labelledby='select2-ddlEditSoftware-container']").addClass('mistake');
+                $("#errorEditMsg").text('Please choose software type');
+                return;
+            }
+        }else if(role==3){
+            if(  type =='' && weightage =='' ){
+                $("body").find("[aria-labelledby='select2-ddlEditorderType-container']").addClass('mistake');
+                $("#txtEditWeightage").addClass('mistake');
+                $("#errorEditMsg").text('Please fill the mandatory fields');
+                return;
+            }else{
+                $("body").find("[aria-labelledby='select2-ddlEditorderType-container']").removeClass('mistake');
+                $("#txtEditWeightage").removeClass('mistake');
+                $("#errorEditMsg").text('');
+            }
+        }
+
+        if(othertype !='' && othertype !==null){
+            if(mls_id =='' || mls_id == null){
+                $("body").find("[aria-labelledby='select2-ddlEditMlsname-container']").addClass('mistake');
+                $("#errorEditMsg").text('Please choose mls name');
+                return
+            }
+        }
+
+        if(mls_id != '' && mls_id != null){
+            if(othertype=='' || othertype==null){
+                $("body").find("[aria-labelledby='select2-ddlEditPlatform-container']").addClass('mistake');
+                $("#errorEditMsg").text('Platform cannot be null if mls is choosen. Please choose mls for mapping the platform');
+                return
+            }
+        }
+
+        if(type==''){
+            $("body").find("[aria-labelledby='select2-ddlEditorderType-container']").addClass('mistake');
+            $("#errorEditMsg").text('Please choose order type');
+            return;
+        }
+
+        if(weightage==''){
+            $("#txtEditWeightage").addClass('mistake');
+            $("#errorEditMsg").text('Please give weightage value');
+            return;
+        }else if(weightage>=10 || weightage<0){
+            $("#txtEditWeightage").addClass('mistake');
+            $("#errorEditMsg").text('Please enter valid digit. Weightage value should be less than 10 and greater than 0');
+            return;
+        }
+
+        //if (weightage == "") {
+        //    alert("Please type weightage ");
+        //    return;
+        //}
+        //if (weightage > 10) {
+        //    alert("weightage value exceeded the limit")
+        //    return;
+        //}
+
+        if(state==null||state==""){
+
+            state=0;
+        }
+        if(client==null||client==""){
+
+            client=0;
+        }
+        if(portal==null||portal==""){
+
+            portal=0;
+        }
+        if(type==null||type==""){
+
+            type=0;
+        }
+        if(software==null || software == ""){
+
+            software=0
+        }
+        if(othertype==null||othertype==""){
+
+            othertype=0
+        }
+        if(mls_id==null||mls_id==""){
+
+            mls_id=0
+        }
+        
+
+
+
+        var strJsonDatas = eval({ wid: refId, client: client, state: state, portal: portal, type: type, software: software, weightage: weightage,othertype_id :othertype,role:role ,mls_id:mls_id});
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "updatedetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                if(data!=undefined){
+                    if(data=="exists"){
+                        swal({
+                            title: 'Error',
+                            text: 'Weightage already presented',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            //location.reload();
+                        })
+                    }
+                    if(data=="Error")
+                    {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Development team.',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            //location.reload();
+                        })
+                    }
+                    if(data=="success")
+                    {
+                        //Result = jQuery.parseJSON(data);
+                        //Result = data;
+                        swal({
+                            title: 'Updated!',
+                            text: 'Weightage have been have been updated',
+                            icon: 'success',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            location.reload();
+                        }
+                        )
+                    }
+                }else
+                {
+                }
+            }
+
+        });
+
+    }
+
+    var refId,roleid,roleName;
+
+    function edit(rowid) {
+
+        $(".mistake").removeClass('mistake');
+        $("#errorEditMsg").text('');
+
+        $("#ddlEditState").val('').trigger('change') ;
+
+        refId = document.getElementById(rowid).childNodes[0].outerText;
+        roleid = document.getElementById(rowid).childNodes[1].outerText;
+
+        if(roleid==3){
+            roleName="Researcher"
+            $('#edportal').addClass('hidden')
+            $('#edsoftware').addClass('hidden')
+            $('#edstate').removeClass('hidden')
+            $('#edclient').removeClass('hidden')
+        }else if(roleid==5){
+            roleName="Data Entry"
+            $('#edportal').removeClass('hidden')
+            $('#edsoftware').removeClass('hidden')
+            $('#edstate').addClass('hidden')
+            $('#edclient').addClass('hidden')
+        }
+        $('#editRoleName').text("Edit " + roleName + " Weightage ");
+        //console.log(refId);
+        var strJsonDatas = eval({ wid: refId });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getweightagedetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                var Result = jQuery.parseJSON(data);
+
+                for(var i=0;i<eType.length-1;i++)
+                {
+                    if(eType[i].value==Result[0].ordertype_id)
+                    {
+                        //$("#select2-ddlEditorderType-container").html('<span class="select2-selection__clear" title="Remove all items" onclick="remove()">×</span>' + eType[i].short_display);
+
+                        $("#select2-ddlEditorderType-container").html(eType[i].short_display);
+
+                        $("#ddlEditorderType").val(Result[0].ordertype_id).change();
+
+                        break;
+                    }
+                    else if(Result[0].ordertype_id==undefined||Result[0].ordertype_id==0)
+                    {
+                        $("#select2-ddlEditorderType-container").html("-Select an option-");
+
+                        //$("#ddlEditorderType").val(Result[0].ordertype_id).change();
+
+                    }
+                    //to make default selection as first option
+                    $("#ddlEditorderType").val(null).trigger("change");
+                }
+
+                for(var i=0;i<eClient.length-1;i++)
+                {
+                    if(eClient[i].ref_no==Result[0].client_id)
+                    {
+                        $("#select2-ddlEditClient-container").html(eClient[i].full_name);
+
+                        $("#ddlEditClient").val(Result[0].client_id).change();
+                        break;
+
+                    }
+                    else if(Result[0].client_id==undefined||Result[0].client_id==0)
+                    {
+                        $("#select2-ddlEditClient-container").html("-Select an option-");
+
+                        //$("#ddlEditClient").val(Result[0].client_id).change();
+                    }
+                    //to make default selection as first option
+                    $("#ddlEditClient").val(null).trigger("change");
+                }
+
+
+                for(var i=0;i<ePortal.length-1;i++)
+                {
+                    if(ePortal[i].portal_id==Result[0].portal_id)
+                    {
+                        $("#select2-ddlEditPortal-container").html(ePortal[i].portal_name);
+
+                        $("#ddlEditPortal").val(Result[0].portal_id).change();
+
+                        break;
+                    }
+                    else if(Result[0].portal_id==undefined||Result[0].portal_id==0)
+                    {
+                        $("#select2-ddlEditPortal-container").html("-Select an option-");
+
+                        //$("#ddlEditPortal").val(Result[0].portal_id).change();
+
+                    }
+                    //to make default selection as first option
+                    $("#ddlEditPortal").val(null).trigger("change");
+                }
+
+                for(var i=0;i<eState.length-1;i++)
+                {
+                    if(eState[i].state_id==Result[0].state_id)
+                    {
+                        $("#select2-ddlEditState-container").html(eState[i].state_name);
+
+                        $("#ddlEditState").val(Result[0].state_id).change();
+
+                        console.log(a);
+
+                        //abc();
+
+                        break;
+                    }
+                    else if(Result[0].state_id==undefined||Result[0].state_id==0)
+                    {
+                        $("#select2-ddlEditState-container").html("-Select an option-");
+
+                        //$("#ddlEditState").val(-1).change();
+
+                    }
+                    //to make default selection as first option
+                    $("#ddlEditState").val(null).trigger("change");
+                }
+
+                for(var i=0;i<eRole.length-1;i++)
+                {
+                    if(eRole[i].status_role_id==Result[0].status_role_id)
+                    {
+                        $("#select2-ddlEditUserRole-container").html(eRole[i].role_name);
+
+                        $("#ddlEditUserRole").val(Result[0].status_role_id).change();
+
+                        break;
+                    }
+                    else if(Result[0].status_role_id==undefined||Result[0].status_role_id==0)
+                    {
+                        $("#select2-ddlEditUserRole-container").html("-Select an option-");
+
+                        //$("#ddlEditUserRole").val(-1).change();
+
+                    }
+                    //to make default selection as first option
+                    $("#ddlEditUserRole").val(null).trigger("change");
+                }
+
+                //for(var i=0;i<eOtherType.length-1;i++)
+                //{
+                //    if(eOtherType[i].platform_id==Result[0].othertype_id)
+                //    {
+                //        $("#select2-ddlEditTypes-container").html(eOtherType[i].platform_name);
+
+                //        $("#ddlEditTypes").val(Result[0].othertype_id).change();
+
+                //        break;
+                //    }
+                //    else if(Result[0].othertype_id == undefined || Result[0].othertype_id == 0)
+                //    {
+                //        $("#select2-ddlEditTypes-container").html("-Select an option-");
+
+                //        //$("#ddlEditTypes").val(-1).change();
+                //    }
+                //}
+
+                for(var i=0;i<eMlsNames.length-1;i++)
+                {
+                    if(eMlsNames[i].mls_id==Result[0].mls_id)
+                    {
+                        $("#select2-ddlEditMlsname-container").html(eMlsNames[i].mls_name);
+
+                        $("#ddlEditMlsname").val(Result[0].mls_id).change();
+
+                        break;
+                    }
+                    else if(Result[0].mls_id==undefined||Result[0].mls_id==0)
+                    {
+                        $("#select2-ddlEditMlsname-container").html("-Select an option-");
+
+                        //$("#ddlEditorderType").val(Result[0].ordertype_id).change();
+
+                    }
+                    //to make default selection as first option
+                    $("#ddlEditMlsname").val(null).trigger("change");
+                }
+
+
+                //if (ResultPlatform != "" && ResultPlatform != null) {
+                //    for (var i = 0; i < ResultPlatform.length; i++) {
+                //        $('#ddlEditPlatform').append('<option value="' + ResultPlatform[i]["platform_id"] + '">' + ResultPlatform[i]["platform_name"] + '</option>');
+                //    }
+                //}
+
+
+                for(var i=0;i<=ePlatform.length-1;i++)
+                {
+                    if(ePlatform[i].platform_id==Result[0].othertype_id)
+                    {
+                        $("#ddlEditPlatform").html("").trigger("change");
+
+                        $('#ddlEditPlatform').append('<option value="' + Result[0].othertype_id + '">' + ePlatform[i].platform_name + '</option>');
+                        //$("#ddlEditPlatform").html("").trigger("change");
+
+                        //$('#ddlEditPlatform').append('<option value="' + ResultPlatform[i]["platform_id"] + '">' + ResultPlatform[i]["platform_name"] + '</option>');
+
+                        $("#select2-ddlEditPlatform-container").html(ePlatform[i].platform_name);
+
+                        //$('select option[value!='+Result[0].othertype_id+']').hide();
+
+                        $("#ddlEditPlatform").val(Result[0].othertype_id).change();
+
+                        break;
+                    }
+                    else if(Result[0].othertype_id==undefined||Result[0].othertype_id==0)
+                    {
+                        $("#ddlEditPlatform").html("").trigger("change");
+
+                        $("#select2-ddlEditPlatform-container").html("-Select an option-");
+
+                        //$("#ddlEditorderType").val(Result[0].ordertype_id).change();
+
+                    }
+                    //to make default selection as first option
+                    $("#ddlEditPlatform").val(null).trigger("change");
+                }
+
+                //$("#ddlEditPlatform").html("").trigger("change");
+
+
+
+
+
+                //$("#ddlEditClient").val((Result[0].client_id)).change();
+                //$("#ddlEditPortal ").val((Result[0].portal_id)).change();
+                //$("#ddlEditorderType").val((Result[0].ordertype_id)).change();
+                //$("#ddlEditState").val((Result[0].state_id)).change();
+                if(Result[0].software == undefined || Result[0].software == 0)
+                {
+                    $("#select2-ddlEditSoftware-container").html("-Select an option-");
+                }
+                else if(Result[0].software == 1)
+                {
+                    $("#select2-ddlEditSoftware-container").html("WS");
+                    $("#ddlEditSoftware").val(1).change();
+                    //$("#ddlEditSoftware").val((Result[0].software)).change();
+                }else if(Result[0].software == 2)
+                {
+                    $("#select2-ddlEditSoftware-container").html("WOS");
+                    $("#ddlEditSoftware").val(2).change();
+                    //$("#ddlEditSoftware").val((Result[0].software)).change();
+                }
+
+                $("#txtEditWeightage").val((Result[0].weightage)).change();
+
+                //$("#ddlEditClient").addClass("js-example-basic-single w-100");
+
+                //$('#ddlEditState').select2.empty();
+
+                //$('#ddlEditState').select2("val", "");
+
+            }
+        });
+    }
+
+    function deleteId(rowid) {
+        refId = document.getElementById(rowid).childNodes[0].outerText;
+        var strJsonDatas = eval({ wid: refId })
+        console.log(refId);
+
+        swal({
+            title: 'Are you sure do you want to delete this weightage?',
+            //text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3f51b5',
+            cancelButtonColor: '#ff4081',
+            confirmButtonText: 'Great ',
+            buttons: {
+                cancel: {
+                    text: "NO",
+                    value: null,
+                    visible: true,
+                    className: "btn btn-danger",
+                    closeModal: true,
+                },
+                confirm: {
+                    text: "YES",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary",
+                    closeModal: true
+                }
+            }
+        }).then(
+        function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "deletedetails",
+                    data: JSON.stringify(strJsonDatas),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (msg) {
+                        var data = msg;
+                        if(data!=undefined){
+                            if(data=="Error")
+                            {
+                                swal({
+                                    title: 'Error',
+                                    text: 'Something went wrong.Contact Development team',
+                                    icon: 'error',
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary",
+                                        timer: 1000,
+                                    }
+                                }).then(
+                                function(){
+                                    //location.reload();
+                                })
+                            }
+                            if(data=="success")
+                            {
+                                //Result = jQuery.parseJSON(data);
+                                swal({
+                                    title: 'Success',
+                                    text: 'Weightage has been deleted',
+                                    icon: 'success',
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary",
+                                        timer: 1000,
+                                    }
+                                }).then(
+                                function() {
+                                    location.reload();
+                                })
+                            }
+                        }else
+                        {
+                            ////Result = jQuery.parseJSON(data);
+                            //Result=data;
+                            //swal({
+                            //    title: 'Deleted!',
+                            //    text: 'Your file has been deleted.',
+                            //    type:"success",
+                            //    timer: 1000,
+                            //    button: false
+                            //}).then(
+                            //    function() {
+                            //        location.reload();
+                            //    })
+                        }
+                    }
+                });
+            }
+            else {
+                return false;
+            }
+        }
+        )
+    }
+
+    function removeDetails(){
+        $("#txtWeightage").val('')
+        $(".mistake").removeClass('mistake');
+        $("#errorMsg").text('');
+
+        $("#ddlPortal").html("").trigger("change");
+        $("#ddlClient").html("").trigger("change");
+        $("#ddlState").html("").trigger("change");
+        $("#ddlorderType").html("").trigger("change");
+        $("#ddlSoftware").html("").trigger("change");
+        $("#ddlMlsname").html("").trigger("change");
+        $("#ddlPlatform").html("").trigger("change");
+
+        for (var i = 0; i < ResultClientList.length; i++) {
+
+            $('#ddlClient').append('<option value="' + ResultClientList[i]["ref_no"] + '">' + ResultClientList[i]["full_name"] + '</option>');
+            $('#ddlEditClient').append('<option value="' + ResultClientList[i]["ref_no"] + '">' + ResultClientList[i]["full_name"] + '</option>');
+
+            $("#ddlClient").val(null).trigger("change");
+            $("#ddlEditClient").val(null).trigger("change");
+        }
+
+        for (var i = 0; i < ResultPortalList.length; i++) {
+
+            $('#ddlPortal').append('<option value="' + ResultPortalList[i]["portal_id"] + '">' + ResultPortalList[i]["portal_name"] + '</option>');
+            $('#ddlEditPortal').append('<option value="' + ResultPortalList[i]["portal_id"] + '">' + ResultPortalList[i]["portal_name"] + '</option>');
+
+            $("#ddlPortal").val(null).trigger("change");
+            $("#ddlEditPortal").val(null).trigger("change");
+        }
+
+        for (var i = 0; i < ResultOrderTypeList.length; i++) {
+
+            $('#ddlorderType').append('<option value="' + ResultOrderTypeList[i]["value"] + '">' + ResultOrderTypeList[i]["display_value"] + '</option>');
+            $('#ddlEditorderType').append('<option value="' + ResultOrderTypeList[i]["value"] + '">' + ResultOrderTypeList[i]["display_value"] + '</option>');
+
+            $("#ddlorderType").val(null).trigger("change");
+            $("#ddlEditorderType").val(null).trigger("change");
+        }
+
+        for (var i = 0; i < ResultStateList.length; i++) {
+
+
+            $('#ddlState').append('<option value="' + ResultStateList[i]["state_id"] + '">' + ResultStateList[i]["state_name"] + '</option>');
+            $('#ddlEditState').append('<option value="' + ResultStateList[i]["state_id"] + '">' + ResultStateList[i]["state_name"] + '</option>');
+
+            $("#ddlState").val(null).trigger("change");
+            $("#ddlEditState").val(null).trigger("change");
+        }
+
+        for (var i = 0; i < ResultMlsNames.length; i++) {
+
+            $('#ddlMlsname').append('<option value="' + ResultMlsNames[i]["mls_id"] + '">' + ResultMlsNames[i]["mls_name"] + '</option>');
+            $('#ddlEditMlsname').append('<option value="' + ResultMlsNames[i]["mls_id"] + '">' + ResultMlsNames[i]["mls_name"] + '</option>');
+
+            $("#ddlMlsname").val(null).trigger("change");
+            $("#ddlEditMlsname").val(null).trigger("change");
+        }
+
+
+
+
+
+
+    }
+
+    //function abc(){   
+    //    $('#ddlEditState').select2({
+    //        allowClear: true,
+    //        placeholder: "-Select an option-"
+    //    })
+    //}
+
+    //function remove(){
+    //    var id = this.id;
+    //    alert(id)
+    //    //$('select2').select2({
+    //    //            allowClear: true,
+    //    //            placeholder: "-Select an option-"
+    //    //        })
+    //    $("#ddlEditorderType").html('').trigger("change");
+    //}
+
+
+
+</script>
+

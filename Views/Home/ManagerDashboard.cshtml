@@ -1,0 +1,642 @@
+﻿
+@{
+    ViewBag.Title = "ManagerDashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="~/Content/css/mdi.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <style>
+        .error-msg {
+            color: #D8000C;
+            background-color: #FFBABA;
+            width: 100%;
+        }
+                .ti-calendar{
+            background-color:white;
+        }
+        .dateProp{
+            background-color:white !important;
+        }
+        .hidden{
+            display:none;
+        }
+    </style>
+
+</head>
+
+
+
+<body>
+
+    <div class="row" style="background-color:#fff; border-radius:20px; margin-bottom:22px;">
+        <div class="col-md-12 grid-margin">
+            <div class="row">
+                <div class="col-12 col-xl-5 mb-4 mb-xl-0">
+                    <h3 class="font-weight-bold">Welcome , @Session["emp_full_name"] </h3>
+                    @*<h6 class="font-weight-normal mb-0">All systems are running smoothly! You have <span class="text-primary">3 unread alerts!</span></h6>*@
+                </div>
+                <div class="col-12 col-xl-7 hidden">
+                    <div class="justify-content-end d-flex">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>From Date</label>
+                                <div id="date-form" class="input-group date txtfromdate">
+                                    <input type="text" id="txtfromdate" class="form-control dateProp" readonly />
+                                    <span class="input-group-addon input-group-append border-left">
+                                        <span class="ti-calendar input-group-text">
+                                        </span>
+                                    </span>
+                                    
+                                </div>
+                                <label style="font: italic 13px/21px serif; color: #9d9d9d;">(MM / DD / YYYY)</label>
+                            </div>
+                            <div class="col-md-4">
+                                <label>To Date</label>
+                                <div id="to-date-form" class="input-group date txttodate">
+                                    <input type="text" id="txttodate" class="form-control dateProp" readonly />
+                                    <span class="input-group-addon input-group-append border-left">
+                                        <span class="ti-calendar input-group-text"></span>
+                                    </span>
+                                    
+                                </div>
+                                <label style="font: italic 13px/21px serif;color: #9d9d9d;">(MM / DD / YYYY)</label>
+                            </div>
+                            <div class="col-md-3" style="margin-top: -6px;">
+                                <label><br /><br /><br /></label>
+                                <button class="btn btn-primary" onclick='employeeTable();'>Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        @*<div class="col-md-6 grid-margin stretch-card">
+            <div class="card tale-bg" style="border-radius: 15px 50px;">
+                <div class="card-people mt-auto">
+                    <img src="~/Content/images/dashboard/people.svg" alt="people" style="border-radius: 15px 50px;">
+                    <div class="weather-info">
+                        <div class="d-flex">
+                            <div>
+                                <h2 class="mb-0 font-weight-normal"><i class="icon-sun mr-2"></i>31<sup>C</sup></h2>
+                            </div>
+                            <div class="ml-2">
+                                <h4 class="location font-weight-normal">Chicago</h4>
+                                <h6 class="font-weight-normal">Illinois</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+        @*<div class="col-md-4 grid-margin stretch-card">
+            <div class="card" style="border-radius: 15px 50px;">
+                <div class="card-body">
+                    <h3 class="card-title mb-0" style="display:flex; justify-content:space-between">
+                        <span>Best Performers</span>
+                        <p style="color:#9d9d9d"><span id="monthId">month</span>(<span id="yearId">year</span>)</p>
+                    </h3>
+
+
+                    <div class="table-responsive">
+                        <table id="bestPerformance" class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th class="pl-0  pb-2 border-bottom">Employee Name</th>
+                                    <th class="border-bottom pb-2">Incentive Orders</th>
+
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card" style="border-radius: 15px 50px;">
+                <div class="card-body">
+                    <h3 class="card-title mb-0" style="display:flex; justify-content:space-between">
+                        <span>Poor Performers</span>
+                        <p style="color:#9d9d9d"><span id="monthId2">month</span>(<span id="yearId2">year</span>)</p>
+                    </h3>
+                    <div class="table-responsive">
+                        <table id="poorPerformance" class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th class="pl-0  pb-2 border-bottom">Employee Name</th>
+                                    <th class="border-bottom pb-2">Incentive Orders</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+        <div class="col-md-8 grid-margin stretch-card">
+            <div class="card" style="border-radius: 15px 50px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <p class="card-title">Incentive Info</p>
+                        @*<a href="#" class="text-info">View all</a>*@
+                    </div>
+                    <p class="font-weight-500">The total incentives provided for employees in the previous month of have been charted here.</p>
+                    <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                    <canvas id="sales-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        @*<div class="row" style="justify-content: center;">
+
+            <div class="col-md-10 grid-margin stretch-card">
+                <div class="card" style="border-radius: 15px 50px;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <p class="card-title">Incentive Info</p>
+                            <a href="#" class="text-info">View all</a>
+                        </div>
+                        <p class="font-weight-500">The total incentives provided for employees in the previous month of have been charted here.</p>
+                        <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                        <canvas id="sales-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+        <div class="col-md-4 grid-margin stretch-card" style="flex-direction: column;justify-content: center;">
+
+
+                <div class="inline row" style="justify-content: center;">
+                    <div class="col-md-5 grid-margin stretch-card">
+                        <div class="card cards-light-danger stretch-card" style="border-radius: 15px 50px;">
+                            @*<div class="card-body">
+                                <h5>Incentive Previous month</h5>
+                            </div>*@
+                            <div class="card-body" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                                <p class="mb-4" style="font-size:18px; font-weight:600;">Incentive Current month</p>
+                                <p class="fs-30 mb-2" id="currentMonthIncentive"></p>
+                                @*<p>0% (30 days)</p>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 grid-margin stretch-card">
+                                <div class="card cards-dark-blue stretch-card" style="border-radius: 15px 50px;">
+                                    @*<div class="card-body">
+                                        <h5>Total incentive Provided</h5>
+                                    </div>*@
+                                    <div class="card-body" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                                        <p class="mb-4" style="font-size:18px; font-weight:600;">Incentive Previous month</p>
+                                        <p class="fs-30 mb-2" id="previousMonthIncentive">0</p>
+                                        @*<p>0% (30 days)</p>*@
+                                    </div>
+                                </div>
+                            </div>
+                    
+                        
+                    </div>
+            <div class="row" style="justify-content: center;">
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="col-md-12 mt-10 mb-4 mx-auto stretch-card transparent" style="align-content: center;justify-content: center;flex-direction: column-reverse">
+                        <div class="card cards-taales" style="height:100%;">
+                            <div class="card-body" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                                <p class="mb-4" style="font-size:18px; font-weight:600;">Incentive Eligible Employees</p>
+                                <p class="fs-30 mb-2" id="eligibleEmployee"></p>
+                                <p>0% (30 days)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        </div>
+
+    <div class="row">
+        @*<div class="col-md-4 grid-margin stretch-card">
+            <div class="card" style="border-radius: 15px 50px;">
+                <div class="card-body">
+                    <h3 class="card-title mb-0" style="display:flex; justify-content:space-between">
+                        <span>Best Performers</span>
+                        <p style="color:#9d9d9d"><span id="monthId">month</span>(<span id="yearId">year</span>)</p>
+                    </h3>
+
+                    
+                    <div class="table-responsive">
+                        <table id="bestPerformance" class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th class="pl-0  pb-2 border-bottom">Employee Name</th>
+                                    <th class="border-bottom pb-2">Incentive Orders</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card" style="border-radius: 15px 50px;">
+                <div class="card-body">
+                    <h3 class="card-title mb-0" style="display:flex; justify-content:space-between">
+                        <span>Poor Performers</span>
+                        <p style="color:#9d9d9d"><span id="monthId2">month</span>(<span id="yearId2">year</span>)</p>
+                    </h3>
+                    <div class="table-responsive">
+                        <table id="poorPerformance" class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th class="pl-0  pb-2 border-bottom">Employee Name</th>
+                                    <th class="border-bottom pb-2">Incentive Orders</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+        @*<div class="col-md-4 grid-margin stretch-card">
+            <div class="col-md-12 mt-10 mb-4 mx-auto stretch-card transparent" style="align-content: center;justify-content: center;flex-direction: column-reverse">
+                <div class="card cards-taales" style="height:100%;">
+                    <div class="card-body" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                        <p class="mb-4" style="font-size:18px; font-weight:600;">Incentive Eligible Employees</p>
+                        <p class="fs-30 mb-2">115</p>
+                        <p>0% (30 days)</p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>*@
+    </div>
+
+    @*<div class="row" style="justify-content: center;">
+
+        <div class="col-md-10 grid-margin stretch-card">
+            <div class="card" style="border-radius: 15px 50px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <p class="card-title">Incentive Info</p>
+                        <a href="#" class="text-info">View all</a>
+                    </div>
+                    <p class="font-weight-500">The total incentives provided for employees in the previous month of have been charted here.</p>
+                    <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                    <canvas id="sales-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>*@
+           
+
+    <input type="hidden" value="@Session["role"]" id="hdnRole" />
+
+</body>
+
+</html>
+
+@*<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>*@
+
+<script>
+    var url = $("#RedirectTo").val();
+
+    $(document).ready(function () {
+
+        var cudt = new Date();
+
+        $('#date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        $('#to-date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        var cudate = GetDateFormat(cudt, 'mm/dd/yyyy');
+
+        $("#txttodate").val(cudate);
+
+
+        //var from = new Date($("#txttodate").val());
+        //var d = new Date($("#txttodate").val());
+        ////var d = $("#txttodate").val(cudate);
+        //d.setDate(d.getDate() - 30);
+        //$(".input-group.date.txtfromdate").datepicker("setDate", new Date(d));
+        //$(".input-group.date.txttodate").datepicker("setDate", new Date(from));
+        var endDate = new Date($("#txttodate").val());
+        var startDate = (startOfMonth(cudt).toString());
+        $(".input-group.date.txttodate").datepicker("setDate", new Date(endDate));
+        $(".input-group.date.txtfromdate").datepicker("setDate", new Date(startDate));
+
+        $("#txtfromdate").change(function () {
+            var a = $("#txtfromdate").val();
+            var myDate = new Date(a);//input from date
+            var lastDay = new Date(myDate.getFullYear(), myDate.getMonth() + 1, 0);
+            lastDay = GetDateFormat(lastDay, 'mm/dd/yy');
+            var todayDate = "0" + cudate
+            var today = new Date(todayDate);
+            if (myDate > today) {
+                $(".input-group.date.txtfromdate").datepicker("setDate", today);
+                var dday = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                dday = GetDateFormat(lastDay, 'mm/dd/yy');
+                $(".input-group.date.txttodate").datepicker("setDate", new Date(dday));
+            }
+            else {
+                $(".input-group.date.txttodate").datepicker("setDate", new Date(lastDay));
+            }
+        })
+
+        $("#txttodate").change(function () {
+            var b = $("#txttodate").val();
+            var myDate = new Date(b);
+            var firstDay = new Date(myDate.getFullYear(), myDate.getMonth(), 1);
+            firstDay = GetDateFormat(firstDay, 'mm/dd/yy');
+            $("#txtfromdate").val(firstDay);
+            $(".input-group.date.txtfromdate").datepicker("setDate", firstDay);
+            //var b = $("#txtfromdate").val();
+            //var myDate = new Date(b);//from date
+            //var lastDay = new Date(myDate.getFullYear(), myDate.getMonth() + 1, 0);
+            //lastDay = GetDateFormat(lastDay, 'mm/dd/yy');
+            //var a = $("#txttodate").val();
+            //var todayDate = "0" + cudate
+
+            //var today = new Date(todayDate); // current Date
+            //var comingday = new Date(a); // Input Date
+            //if (myDate > comingday) {
+            //$(".input-group.date.txttodate").datepicker("setDate", new Date(lastDay));
+            //}
+            //else if (today > comingday)
+            //{
+            //    $(".input-group.date.txttodate").datepicker("setDate", comingday);
+            //}
+           
+            //else
+            //{
+            //    $(".input-group.date.txttodate").datepicker("setDate", today);
+
+            //}
+        })
+
+        //getDashboardValues();
+        employeeTable();
+
+    })
+
+    var  Results = @Html.Raw(Json.Encode(ViewBag.Details));
+    Results = Results.Data;
+
+    function startOfMonth(date) {
+
+        return new Date(date.getFullYear(), date.getMonth(), 1);
+
+    }
+
+
+
+    function GetDateFormat(sDateTime, dtFormat) {
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
+
+        const dateObj = sDateTime; // new Date();
+
+        const month = dateObj.getMonth();
+
+        const day = String(dateObj.getDate()).padStart(2, '0');
+
+        const year = dateObj.getFullYear();
+
+        const output = parseInt(month + 1) + '/' + day + '/' + year;
+
+        return output;
+
+    }
+
+
+    function getDashboardValues()
+    {
+        loadergif(1);
+        var fromDate = $("#txtfromdate").val();
+        var toDate = $("#txttodate").val() + " 23:59:59.599";
+        var fdate = new Date(fromDate);
+        var edate = new Date(toDate);
+        var strJsonDatas = eval({ StartDate: fdate, EndDate: edate });
+        $.ajax({
+            type: "Post",
+            //async: false,
+            url: "getManagerDashboardValues",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var Details = msg;
+                var Result = jQuery.parseJSON(Details);
+        
+                $('#monthId, #monthId2').text("Nov");
+        
+                $('#yearId, #yearId2').text("2022");
+                
+        
+        
+        
+                if (Result != '' && Result != null) {
+        
+                    var compStatus = Result[1].counts;
+                    $('#completedOrders').text(compStatus);
+                    var pendingstatus = Result[2].counts;
+                    $('#pendingOrders').text(pendingstatus);
+                    var totalstatus = Result[0].counts;
+                    $('#totalOrders').text(totalstatus);
+        
+                    loadergif(0);
+                }
+            }
+        })
+    }
+
+    function employeeTable() {
+
+        
+
+            const monthnames = ["January", "February", "March", "April", "May", "June",
+                                "July", "August", "September", "October", "November", "December"];
+
+            var fromDate = $("#txtfromdate").val();
+            var toDate = $("#txttodate").val() + " 23:59:59.599";
+            var fdate = new Date(fromDate);
+            var edate = new Date(toDate);
+            var monthName = monthnames[fdate.getMonth()]
+            let year = fdate.getFullYear();
+
+            if(Results != '' && Results != null && Results != 'Error'){
+               
+                var dashboardMenu = Results.table4;
+                var Result = jQuery.parseJSON(dashboardMenu);
+                var curInc = Result[0].incentive;
+                var eligibleEmployee = Result[0].eligibleEmployees;
+                $('#currentMonthIncentive').text(curInc);
+                $('#eligibleEmployee').text(eligibleEmployee);
+
+                $('#monthId, #monthId2').text(monthName);
+
+                $('#yearId, #yearId2').text(year);
+
+                var Result1 = jQuery.parseJSON(Results.table2);//best performer
+                var Result2 = jQuery.parseJSON(Results.table3);//poor performer
+
+                $('#bestPerformance').DataTable().clear().destroy();
+                $('#poorPerformance').DataTable().clear().destroy();
+
+                if (Result1 != '' && Result1 != null) {
+
+                    Datas = Result1;
+
+                    var length = Datas.length;
+
+
+                    var table = document.getElementById('bestPerformance');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+
+                        $('#bestPerformance').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].emp_name + '</td>' +
+                                '<td>' + Datas[i].orderId + '</td>' +
+                                //'<td>' + Datas[i].weightage_value + '</td>' +
+                           '</tr>');
+
+                    }
+
+
+
+                    //setTimeout(function () {
+                    $('#bestPerformance').DataTable({
+                        "bpaging": false,
+                        //"bDestroy": true,
+                        responsive: true,
+                        //"scrollX":"0",
+                        "ordering": false,
+                        paging: false,
+                        searching:false,
+                        dom: 'Blfrtip',
+                        "bInfo": false,
+                        language: {
+                            searchPanes: {
+                                emptyPanes: 'There are no panes to display. :/'
+                            }
+                        }
+
+                    });
+
+
+
+                    loadergif(0);
+                }
+
+                if (Result2 != '' && Result2 != null) {
+
+                    $('#poorPerformance').DataTable().clear().destroy();
+
+                    Datas = Result2;
+
+                    var length = Datas.length;
+                    //Data = msg.Data;
+
+                    //Datas = jQuery.parseJSON(Data);
+
+                    //var length = Datas.length;
+
+                    var table = document.getElementById('poorPerformance');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+
+                        $('#poorPerformance').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].emp_name + '</td>' +
+                                '<td>' + Datas[i].orderId + '</td>' +
+                                //'<td>' + Datas[i].weightage_value + '</td>' +
+                           '</tr>');
+
+                    }
+
+
+
+                    //setTimeout(function () {
+                    $('#poorPerformance').DataTable({
+                        "bpaging": false,
+                        //"bDestroy": true,
+                        responsive: true,
+                        //"scrollX":"0",
+                        "ordering": false,
+                        paging: false,
+                        searching: false,
+                        dom: 'Blfrtip',
+                        "bInfo": false,
+                        language: {
+                            searchPanes: {
+                                emptyPanes: 'There are no panes to display. :/'
+                            }
+                        }
+                    });
+
+                    loadergif(0);
+                }
+            }
+            else{
+                alert('LOadtime is high');
+            }
+                    
+        }
+
+
+
+</script>
+
+
+
+
+
+
+

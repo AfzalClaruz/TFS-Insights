@@ -1,0 +1,893 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "MonthlyReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden {
+        display: none;
+    }
+    .refreshicon{
+        font-size: 0.7em;
+        cursor:pointer;
+    }
+    .dt-buttons a{
+            width:32px;
+           line-height: 0;
+           margin-top: 20px;
+        }
+        .dt-buttons span{
+            font-size:14px;
+            margin-left:-13px;
+        }
+        .ti-calendar{
+            background-color:white;
+        }
+        .dateProp{
+            background-color:white !important;
+        }
+</style>
+
+@*@if (TempData["exError"] != null)
+{
+    <div style="background-color:red; color:white;">
+        <h1>Unknown Error Occured.Please contact Dev Team</h1>
+    </div>
+}*@
+
+<div class="abc">
+    <h2 style="margin-bottom:30px; display:flex; justify-content:space-between">Employee - Orders Monthly Report 
+    <span class="refreshicon"><i class="fa fa-refresh " aria-hidden="true" onclick="refreshPage();" style="font-size:20px;"></i> </span></h2>
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+
+
+    @using (Html.BeginForm("MonthlyReport", "Home", FormMethod.Post, new { @class = "col-md-9", style = "display:contents;", name = "frm", id = "frm", onsubmit = "loadergif(1);"   }))
+{
+        <div class="col-md-12">
+            <div class="row" style="margin-bottom:40px;">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label style="font-size:1rem;">Select Your Employee</label>
+                        <select class="js-example-basic-single w-100" id="ddlEmployee" name="empRef" selected="@Html.Raw(Json.Encode(ViewBag.empRef))"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>From Date</label>
+                    <div id="date-form" class="input-group date txtfromdate">
+                        @Html.TextBoxFor(a => a.StartDate, new { @class = "form-control dateProp",  id = "txtfromdate", placeholder = "StartDate", autocomplete = "off", required = "" })
+                        @*<input type="text" id="txtfromdate" class="form-control" />*@
+                        <span class="input-group-addon input-group-append border-left">
+                            <span class="ti-calendar input-group-text">
+                            </span>
+                        </span>
+                        @Html.ValidationMessageFor(a => a.StartDate)
+                    </div>
+                    <label style="font: italic 13px/21px serif; color: #9d9d9d;">(DD - MM - YYYY)</label>
+                </div>
+                <div class="col-md-3">
+                    <label>To Date</label>
+                    <div id="to-date-form" class="input-group date txttodate">
+                        @Html.TextBoxFor(a => a.EndDate, new { @class = "form-control icon dateProp", id = "txttodate", placeholder = "EndDate", autocomplete = "off", required = "" })
+                        @*<input type="text" id="txttodate" class="form-control" />*@
+                        <span class="input-group-addon input-group-append border-left">
+                            <span class="ti-calendar input-group-text"></span>
+                        </span>
+                        @Html.ValidationMessageFor(a => a.EndDate)
+                    </div>
+                    <label style="font: italic 13px/21px serif; color: #9d9d9d;">(DD - MM - YYYY)</label>
+                </div>
+                <div class="col-md-3">
+                    <label><br /></label>
+                    <div class="md-form mb-5">
+                        <button type="submit" class="btn btn-primary" title="Generate Report" ><i class="fa fa-cogs" style="margin-right: 5px;" aria-hidden="true"></i> Generate Report </button>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    }
+        <div class="col-sm-12 hidden" id="hiddenTable_date">
+            <table id="EmployeeDetailsByDate" class="table dataTable no-footer" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>SL.NO</th>
+                        <th>EMPLOYEE NAME</th>
+                        <th>DESIGNATION</th>
+                        <th>ORDER COUNT</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="col-sm-12 hidden" id="hiddenTable_employee">
+            <table id="EmployeeDetails" class="table dataTable no-footer" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>SL.NO</th>
+                        <th>ADDRESS</th>
+                        <th>WEIGHTAGE</th>
+                        <th>LOSS</th>
+                        <th>GAIN</th>
+                        <th>COMPLETED DATE</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+<script type="text/JavaScript" src="https://MomentJS.com/downloads/moment-with-locales.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+<script>
+    var employeeNames=null;
+    $(document).ready(function () {
+
+
+
+
+        var cudt = new Date();
+
+        $('#date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        $('#to-date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        //var cudate = GetDateFormat(cudt, 'mm/dd/yy');
+
+        var startDate = "@TempData["StartDate"].ToString()";
+
+        var startSplit = startDate.split(" ");
+
+        startDate = startSplit[0];
+
+        var endDate = "@TempData["EndDate"].ToString()";
+
+        var endSplit = endDate.split(" ");
+
+        endDate = endSplit[0];
+
+        $("#txttodate").val(endDate);
+        $("#txtfromdate").val(startDate);
+
+        //var d = new Date($("#txttodate").val());
+        //d.setDate(d.getDate() - 30);
+        //$(".input-group.date.txtfromdate").datepicker("setDate", new Date(d));
+
+        EmployeeData();
+        generateOrders();
+        generatetable();
+        //generatetable();
+
+
+    });
+
+    function EmployeeData() {
+        var empRef=@Html.Raw(Json.Encode(ViewBag.empRef));
+        var strJsonData = eval({ CurrentUser: 1, EmployeeId: 1 });
+        var Result = "";
+        $.ajax({
+            url: "LoadTableData",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            //data: JSON.stringify(strJsonData),
+            success: function (data) {
+
+
+                ResultEmployeeList = jQuery.parseJSON(data.strEmployeeList);
+
+                employeeNames=ResultEmployeeList;
+
+
+                if (ResultEmployeeList != "" && ResultEmployeeList != null) {
+
+                    $('#ddlEmployee').empty().append('<option value="-1">-Select Employee-</option>');
+
+                    for (var i = 0; i < ResultEmployeeList.length; i++) {
+
+                        if(empRef!="")
+                        {
+                            if(ResultEmployeeList[i]["emp_ref_no"]==empRef)
+                            {
+                                $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '" selected>' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                            }
+                            else
+                            {
+                                $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                            }
+                        }
+                        else
+                        {
+                            $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                        }
+                        //$('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                    }
+                }
+
+            }
+        });
+    }
+
+    function GetDateFormat(sDateTime, dtFormat) {
+
+        //var DateTime = sDateTime ;
+        //var year = DateTime.substring(0, 4);
+        //var month = DateTime.substring(5, 7);
+        //var date = DateTime.substring(8, 10);
+
+        //var dob = month + '/' + date + '/' + year;
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
+
+        const dateObj = sDateTime; // new Date();
+
+        const month = dateObj.getMonth();
+
+        const day = String(dateObj.getDate()).padStart(2, '0');
+
+        const year = dateObj.getFullYear();
+
+        const output = parseInt(month + 1) + '/' + day + '/' + year;
+
+        return output;
+
+    }
+
+    function generateOrders() {
+
+        var sEmployee = $("#ddlEmployee").val();
+
+        //var sFromDate = $("#txtfromdate").val();
+
+        //var sTodate = $("#txttodate").val();
+
+        //if (sEmployee == "-1") {
+        //    alert("Choose an employee")
+        //    return;
+        //}
+
+        if (sEmployee == null || sEmployee == -1) {
+
+            employees_date();
+            //loadergif(0);
+
+
+            $('#hiddenTable_date').removeClass('hidden');
+            //$('#hiddenTable_employee').removeClass('hidden');
+        }
+
+
+        else {
+
+            caller();
+            //loadergif(0);
+
+            $('#hiddenTable_date').addClass('hidden');
+            //$('#hiddenTable_employee').removeClass('hidden');
+        }
+
+        //console.log(sFromDate);
+        //console.log(sTodate);
+        //console.log(sEmployee);
+
+        //$(".dt-button").addClass("btn btn-outline-primary btn-fw");
+        //$(".dt-button").removeClass("dt-button");
+    }
+
+    //function caller() {
+    //    var sEmployee = $("#ddlEmployee").val();
+
+    //    var sFromDate = $("#txtfromdate").val();
+
+    //    var sTodate = $("#txttodate").val();
+
+    //    if (sEmployee == "-1") {
+    //        alert("Choose an employee")
+    //        return;
+    //    }
+
+    //    console.log(sFromDate);
+    //    console.log(sTodate);
+    //    console.log(sEmployee);
+
+    //    var strJsonDatas = eval({ : sEmployee, f_date: sFromDate, l_date: sTodate });
+
+
+    //    $.ajax({
+    //        type: "POST",
+    //        async: false,
+    //        url: "getemployeedetails",
+    //        data: JSON.stringify(strJsonDatas),
+    //        contentType: "application/json; charset=utf-8",
+    //        //dataType: "local",
+    //        success: function (msg) {
+    //            var data = msg;
+
+    //            if (data == '[]') {
+    //                WriteLog('No Records Found');
+    //            }
+    //            else if (data == null) {
+    //                WriteLog('Unable to connect to server');
+    //            }
+    //            else {
+    //                try {
+
+    //                    Result = jQuery.parseJSON(data);
+
+    //                }
+    //                catch (exception) {
+    //                    Result = null;
+    //                }
+
+    //                if (Result == null)
+    //                    WriteLog(data.toString());
+
+    //            }
+
+    //            if (Result != '' && Result != null) {
+
+    //                Datas = Result;
+
+
+    //                var length = Datas.length;
+
+    //                var table = document.getElementById('EmployeeDetails');
+
+    //                for (var i = table.rows.length - 1; i > 0; i--) {
+    //                    table.deleteRow(i);
+    //                }
+
+    //                for (var i = 0; i < length; i++) {
+
+
+
+    //                    $('#EmployeeDetails').append(
+    //                        '<tr id="' + i + '">' +
+    //                        '<td>' + Datas[i].Sl_no + '</td>' +
+    //                            '<td>' + Datas[i].EMP_FIRST_NAME + '</td>' +
+    //                            '<td>' + Datas[i].Designation_name + '</td>' +
+    //                            '<td>' + Datas[i].ADDRESS + '</td>' +
+    //                            '<td>' + Datas[i].C_DATE + '</td>' +
+    //                       '</tr>');
+
+    //                }
+
+    //                //setTimeout(function () {
+    //                $('#EmployeeDetails').DataTable({
+
+    //                    "bpaging": false,
+    //                    "bDestroy": true,
+    //                    dom: 'Blfrtip',
+    //                    buttons: [
+    //                           {
+    //                               extend: 'pdf',
+    //                               footer: true,
+    //                               exportOptions: {
+    //                                   columns: [0, 1, 2, 3, 4],
+    //                                   orthogonal: "export",
+    //                                   rows: function (idx, data, node) {
+    //                                       number = 1;
+    //                                       return true;
+    //                                   }
+    //                               }
+    //                           },
+    //                               {
+    //                                   extend: 'csv',
+    //                                   footer: false
+
+    //                               },
+    //                               {
+    //                                   extend: 'excelHtml5',
+    //                                   footer: false,
+    //                                   exportOptions: {
+    //                                       columns: [0, 1, 2, 3, 4]
+    //                                   }
+    //                               }
+    //                    ]
+
+    //                })
+
+
+
+    //            }
+
+    //        }
+
+    //    });
+    //    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+    //    $(".dt-button").removeClass("dt-button");
+    //    $('#hiddenTable_date').addClass('hidden');
+    //    $('#hiddenTable_employee').removeClass('hidden');
+
+    //}
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    function employees_date() {
+        //var sEmployee = $("#ddlEmployee").val();
+
+        var sFromDate = $("#txtfromdate").val();
+
+        var sTodate = $("#txttodate").val();
+        //emp_ref_no: sEmployee,
+        var strJsonDatas = eval({ f_date: sFromDate, l_date: sTodate });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getorderdetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+
+                if (data == '[]') {
+                    var table = document.getElementById('EmployeeDetailsByDate');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    $('#EmployeeDetailsByDate').append(
+                            '<tr id="' + i + '">' +
+                            '<td></td>' +
+                                '<td><span style="color:red;">No Datas Found</span></td>' +
+                                '<td></td>' +
+                                //'<td>' + Datas[i].C_DATE + '</td>' +
+                           '</tr>');
+
+                }
+                else if (data == null) {
+                    WriteLog('Unable to connect to server');
+                }
+                else {
+                    try {
+
+                        Result = jQuery.parseJSON(data);
+
+                    }
+                    catch (exception) {
+                        Result = null;
+                    }
+
+                    if (Result == null)
+                        WriteLog(data.toString());
+
+                }
+
+                if (Result != '' && Result != null) {
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+
+                    var table = document.getElementById('EmployeeDetailsByDate');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+
+                        $('#EmployeeDetailsByDate').append(
+                            '<tr id="' + i + '">' +
+                            '<td>' + Datas[i].Sl_no + '</td>' +
+                                '<td>' + Datas[i].Name + '</td>' +
+                                '<td>' + Datas[i].Designation_name + '</td>' +
+                                '<td>' + Datas[i].OrderCount + '</td>' +
+                                //'<td>' + Datas[i].C_DATE + '</td>' +
+                           '</tr>');
+
+                    }
+
+                    //setTimeout(function () {
+                    $('#EmployeeDetailsByDate').DataTable({
+                        "language": {
+                            emptyTable: "No data available in table",
+                        },
+
+                        "bpaging": false,
+                        "bDestroy": true,
+                        dom: 'Blfrtip',
+                        buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 1, 2,3],
+                                       orthogonal: "export",
+                                       rows: function (idx, data, node) {
+                                           number = 1;
+                                           return true;
+                                       }
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 1, 2, 3]
+                                       }
+                                   }
+                        ]
+                    });
+
+
+                }
+
+
+            }
+
+        });
+        $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+        $(".dt-button").removeClass("dt-button");
+        $('#hiddenTable_date').removeClass('hidden');
+        //$('#hiddenTable_employee').addclass('hidden');
+        //$(".dt-button").addClass("btn btn-outline-primary btn-fw")
+        //$(".dt-button").removeClass("dt-button")
+    }
+    function reportLoader() {
+        //loadergif(1);
+
+        //setTimeout(function () { generateOrders() }, 3000);
+        generatetable();
+    }
+
+
+    function generatetable() {
+
+
+        var  Result = @Html.Raw(Json.Encode(ViewBag.Data));
+        var  empRef = @Html.Raw(Json.Encode(ViewBag.empRef));
+        var  StartDate = @Html.Raw(Json.Encode(ViewBag.fromDate));
+        var  EndDate = @Html.Raw(Json.Encode(ViewBag.toDate));
+
+        Result = Result.Data;
+        //var sEmployee = $("#ddlEmployee").val();
+
+
+        if(Result !=null )
+        {
+            //console.log("this is result",Result[0].JSON.parse(dataFromServer.d))
+
+            //var startDate = StartDate.split(" ");
+
+            //StartDate
+
+            if(empRef!=null && empRef !=-1)
+            {
+
+                $('#hiddenTable_date').addClass('hidden');
+                $('#hiddenTable_employee').removeClass('hidden');
+                //$('#hiddenTable_date').addClass('hidden');
+                $('#EmployeeDetails').DataTable().clear().destroy();
+
+
+                $("#ddlEmployee").val(empRef).change();
+
+
+                Data = Result;
+
+                Datas = jQuery.parseJSON(Data);
+
+                var length = Datas.length;
+
+                var table = document.getElementById('EmployeeDetails');
+
+                for (var i = table.rows.length - 1; i > 0; i--) {
+                    table.deleteRow(i);
+                }
+
+                for (var i = 0; i < length; i++) {
+                    if (Datas[i].weightage_value == undefined)
+                        Datas[i].weightage_value = "-";
+                    if (Datas[i].initial_value == undefined)
+                        Datas[i].initial_value = "-";
+                    if (Datas[i].final_value == undefined)
+                        Datas[i].final_value = "-";
+
+                    var final_value = Datas[i].final_value;
+                    var initial_value = Datas[i].initial_value;
+
+                    if(Datas[i].initial_value>0)
+                    {
+                        initial_value="<span style='color:red;'>"+Datas[i].initial_value+"</span>"
+                    }
+
+                    if(Datas[i].initial_value>Datas[i].final_value)
+                    {
+                        final_value="<span style='color:red;'>"+Datas[i].final_value+"</span>"
+                    }
+
+                    $('#EmployeeDetails').append(
+                        '<tr id="' + i + '">' +
+                        //'<td>' + Datas[i].Sl_no + '</td>' +
+                        //    '<td>' + Datas[i].EMP_FIRST_NAME + '</td>' +
+                        //    '<td>' + Datas[i].Designation_name + '</td>' +
+                        //    '<td>' + Datas[i].ADDRESS + '</td>' +
+                        //    '<td>' + Datas[i].C_DATE + '</td>' +
+                            '<td>' + Datas[i].Sl_no + '</td>' +
+                            //'<td >' + Datas[i].order_id + '</td>' +
+                            '<td>' + Datas[i].subject_address + '</td>' +
+                            '<td>' + Datas[i].weightage_value + '</td>' +
+                            '<td>' + initial_value + '</td>' +
+                            '<td>' + final_value + '</td>' +
+                            '<td>' + Datas[i].updated_date + '</td>' +
+                        //    <th>Sl.No</th>
+                        //<th>Order Id</th>
+                        //<th>Address</th>
+                        //<th>Weightage</th>
+                        //<th>Initial Value</th>
+                        //<th>Finale Value</th>
+                       '</tr>');
+
+                }
+
+
+
+                //setTimeout(function () {
+                $('#EmployeeDetails').DataTable({
+
+                    "bpaging": false,
+                    "bDestroy": true,
+                    dom: 'Blfrtip',
+                    buttons: [
+                           {
+                               extend: 'pdf',
+                               footer: true,
+                               exportOptions: {
+                                   columns: [0, 1, 2, 3, 4],
+                                   orthogonal: "export",
+                                   rows: function (idx, data, node) {
+                                       number = 1;
+                                       return true;
+                                   }
+                               }
+                           },
+                               {
+                                   extend: 'csv',
+                                   footer: false
+
+                               },
+                               {
+                                   extend: 'excelHtml5',
+                                   footer: false,
+                                   exportOptions: {
+                                       columns: [0, 1, 2, 3, 4]
+                                   }
+                               }
+                    ]
+
+                })
+
+                $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                $(".dt-button").removeClass("dt-button");
+                $('#hiddenTable_date').addClass('hidden');
+                $('#hiddenTable_employee').removeClass('hidden');
+
+
+            }
+
+
+
+            else{
+
+                $('#hiddenTable_employee').addClass('hidden');
+                $('#hiddenTable_date').removeClass('hidden');
+                //$('#hiddenTable_date').addClass('hidden');
+                //$('#EmployeeDetailsByDate').DataTable().clear().destroy();
+                $('#EmployeeDetails').DataTable().clear().destroy();
+
+
+                var length = Datas.length;
+                //console.log("Datas",Datas)
+                var table = document.getElementById('EmployeeDetailsByDate');
+
+                for (var i = table.rows.length - 1; i > 0; i--) {
+                    table.deleteRow(i);
+                }
+
+                for (var i = 0; i < length; i++) {
+
+
+                    $('#EmployeeDetailsByDate').append(
+                        '<tr id="' + i + '">' +
+                        '<td>' + Datas[i].Sl_no + '</td>' +
+                            '<td>' + Datas[i].Name + '</td>' +
+                            '<td>' + Datas[i].Designation_name + '</td>' +
+                            '<td>' + Datas[i].OrderCount + '</td>' +
+                            //'<td>' + Datas[i].C_DATE + '</td>' +
+                       '</tr>');
+
+                }
+
+                //setTimeout(function () {
+                $('#EmployeeDetailsByDate').DataTable({
+                    "language": {
+                        emptyTable: "No data available in table",
+                    },
+
+                    "bpaging": false,
+                    "bDestroy": true,
+                    dom: 'Blfrtip',
+                    buttons: [
+                           {
+                               extend: 'pdf',
+                               footer: true,
+                               exportOptions: {
+                                   columns: [0, 1, 2, 3],
+                                   orthogonal: "export",
+                                   rows: function (idx, data, node) {
+                                       number = 1;
+                                       return true;
+                                   }
+                               }
+                           },
+                               {
+                                   extend: 'csv',
+                                   footer: false
+
+                               },
+                               {
+                                   extend: 'excelHtml5',
+                                   footer: false,
+                                   exportOptions: {
+                                       columns: [0, 1, 2, 3]
+                                   }
+                               }
+                    ]
+                });
+
+                $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                $(".dt-button").removeClass("dt-button");
+                $('#hiddenTable_date').removeClass('hidden');
+
+
+
+            }
+
+
+
+        }
+
+
+
+
+        //if(Result !=null && (sEmployee==-1 || sEmployee == null ))
+        //{
+        //    Data = Result;
+
+        //    Datas = jQuery.parseJSON(Data);
+
+        //    var length = Datas.length;
+
+        //    var table = document.getElementById('EmployeeDetailsByDate');
+
+        //    for (var i = table.rows.length - 1; i > 0; i--) {
+        //        table.deleteRow(i);
+        //    }
+
+        //    for (var i = 0; i < length; i++) {
+
+        //        $('#EmployeeDetailsByDate').append(
+        //            '<tr id="' + i + '">' +
+        //            '<td>' + Datas[i].Sl_no + '</td>' +
+        //                '<td>' + Datas[i].Name + '</td>' +
+        //                '<td>' + Datas[i].OrderCount + '</td>' +
+        //                //'<td>' + Datas[i].C_DATE + '</td>' +
+        //           '</tr>');
+
+        //    }
+
+        //    //setTimeout(function () {
+        //    $('#EmployeeDetailsByDate').DataTable({
+        //        "language": {
+        //            emptyTable: "No data available in table",
+        //        },
+
+        //        "bpaging": false,
+        //        "bDestroy": true,
+        //        dom: 'Blfrtip',
+        //        buttons: [
+        //               {
+        //                   extend: 'pdf',
+        //                   footer: true,
+        //                   exportOptions: {
+        //                       columns: [0, 1, 2],
+        //                       orthogonal: "export",
+        //                       rows: function (idx, data, node) {
+        //                           number = 1;
+        //                           return true;
+        //                       }
+        //                   }
+        //               },
+        //                   {
+        //                       extend: 'csv',
+        //                       footer: false
+
+        //                   },
+        //                   {
+        //                       extend: 'excelHtml5',
+        //                       footer: false,
+        //                       exportOptions: {
+        //                           columns: [0, 1, 2]
+        //                       }
+        //                   }
+        //        ]
+        //    });
+        //}
+
+
+
+        //var sEmployee = $("#ddlEmployee").val();
+
+
+        //var sFromDate = $("#txtfromdate").val();
+
+        //var sTodate = $("#txttodate").val();
+
+        //console.log(sEmployee)
+        //console.log(sFromDate)
+        //console.log(sTodate)
+
+        //if (sEmployee == null || sEmployee == -1) {
+        //    $('#hiddenTable_employee').addClass('hidden');
+        //    $('#hiddenTable_date').addClass('hidden');
+        //    $('#EmployeeDetailsByDate').DataTable().clear().destroy();
+        //    $('#EmployeeDetails').DataTable().clear().destroy();
+        //    //.clear().draw();
+        //    employees_date();
+        //}
+        //else {
+        //    $('#hiddenTable_date').addClass('hidden');
+        //    $('#hiddenTable_employee').removeClass('hidden');
+        //    //$('#hiddenTable_date').addClass('hidden');
+        //    $('#EmployeeDetails').DataTable().clear().destroy();
+        //    caller();
+        //}
+
+        //generateOrders();
+    }
+
+    function refreshPage(){
+        location.href=location.href;
+    }
+
+</script>
+

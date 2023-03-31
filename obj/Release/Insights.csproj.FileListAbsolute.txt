@@ -1,0 +1,6 @@
+E:\Projects\Insights\Insights\bin\Insights.dll.config
+E:\Projects\Insights\Insights\bin\Insights.dll
+E:\Projects\Insights\Insights\bin\Insights.pdb
+E:\Projects\Insights\Insights\obj\Release\Insights.csprojResolveAssemblyReference.cache
+E:\Projects\Insights\Insights\obj\Release\Insights.dll
+E:\Projects\Insights\Insights\obj\Release\Insights.pdb

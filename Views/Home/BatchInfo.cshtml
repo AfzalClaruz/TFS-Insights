@@ -1,0 +1,974 @@
+﻿
+@{
+    ViewBag.Title = "BatchInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden{
+        display:none;
+    }
+    div.dataTables_wrapper div.dataTables_filter label {
+        position: static;
+    }
+    .mistake {
+        /*background-color: #fce4e4;*/
+        border: 1px solid #cc0033;
+    }
+
+    .swal-footer {
+        display: flex;
+        justify-content: center;
+    }
+
+    @@keyframes blinker {
+        50% {
+            opacity: 0;
+        }
+    }
+</style>
+
+<div class="abc">
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Batch Details</h2>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4 addbtn" style="display:flex; justify-content:flex-end;">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateForm" onclick="getId();"><i class="fa fa-plus" style="margin-right: 5px;" aria-hidden="true"></i> Add Batch </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalCreateForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document" style="display:flex; justify-content:center">
+            <div class="modal-content" style="width: 500px">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold" style="justify-content: center;display: flex;">Add New Batch</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding:35px 40px !important">
+                    <div class="row" style="display: flex;justify-content: space-around;">
+                        <form method="post">
+                            <div class="col-sm-12">
+                                <div class="row" style="align-items: center;">
+                                    <div class="col-sm-3"><label>Batch ID : </label></div>
+                                    <div class="col-sm-9"><input class="form-control" type="text" id="batchId" readonly /></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="row" style="align-items: center;">
+                                    <div class="col-sm-3"><label>Batch Name : </label></div>
+                                    <div class="col-sm-9"><input class="form-control" type="text" id="batchName" /></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" style="display: flex;justify-content: center;">
+                                @*<span class="hidden" id="errorName" style="color: red; font-size: 13px; padding-top: 16px;">Name must contain only alphabets and numbers</span>
+                                <span class="hidden" id="emptyName" style="color: red; font-size: 13px; padding-top: 16px;">Name cannot be empty</span>*@
+                                @*<blink style ="color:red;">Please enter the correct values</blink>*@
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="row" style="align-items: center;">
+                                    <div class="col-sm-3"><label>Target : </label></div>
+                                    <div class="col-sm-9">
+                                        <div class="row" style="padding-top: 30px">
+                                            <div class="col-sm-6"><label>Research : </label></div>
+                                            <div class="col-sm-6"><input class="form-control" type="number" id="resTarget" required /></div>
+                                            @*<span class="hidden" id="errorMsg" style="color:red;">Please enter value greater than 0</span>*@
+                                        </div>
+                                        <div class="row" style="padding-top: 30px">
+                                            <div class="col-sm-6"><label>Data Entry : </label></div>
+                                            <div class="col-sm-6"><input class="form-control" type="number" id="entryTarget" required /></div>
+                                            @*<span class="hidden" id="errorMsgEntry" style="color:red;">Please enter value greater than 0</span>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12" style="display: flex;justify-content: center;">
+                                @*<span class="hidden" id="errorMsg" style="color: red; font-size: 13px; padding-top: 16px;">Please enter a value greater than 0</span>
+                                <span class="hidden" id="emptyMsg" style="color: red; font-size: 13px; padding-top: 16px;">Please enter a value</span>*@
+                                @*<blink style ="color:red;">Please enter the correct values</blink>*@
+                                <span id="errorMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary" onclick="addData()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Save </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Edit Form*@
+    <div class="modal fade" id="modalEditForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document" style="display:flex; justify-content:center">
+            <div class="modal-content" style="width: 500px">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold" style="justify-content: center;display: flex;">Edit Batch Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding:35px 50px !important">
+                    <div class="row" style="display: flex;justify-content: space-around;">
+                        <div class="col-sm-12">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-3"><label>Batch ID : </label></div>
+                                <div class="col-sm-9"><input class="form-control" type="text" id="EditBatchId" readonly /></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-3"><label>Batch Name : </label></div>
+                                <div class="col-sm-9"><input class="form-control" type="text" id="editBatchName" /></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-3"><label>Target : </label></div>
+                                <div class="col-sm-9">
+                                    <div class="row" style="padding-top: 30px">
+                                        <div class="col-sm-6"><label>Research : </label></div>
+                                        <div class="col-sm-6"><input class="form-control" type="number" id="editResTarget" /></div>
+                                    </div>
+                                    <div class="row" style="padding-top: 30px">
+                                        <div class="col-sm-6"><label>Data Entry : </label></div>
+                                        <div class="col-sm-6"><input class="form-control" type="number" id="editEntryTarget" /></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="display: flex;justify-content: center;">
+                            <span id="errorEditMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="updateData()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Update </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12" id="hiddenTable_BatchData">
+        <table id="BatchData" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>BATCH ID</th>
+                    <th>BATCH NAME</th>
+                    <th class="hidden">ID</th>
+                    <th>NO. OF EMPLOYEES</th>
+                    <th>RESEARCHER TARGET</th>
+                    <th>DE TARGET</th>
+                    <th>EDIT</th>
+                    <th>DELETE</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+
+    document.getElementById("resTarget").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("entryTarget").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("editResTarget").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("editEntryTarget").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    $(document).ready(function () {
+        var rowNo;
+        var name;
+        var res;
+        var entry;
+        generateTable();
+    })
+    function generateTable() {
+        RefId = 2;
+        loadergif(1);
+        $('#BatchData').DataTable().clear().destroy();
+        rowNo = 0;
+        var strJsonDatas = eval({ Id: RefId });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getBatchData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+
+                Result = jQuery.parseJSON(data);
+                $('#BatchData').DataTable().clear().destroy();
+                if (Result != null) {
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+
+                    var table = document.getElementById('BatchData');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+
+
+                        $('#BatchData').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].batchId + '</td>' +
+                                '<td>' + Datas[i].batchName + '</td>' +
+                                '<td class="hidden">' + Datas[i].id + '</td>' +
+                                '<td>' + Datas[i].emp_no + '</td>' +
+                                '<td>' + Datas[i].researchTarget + '</td>' +
+                                '<td>' + Datas[i].dataentryTarget + '</td>' +
+                                '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                                '<td><a href="#" onclick="deleteId(' + i + ') "><i class="fa fa-trash" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                           '</tr>');
+
+                    }
+
+
+
+                    //setTimeout(function () {
+                    $('#BatchData').DataTable({
+
+                        "bpaging": false,
+                        "bDestroy": true,
+                        scrollX: true,
+                        "bScrollCollapse": true,
+                        dom: 'Blfrtip',
+                        buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 2],
+                                       orthogonal: "export",
+                                       rows: function (idx, data, node) {
+                                           number = 1;
+                                           return true;
+                                       }
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 2]
+                                       }
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 2]
+                                       }
+                                   }
+                        ],
+                        columnDefs: [
+                    { width: "10%", targets: 0 }, { width: "20%", targets: 2 }
+                        ]
+
+                    })
+
+                    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                    $(".dt-button").removeClass("dt-button");
+
+                    loadergif(0);
+                }
+
+            }
+        })
+    }
+
+    function addData() {
+
+        RefId = 1
+        var batch = $("#batchId").val();
+        var resValue = $("#resTarget").val();
+        var entryValue = $("#entryTarget").val();
+        var batchName = $("#batchName").val();
+
+        batchName = batchName.trim();
+
+        batchName = batchName.replace(/  +/g, ' ');
+
+        var a = batchName.length;
+
+        
+
+        var span = document.getElementById('errorMsg');
+
+
+
+        var regEx = /^[A-Za-z0-9\s]+$/;
+
+        //var regEx = /^[A-Za-z0-9]+(?:[0-9]+)?$/
+
+        //if (batchName == " ") {
+        //    $('#batchName').addClass('mistake');
+        //    $('#resTarget').addClass('mistake')
+        //    $('#entryTarget').addClass('mistake')
+        //    $("#errorMsg").text('Please enter a value');
+        //    return;  
+        //}
+        //else {
+        //    $('#batchName').removeClass('mistake');
+        //    $('#resTarget').removeClass('mistake')
+        //    $('#entryTarget').removeClass('mistake')
+        //    $("#errorMsg").text('');
+        //}
+
+        ///////////////////////////////////////////////////////////////////
+
+        if (batchName == '' && resValue == '' && entryValue == '') {
+            $('#batchName').addClass('mistake');
+            $('#resTarget').addClass('mistake')
+            $('#entryTarget').addClass('mistake')
+            $("#errorMsg").text('Please enter all values');
+            return;  
+        }
+        else {
+            $('#batchName').removeClass('mistake');
+            $('#resTarget').removeClass('mistake')
+            $('#entryTarget').removeClass('mistake')
+            $("#errorMsg").text('');
+        }
+            
+        ///////////////////////////////////////////////////////////////////
+
+        if (batchName == '') {
+            $("#errorMsg").text('Please enter a value');
+            $('#batchName').addClass('mistake');
+            return;
+        }
+        //else {
+        //    $("#errorMsg").text('');
+        //    $('#batchName').removeClass('mistake');
+        //}
+
+        ///////////////////////////////////////////////////////////////////
+
+        if (!batchName.match(regEx)) {
+              $("#errorMsg").text('Name should not contain special characters');
+              $('#batchName').addClass('mistake');
+              return;
+            //$("#errorMsg").text('');
+            //$('#batchName').removeClass('mistake');
+            //alert("success")
+        }
+        //else {
+        //    $("#errorMsg").text('Name should not contain special characters');
+        //    $('#batchName').addClass('mistake');
+        //    return;
+        //}
+
+        ///////////////////////////////////////////////////////////////////
+
+        if (resValue == '' && entryValue == '') {
+            $("#errorMsg").text('Please enter a value');
+            $('#resTarget').addClass('mistake')
+            $('#entryTarget').addClass('mistake')
+            return;
+        } else if (resValue <= 0 && entryValue <= 0 && resValue != '' && entryValue != '') {
+            $('#resTarget').addClass('mistake')
+            $('#entryTarget').addClass('mistake')
+            $("#errorMsg").text('Both values should be greater than 0');
+            return;
+        }
+        //else {
+        //    $("#errorMsg").text('');
+        //    $('#resTarget').removeClass('mistake')
+        //    $('#entryTarget').removeClass('mistake')
+        //}
+
+        ///////////////////////////////////////////////////////////////////
+
+        //if (resValue == '' || entryValue == '') {
+            if (resValue == '') {
+                $('#resTarget').addClass('mistake')
+                $("#errorMsg").text('Please enter research value');
+                return;
+            } else if (resValue <= 0) {
+                $('#resTarget').addClass('mistake')
+                $("#errorMsg").text('Research Value should be greater than 0');
+                return;
+            }else if (resValue > 100) {
+                $('#resTarget').addClass('mistake')
+                $("#errorMsg").text('Research Value should not exceed 100');
+                return;
+            }
+            //else
+            //    $('#resTarget').removeClass('mistake')
+            //    $("#errorMsg").text('');
+
+            if (entryValue == '') {
+                $('#entryTarget').addClass('mistake')
+                $("#errorMsg").text('Please enter entry value');
+                return;
+            } else if (entryValue <= 0) {
+                $('#entryTarget').addClass('mistake')
+                $("#errorMsg").text('Entry Value should be greater than 0');
+                return;
+            }else if (entryValue > 100) {
+                $('#entryTarget').addClass('mistake')
+                $("#errorMsg").text('Entry Value should not exceed 100');
+                return;
+            }
+            //else {
+            //    $('#entryTarget').removeClass('mistake')
+            //    $("#errorMsg").text('');
+            //}
+
+            //$("#errorMsg").text('Please enter a value');
+            //return;
+    //} 
+    //else {
+    //        $('#entryTarget').removeClass('mistake')
+    //        $('#resTarget').removeClass('mistake')
+    //        $("#errorMsg").text('');
+    //    }
+         
+        ///////////////////////////////////////////////////////////////////
+
+
+        //else {
+        //    $('#entryTarget').removeClass('mistake')
+        //    $('#resTarget').removeClass('mistake')
+        //    $("#errorMsg").text('');
+        //}
+
+        ///////////////////////////////////////////////////////////////////
+
+        //if (resValue <= 0) {
+        //    $('#resTarget').addClass('mistake')
+        //    $("#errorMsg").text('Research Value should be greater than 0');
+        //    return;
+        //}
+        //else {
+        //    $('#resTarget').removeClass('mistake')
+        //    $("#errorMsg").text('');
+        //}
+            
+        ///////////////////////////////////////////////////////////////////
+
+        //if (entryValue <= 0) {
+        //    $('#entryTarget').addClass('mistake')
+        //    $("#errorMsg").text('Entry Value should be greater than 0');
+        //    return;
+        //}
+        //else {
+        //    $('#entryTarget').removeClass('mistake')
+        //    $("#errorMsg").text('');
+        //}
+
+        ///////////////////////////////////////////////////////////////////
+
+        var strJsonDatas = eval({ Id: RefId, batchId: batch,batchName : batchName, resTarget: resValue, entryTarget: entryValue })
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getBatchData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var datas = msg;
+                var Result = jQuery.parseJSON(datas);
+                var data = Result[0].resultmsg
+                if (data != undefined) {
+                    if (data == "VALUES INSERTED") {
+                        swal({
+                            title: 'Success!',
+                            text: 'New Batch added.',
+                            icon: 'success',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        }
+                        )
+                    }
+                    else if (data == "VALUES EXISTS") {
+                        swal({
+                            title: 'Error!',
+                            text: 'Batch values already exist.',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        }
+                        )
+                    }
+                    else if (data == "NAME EXISTS") {
+                        swal({
+                            title: 'Error!',
+                            text: 'Batch name already exists.',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        }
+                        )
+                    }
+                }
+                else {
+                }
+
+
+            }
+        })
+    }
+
+    function edit(rowid) {
+        RefId = 3;
+        rowNo = document.getElementById(rowid).childNodes[2].outerText;
+
+        $('#editResTarget').val('');
+        $('#editEntryTarget').val('');
+        $('#editBatchName').val('');
+        $("#errorEditMsg").text('');
+        $('#editResTarget').removeClass('mistake')
+        $('#editEntryTarget').removeClass('mistake')
+        $('#editBatchName').removeClass('mistake');
+
+        var strJsonDatas = eval({ Id: RefId, batchId: rowNo });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getBatchData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+                var Result = jQuery.parseJSON(data);
+
+                name = Result[0].batchName;
+                res = Result[0].researchTarget;
+                entry = Result[0].dataentryTarget;
+
+
+                //alert($("#ddlNewMlsName").val());
+                $('#EditBatchId').val(Result[0].batchId);
+                $('#editBatchName').val(Result[0].batchName);
+                $('#editResTarget').val(Result[0].researchTarget);
+                $('#editEntryTarget').val(Result[0].dataentryTarget);
+
+            }
+        });
+    }
+
+    function updateData() {
+
+        RefId = 4
+        var batch = rowNo;
+        var resValue = $("#editResTarget").val();
+        var entryValue = $("#editEntryTarget").val();
+        var batchName = $("#editBatchName").val();
+
+        $(".mistake").removeClass('mistake');
+
+        $("#errorEditMsg").text('');
+
+
+        //var regEx = /^[A-Za-z0-9\s]+$/;
+
+        batchName = batchName.trim();
+
+        batchName = batchName.replace(/  +/g, ' ');
+
+        var a = batchName.length;
+
+        //var regEx = /^[a-z0-9]+(?: [A-Z0-9]+)?$/
+
+        var regEx = /^[A-Za-z0-9\s]+$/;
+
+        ///////////////////////////////////////////////////////////////////
+
+        if (batchName == '' && resValue == '' && entryValue == '') {
+            $('#editBatchName').addClass('mistake');
+            $('#editResTarget').addClass('mistake')
+            $('#editEntryTarget').addClass('mistake')
+            $("#errorEditMsg").text('Please enter a value');
+            return;
+        }
+        else {
+            $('#editBatchName').removeClass('mistake');
+            $('#editResTarget').removeClass('mistake')
+            $('#editEntryTarget').removeClass('mistake')
+            $("#errorEditMsg").text('');
+        }
+
+        ///////////////////////////////////////////////////////////////////
+
+        if (batchName == '') {
+            $("#errorEditMsg").text('Please enter a value');
+            $('#editBatchName').addClass('mistake');
+            return;
+        }
+        //else {
+        //    $("#errorEditMsg").text('');
+        //    $('#editBatchName').removeClass('mistake');
+        //}
+
+        ///////////////////////////////////////////////////////////////////
+
+        if (!batchName.match(regEx)) {
+            //$("#errorEditMsg").text('');
+            //$('#editBatchName').removeClass('mistake');
+            ////alert("success")
+            $("#errorEditMsg").text('Name should not contain special characters');
+            $('#editBatchName').addClass('mistake');
+            return;
+        }
+
+        ///////////////////////////////////////////////////////////////////
+
+        if (resValue == '' && entryValue == '') {
+            $("#errorEditMsg").text('Please enter a value');
+            $('#editResTarget').addClass('mistake')
+            $('#editEntryTarget').addClass('mistake')
+            return;
+        }
+        else if (resValue <= 0 && entryValue <= 0 && resValue != '' && entryValue != '') {
+            $('#editResTarget').addClass('mistake')
+            $('#editEntryTarget').addClass('mistake')
+            $("#errorEditMsg").text('Both values should be greater than 0');
+            return;
+        }
+        //else {
+        //    $("#errorEditMsg").text('');
+        //    $('#editResTarget').removeClass('mistake')
+        //    $('#editEntryTarget').removeClass('mistake')
+        //}
+
+        ///////////////////////////////////////////////////////////////////
+
+        //if (resValue == '' || entryValue == '') {
+            if (resValue == '') {
+                $('#editResTarget').addClass('mistake')
+                $("#errorEditMsg").text('Please enter research value');
+                return;
+            }
+            else if (resValue <= 0) {
+                $('#editResTarget').addClass('mistake')
+                $("#errorEditMsg").text('Research Value should be greater than 0');
+                return;
+            } else if (resValue > 100) {
+                $('#editResTarget').addClass('mistake')
+                $("#errorEditMsg").text('Research Value should should not exceed 100');
+                return;
+            }
+            //else
+            //{
+            //    $('#editResTarget').removeClass('mistake')
+            //    $("#errorEditMsg").text('');
+            //}
+               
+
+            if (entryValue == '') {
+                $('#editEntryTarget').addClass('mistake')
+                $("#errorEditMsg").text('Please enter entry value');
+                return;
+            }
+            else if (entryValue <= 0) {
+                $('#editEntryTarget').addClass('mistake')
+                $("#errorEditMsg").text('Entry Value should be greater than 0');
+                return;
+            }else if (entryValue > 100) {
+                $('#editEntryTarget').addClass('mistake')
+                $("#errorEditMsg").text('Entry Value should should not exceed 100');
+                return;
+            }
+            //else
+            //{
+            //    $('#editEntryTarget').removeClass('mistake')
+            //    $("#errorEditMsg").text('');
+            //}
+
+            //$("#errorEditMsg").text('Please enter a value');
+            //return;
+    //} 
+    //else {
+    //        $('#editEntryTarget').removeClass('mistake')
+    //        $('#editResTarget').removeClass('mistake')
+    //        $("#errorEditMsg").text('');
+    //    }
+
+
+
+        var strJsonDatas = eval({ Id: RefId, batchId: batch,batchName:batchName, resTarget: resValue, entryTarget: entryValue })
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getBatchData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var datas = msg;
+                var Result = jQuery.parseJSON(datas);
+                var data = Result[0].resultmsg
+                if (data != undefined) {
+                    if (data == "VALUES UPDATED") {
+                        swal({
+                            title: 'Success!',
+                            text: 'Values updated successfully',
+                            icon: 'success',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        }
+                        )
+                    }
+                    else if (data == "NAME UPDATED") {
+                        swal({
+                            title: 'Success!',
+                            text: 'Name updated successfully',
+                            icon: 'success',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        }
+                        )
+                    }
+                    else if (data == "VALUE EXISTS") {
+                        swal({
+                            title: 'Error!',
+                            text: 'Values already exist. Please check and update',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        }
+                        )
+                    }
+                    else if (data == "NAME EXISTS") {
+                        swal({
+                            title: 'Error!',
+                            text: 'Batch name already exist. Please give another name',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        }
+                        )
+                    }
+                }
+                else {
+                }
+
+
+            }
+        })
+    }
+
+    function getId() {
+        
+        $('#resTarget').val('');
+        $('#entryTarget').val('');
+        $('#batchName').val('');
+        $("#errorMsg").text('');
+        $('#resTarget').removeClass('mistake')
+        $('#entryTarget').removeClass('mistake')
+        $('#batchName').removeClass('mistake');
+
+        RefId = 6;
+        var strJsonDatas = eval({ Id: RefId });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getBatchData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg[0].Column1;
+                var Result = jQuery.parseJSON(msg);
+                var a = Result[0].Column1;
+                a = a + 1;
+                if (a < 10) {
+                    a = a.toString().padStart(2, '0')
+                }
+                const year = new Date().getFullYear().toString().slice(-2);
+
+                const currentMonth = new Date().getMonth() + 1;
+
+                var d = 'BTC' + year + currentMonth + a
+
+                $('#batchId').val(d);
+
+            }
+        });
+    }
+
+    function deleteId(rowid) {
+
+        RefId = 5;
+        rowNo = document.getElementById(rowid).childNodes[2].outerText;
+
+        var strJsonDatas = eval({ Id: RefId, batchId: rowNo });
+        
+
+        swal({
+            title: 'Are you sure want to delete?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3f51b5',
+            cancelButtonColor: '#ff4081',
+            confirmButtonText: 'Great ',
+            buttons: {
+                cancel: {
+                    text: "No",
+                    value: null,
+                    visible: true,
+                    className: "btn btn-danger",
+                    closeModal: true,
+                },
+                confirm: {
+                    text: "Yes",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary",
+                    closeModal: true
+                }
+            }
+        }).then(
+        function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "getBatchData",
+                    data: JSON.stringify(strJsonDatas),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (msg) {
+                        var datas = msg;
+                        var Result = jQuery.parseJSON(datas);
+                        var data = Result[0].resultmsg
+                        if (data != undefined) {
+                            if (data == "Error") {
+                                swal({
+                                    title: 'Error',
+                                    text: 'Something went wrong.Contact Development team',
+                                    icon: 'error',
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary",
+                                        timer: 1000,
+                                    }
+                                }).then(
+                                function () {
+                                    location.reload();
+                                })
+                            }
+                            if (data == "DELETED") {
+                                //Result = jQuery.parseJSON(data);
+                                swal({
+                                    title: 'Deleted!',
+                                    text: 'Batch has been deleted.',
+                                    type: "success",
+                                    timer: 1000,
+                                    button: false
+                                }).then(
+                                function () {
+                                    location.reload();
+                                })
+                            }
+                        } else {
+                        }
+                    }
+                });
+            }
+            else {
+                return false;
+            }
+        }
+        )
+    }
+
+</script>
+

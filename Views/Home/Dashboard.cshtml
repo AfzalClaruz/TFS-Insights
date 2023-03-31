@@ -1,0 +1,610 @@
+﻿@*@{
+    ViewBag.Title = "Home Page";
+}*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="~/Content/css/mdi.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .error-msg {
+            color: #D8000C;
+            background-color: #FFBABA;
+            width: 100%;
+        }
+        .ti-calendar{
+            background-color:white;
+        }
+        .dateProp{
+            background-color:white !important;
+        }
+        .card.cards-tale:hover{
+                transform: rotate(5deg);
+        }
+        .card.cards-dark-blue:hover{
+                transform: rotate(5deg);
+        }
+        .card.cards-light-danger:hover{
+                transform: rotate(5deg);
+        }
+        .hidden{
+            display:none;
+        }
+
+    </style>
+
+
+
+</head>
+
+
+
+<body >
+@*@if (TempData["exError"] != null)
+{
+    <div class="error-msg">
+        <i class="fa fa-times-circle"></i>
+        This is an error message.
+    </div>
+}*@
+
+    @*<div class="body-content">
+
+    </div>*@
+    @Html.Hidden("RedirectTo", Url.Action("MyOrders", "Home"))      
+    <div >
+        <div class="row" style="background-color:#fff; border-radius:20px; margin-bottom:22px;">
+            <div class="col-md-12 grid-margin">
+                <div class="row">
+                    <div class="col-12 col-xl-5 mb-4 mb-xl-0">
+                        <h3 class="font-weight-bold"> Hi , @Session["emp_full_name"]  </h3>
+                        @*<h6 class="font-weight-normal mb-0">All systems are running smoothly! You have <span class="text-primary">3 unread alerts!</span></h6>*@
+                    </div>
+                    <div class="col-12 col-xl-7 hidden">
+                        <div class="justify-content-end d-flex">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>From Date</label>
+                                    <div id="date-form" class="input-group date txtfromdate" >
+                                        <input type="text" id="txtfromdate" class="form-control dateProp" disabled />
+                                        <span class="input-group-addon input-group-append border-left">
+                                            <span class="ti-calendar input-group-text">
+                                            </span>
+                                        </span>
+                                        <label style="font: italic 13px/21px serif; color: #9d9d9d;">(MM / DD / YYYY)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>To Date</label>
+                                    <div id="to-date-form" class="input-group date txttodate">
+                                        <input type="text" id="txttodate" class="form-control dateProp" disabled />
+                                        <span class="input-group-addon input-group-append border-left">
+                                            <span class="ti-calendar input-group-text"></span>
+                                        </span>
+                                        <label style="font: italic 13px/21px serif; color: #9d9d9d;">(MM / DD / YYYY)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 hidden" style="margin-top: -6px;">
+                                    <label><br /><br /><br /></label>
+                                    <button class="btn btn-primary" onclick="getDashboardValues()">Apply</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @*</div>*@
+        <div class="row">
+@if (Convert.ToInt64(Session["role"]) == 5)
+{
+    @*<div class="col-md-6 grid-margin stretch-card">
+        <div class="card tale-bg" style="border-radius: 15px 50px;">
+            <div class="card-people mt-auto">
+                <img src="~/Content/images/dashboard/people.svg" alt="people" style="border-radius: 15px 50px;">
+                <div class="weather-info">
+                    <div class="d-flex">
+                        <div>
+                            <h2 class="mb-0 font-weight-normal"><i class="icon-sun mr-2"></i>31<sup>C</sup></h2>
+                        </div>
+                        <div class="ml-2">
+                            <h4 class="location font-weight-normal">Chicago</h4>
+                            <h6 class="font-weight-normal">Illinois</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    @*<div class="col-md-3 grid-margin">
+        <div class="card tale-bg" style="border-radius: 15px 50px; height: 100%;align-items: center;
+                                justify-content: center;
+                                align-content: center;
+                                width:100%; background:#dae7ff ; align-content:center;display:grid;" >
+            <p class="mb-4" style="font-size: 22px; font-weight: 800;">Incentive Recieved</p>
+            <p class="fs-30 mb-2" style="display: flex; justify-content: center;" id="incentiveRE"></p>
+            <p class="mb-4" style="display: flex; justify-content: center;" id="monthName">Current Month</p>
+            <button class="btn btn-primary" onclick="redirectOnClick()">Get Details</button>
+
+        </div>
+    </div>*@
+}
+@if (Convert.ToInt64(Session["role"]) == 6)
+{
+    @*<div class="col-md-6 grid-margin stretch-card">
+        <div class="card tale-bg">
+            <div class="card-people mt-auto">
+                <img src="~/Content/images/dashboard/people.svg" alt="people">
+                <div class="weather-info">
+                    <div class="d-flex">
+                        <div>
+                            <h2 class="mb-0 font-weight-normal"><i class="icon-sun me-2"></i>31<sup>C</sup></h2>
+                        </div>
+                        <div class="ms-2">
+                            <h4 class="location font-weight-normal">Chicago</h4>
+                            <h6 class="font-weight-normal">Illinois</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    @*<div class="col-md-6 grid-margin stretch-card">
+        <div class="card tale-bg" style="border-radius: 15px 50px; height: 100%;align-items: center;
+                                justify-content: center;
+                                align-content: center;
+                                width:100%; background:#dae7ff ; align-content:center;display:grid;" >
+            <p class="mb-4">Incentive Recieved</p>
+            <p class="fs-30 mb-2" id="incentiveDE"></p>
+            <p class="mb-4">Current Month</p>
+            <button class="btn btn-primary" onclick="redirectOnClick()">Get Details</button>
+
+        </div>
+    </div>*@
+}
+@if (Convert.ToInt64(Session["role"]) == 7)
+{
+                <div class="col-md-7 grid-margin stretch-card">
+        <div class="card" style="border-radius: 15px 50px;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <p class="card-title">Incentive Info</p>
+                    <a href="#" class="text-info">View all</a>
+                </div>
+                <p class="font-weight-500">Incentive recieved in the current year has been charted month wise</p>
+                <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                <canvas id="sales-chart-employee"></canvas>
+            </div>
+        </div>
+    </div>
+    @*<div class="col-md-6 grid-margin stretch-card">
+        <div class="card tale-bg">
+            <div class="card-people mt-auto">
+                <img src="~/Content/images/dashboard/people.svg" alt="people">
+                <div class="weather-info">
+                    <div class="d-flex">
+                        <div>
+                            <h2 class="mb-0 font-weight-normal"><i class="icon-sun me-2"></i>31<sup>C</sup></h2>
+                        </div>
+                        <div class="ms-2">
+                            <h4 class="location font-weight-normal">Chicago</h4>
+                            <h6 class="font-weight-normal">Illinois</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    <div class="col-md-5 grid-margin">
+
+        <div class="row emp-row">
+            <div class="col-md-4 mb-4 stretch-card ">
+                <div class="card cards-tale" style="height: 100%;align-items: center;
+                                justify-content: center;
+                                align-content: center;">
+                    <div class="card-body" style="align-content: center;display: grid;" onclick="StatusReport(5)">
+                        <p class="mb-4">Total Orders</p>
+                        <p class="fs-30 mb-2" id="totalOrders"></p>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 stretch-card ">
+                <div class="card cards-dark-blue" onclick="StatusReport(6)">
+                    <div class="card-body">
+                        <p class="mb-4">Picture Uploaded Orders</p>
+                        <p class="fs-30 mb-2" id="picOrders"></p>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4 stretch-card transparent">
+                <div class="card cards-light-danger" onclick="StatusReport(1)">
+                    <div class="card-body">
+                        <p class="mb-4">Submitted Orders</p>
+                        <p class="fs-30 mb-2" id="subOrders"></p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (Convert.ToInt64(Session["role"]) == 4)
+{
+                <div class="col-md-7 grid-margin stretch-card">
+        <div class="card" style="border-radius: 15px 50px;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <p class="card-title">Incentive Info</p>
+                    <a href="#" class="text-info">View all</a>
+                </div>
+                <p class="font-weight-500">Incentive recieved in the current year has been charted month wise</p>
+                <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                <canvas id="sales-chart-employee"></canvas>
+            </div>
+        </div>
+    </div>
+    @*<div class="col-md-6 grid-margin stretch-card">
+        <div class="card tale-bg">
+            <div class="card-people mt-auto">
+                <img src="~/Content/images/dashboard/people.svg" alt="people">
+                <div class="weather-info">
+                    <div class="d-flex">
+                        <div>
+                            <h2 class="mb-0 font-weight-normal"><i class="icon-sun me-2"></i>31<sup>C</sup></h2>
+                        </div>
+                        <div class="ms-2">
+                            <h4 class="location font-weight-normal">Chicago</h4>
+                            <h6 class="font-weight-normal">Illinois</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    <div class="col-md-5 grid-margin stretch-card">
+        <div class="col-md-8 mt-10 mb-4 mx-auto stretch-card transparent" style="align-content: center;justify-content: center;flex-direction: column-reverse">
+            <div class="card cards-tales" style="height: 60%;" onclick="StatusReport(1)">
+                <div class="card-body" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                    <p class="mb-4" style="font-weight: 900; ">Total Orders</p>
+                    <p class="fs-30 mb-2" style="font-size: x-large; " id="TLtotalOrders"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+            
+        </div>
+        <div class="row">
+@if (Convert.ToInt64(Session["role"]) == 6)
+{
+    <div class="col-md-7 grid-margin stretch-card">
+        <div class="card" style="border-radius: 15px 50px;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <p class="card-title">Incentive Info</p>
+                    <a href="#" class="text-info">View all</a>
+                </div>
+                <p class="font-weight-500">Incentive recieved in the current year has been charted month wise</p>
+                <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                <canvas id="sales-chart-employee"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 grid-margin transparent">
+        <div class="row">
+            <div class="col-md-6 mb-4 stretch-card transparent">
+                <div class="card card-tale" onclick="StatusReport(5)">
+                    <div class="card-body">
+                        <p class="mb-4">Total Orders</p>
+                        <p class="fs-30 mb-2" id="totalOrders"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4 stretch-card transparent">
+                <div class="card card-dark-blue" onclick="StatusReport(1)">
+                    <div class="card-body">
+                        <p class="mb-4">Completed Orders</p>
+                        <p class="fs-30 mb-2" id="completedOrders"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+                <div class="card card-light-blue" onclick="StatusReport(2)">
+                    <div class="card-body">
+                        <p class="mb-4">Pending Orders</p>
+                        <p class="fs-30 mb-2" id="pendingOrders"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 stretch-card transparent">
+                <div class="card card-light-danger" onclick="StatusReport(4)">
+                    <div class="card-body">
+                        <p class="mb-4">Correction Orders</p>
+                        <p class="fs-30 mb-2" id="correctionOrders"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (Convert.ToInt64(Session["role"]) == 5)
+{
+    <div class="col-md-8 grid-margin stretch-card">
+        <div class="card" style="border-radius: 15px 50px;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <p class="card-title">Incentive Info</p>
+                    <a href="#" class="text-info">View all</a>
+                </div>
+                <p class="font-weight-500">Incentive recieved in the current year has been charted month wise</p>
+                <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                <canvas id="sales-chart-employee"></canvas>
+            </div>
+        </div>
+    </div>
+        <div class="col-md-4 grid-margin">
+            @*<div class="col-md-5 grid-margin" style="background-color:#fff; border-radius:15px 50px;">*@
+            <div class="row mt-3">
+                <div class="col-md-3"></div>
+
+                <div class="col-md-6">
+                    <div class="card card-tale">
+                        <div class="card-body" onclick="StatusReport(5)">
+                            <p class="mb-4">Total Orders</p>
+                            <p class="fs-30 mb-2" id="totalOrders1"></p>
+                            @*<p>0% (30 days)</p>*@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3"></div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <div class="card card-dark-blue" onclick="StatusReport(1)">
+                        <div class="card-body">
+                            <p class="mb-4">Completed Orders</p>
+                            <p class="fs-30 mb-2" id="completedOrders2"></p>
+                            @*<p>0% (30 days)</p>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <div class="card card-light-danger">
+                        <div class="card-body" onclick="StatusReport(2)">
+                            <p class="mb-4">Pending Orders</p>
+                            <p class="fs-30 mb-2" id="pendingOrders1"></p>
+                            @*<p>0% (30 days)</p>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+        </div>
+}
+
+        </div>
+
+
+        <input type="hidden" value="@Session["role"]" id="hdnRole" />
+        <div class="row">
+    </div>
+        </div>
+
+</body>
+
+</html>
+
+<script type="text/JavaScript" src="https://MomentJS.com/downloads/moment-with-locales.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+
+<script>
+    var url = $("#RedirectTo").val();
+
+    $(document).ready(function () {
+
+        var cudt = new Date();
+
+        $('#date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        $('#to-date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        var cudate = GetDateFormat(cudt, 'mm/dd/yyyy');
+
+        $("#txttodate").val(cudate);
+
+        var endDate = new Date($("#txttodate").val());
+        //var d = $("#txttodate").val(cudate);
+        //d.setDate(d.getDate() - 30);
+        var startDate = (startOfMonth(cudt).toString());
+        $(".input-group.date.txttodate").datepicker("setDate", new Date(endDate));
+        $(".input-group.date.txtfromdate").datepicker("setDate", new Date(startDate));
+
+
+
+        getDashboardValues()
+
+
+    })
+
+    function startOfMonth(date) {
+
+        return new Date(date.getFullYear(), date.getMonth(), 1);
+
+    }
+
+    function GetDateFormat(sDateTime, dtFormat) {
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
+
+        const dateObj = sDateTime; // new Date();
+
+        const month = dateObj.getMonth();
+
+        const day = String(dateObj.getDate()).padStart(2, '0');
+
+        const year = dateObj.getFullYear();
+
+        const output = parseInt(month + 1) + '/' + day + '/' + year;
+
+        return output;
+
+    }
+
+
+    function redirectOnClick() {
+        document.location = 'IncentiveByMonth';
+    }
+
+    function StatusReport(id) {
+        loadergif(1);
+        //window.location = "/Home/MyOrders/"
+        //var status = ""
+        var fromDate = $("#txtfromdate").val();
+        var toDate = $("#txttodate").val();
+        var fdate = new Date(fromDate);
+        var edate = new Date(toDate);
+        //var id = 1
+        var strJsonDatas = eval({ StartDate: fdate, EndDate: edate, currentStatus: id });
+        $.ajax({
+            type: "Post",
+            //async: false,
+            //url: "StatusWiseOrders",
+            url: "MyOrders",
+            data: JSON.stringify(strJsonDatas),
+            //data: {},
+            //data: '{f_date:' + new Date(fromDate) + ' , l_date:' + new Date(toDate) + '}',
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                location.href = url;
+            }
+        })
+
+    }
+
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+    ];
+
+    function getDashboardValues()
+    {
+            loadergif(1);
+            var fromDate = $("#txtfromdate").val();
+            var toDate = $("#txttodate").val() + " 23:59:59.599";
+            var fdate = new Date(fromDate);
+            var edate = new Date(toDate);
+            var strJsonDatas = eval({ StartDate: fdate, EndDate: edate });
+            var month = monthNames[edate.getMonth()];
+            $('#monthName').text(month);
+            
+            $.ajax({
+                type: "Post",
+                //async: false,
+                url: "getDashboardValues",
+                data: JSON.stringify(strJsonDatas),
+                contentType: "application/json; charset=utf-8",
+                //dataType: "local",
+                success: function (msg) {
+
+                    
+                    var Details = msg;
+
+                    if (Details == "Error") {
+                        loadergif(0);
+                        alert("Null Result");
+                    }
+
+                    var Result = jQuery.parseJSON(Details);
+
+
+
+
+                    if (Result != '' && Result != null) {
+
+                        var compStatus = Result[1].counts;
+                        $('#completedOrders').text(compStatus);
+                        $('#completedOrders2').text(compStatus);
+                        $('#completedOrders3').text(compStatus);
+                        var totalOrders = Result[0].counts;
+                        $('#totalOrders').text(totalOrders);
+                        $('#totalOrders1').text(totalOrders);
+                        $('#TLtotalOrders').text(totalOrders);
+                        var incentive = Result[7].counts;
+                       if (incentive == undefined)
+                        {
+                            $('#incentiveDE').text("₹ 0");
+                            $('#incentiveRE').text("₹ 0");
+                       }
+                       else {
+                           $('#incentiveDE').text("₹ " + incentive);
+                           $('#incentiveRE').text("₹ " + incentive);
+                       }
+
+                        var pendingstatus = Result[2].counts;
+                        $('#pendingOrders').text(pendingstatus);
+                        $('#pendingOrders1').text(pendingstatus);
+                        var correctionStatus = Result[3].counts;
+                        $('#correctionOrders').text(correctionStatus);
+                        var picCount = Result[5].counts;
+                        $('#picOrders').text(picCount);
+                        var subCount = Result[6].counts;
+                        $('#subOrders').text(subCount);
+
+                        loadergif(0);
+                    }
+                }
+            })
+
+            //loadergif(0);
+        }
+
+
+
+</script>
+
+
+

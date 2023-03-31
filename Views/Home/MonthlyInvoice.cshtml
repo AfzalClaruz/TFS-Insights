@@ -1,0 +1,329 @@
+﻿
+@{
+    ViewBag.Title = "MonthlyInvoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .hidden{
+        display:none;
+    }
+</style>
+<div class="abc">
+    <h2>Employee Order Report</h2>
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+    <div class="col-md-12">
+        <div class="row" style="margin-bottom:40px;">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label style="font-size:1rem;">Select Your Employee</label>
+                    <select class="js-example-basic-single w-100" id="ddlEmployee"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label>From Date</label>
+                @*<div class="input-group date txtfromdate">
+                <span class="input-group-addon" id="divtxtdob"><i class="fa fa-calendar"></i></span>
+                <input type="text" id="txtfromdate" class="form-control" value="" readonly="readonly" style="background-color:white">
+            </div>*@
+                <div id="date-form" class="input-group date txtfromdate">
+                    <input type="text" id="txtfromdate" class="form-control" />
+                    <span class="input-group-addon input-group-append border-left">
+                        <span class="ti-calendar input-group-text">
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label>To Date</label>
+                @*<div class="input-group date txttodate">
+                <span class="input-group-addon" id="divtxtdob"><i class="fa fa-calendar"></i></span>
+                <input type="text" id="txttodate" class="form-control" value="" readonly="readonly" style="background-color:white">
+            </div>*@
+                <div id="to-date-form" class="input-group date txttodate">
+                    <input type="text" id="txttodate" class="form-control" />
+                    <span class="input-group-addon input-group-append border-left">
+                        <span class="ti-calendar input-group-text">
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label><br /></label>
+                <div class="md-form mb-5">
+                    <button class="btn btn-primary" title="Generate Report" onclick="reportLoader()">Generate Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 hidden" id="hiddenTable">
+        <table id="EmployeeDetails" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>EMPLOYEE NAME</th>
+                    <th>ADDRESS</th>
+                    <th>COMPLETED DATE</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+    @*<script src="http://code.jquery.com/jquery-1.9.1.js" defer></script*@
+    @*<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js" defer></script>*@
+    @*<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" defer></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>*@
+    <script type="text/JavaScript" src="https://MomentJS.com/downloads/moment-with-locales.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            var cudt = new Date();
+
+            $('#date-form').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: false,
+                autoclose: true,
+                format: "mm/dd/yyyy",
+                todayHighlight: false
+            });
+
+            $('#to-date-form').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: false,
+                autoclose: true,
+                format: "mm/dd/yyyy",
+                todayHighlight: false
+            });
+
+       
+
+            var cudate = GetDateFormat(cudt, 'mm/dd/yy');
+
+            $("#txttodate").val(cudate);
+
+            var d = new Date($("#txttodate").val());
+            d.setDate(d.getDate() - 30);
+            $(".input-group.date.txtfromdate").datepicker("setDate", new Date(d));
+
+            GetDefaultPageLoadData();
+
+
+        });
+
+        function GetDefaultPageLoadData() {
+
+            var strJsonData = eval({ CurrentUser: 1, EmployeeId: 1 });
+            var Result = "";
+            $.ajax({
+                url: "GetEmployeeData",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                //data: JSON.stringify(strJsonData),
+                success: function (data) {
+
+
+                    ResultEmployeeList = jQuery.parseJSON(data.strEmployeeList);
+
+                    if (ResultEmployeeList != "" && ResultEmployeeList != null) {
+
+                        $('#ddlEmployee').empty().append('<option value="-1">-Select Employee-</option>');
+
+                        for (var i = 0; i < ResultEmployeeList.length; i++) {
+
+                            $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                        }
+                    }
+
+                }
+            });
+        }
+
+
+        function reportLoader() {
+            //loadergif(1);
+
+            setTimeout(function () { generateReport() }, 3000);
+        }
+
+        function generateReport() {
+            $('#EmployeeDetails').DataTable().clear().destroy();
+            caller();
+            
+            $(".dt-button").addClass("btn btn-outline-primary btn-fw")
+            $(".dt-button").removeClass("dt-button")
+        }
+
+        function caller() {
+            var sEmployee = $("#ddlEmployee").val();
+
+            var sFromDate = $("#txtfromdate").val();
+
+            var sTodate = $("#txttodate").val();
+
+            if (sEmployee == "-1") {
+                alert("Choose an employee")
+                return;
+            }
+
+            console.log(sFromDate);
+            console.log(sTodate);
+            console.log(sEmployee);
+
+            var strJsonDatas = eval({ emp_name: sEmployee, f_date: sFromDate, l_date: sTodate });
+
+
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "getemployeedetails",
+                data: JSON.stringify(strJsonDatas),
+                contentType: "application/json; charset=utf-8",
+                //dataType: "local",
+                success: function (msg) {
+                    var data = msg;
+
+                    if (data == '[]') {
+                        WriteLog('No Records Found');
+                    }
+                    else if (data == null) {
+                        WriteLog('Unable to connect to server');
+                    }
+                    else {
+                        try {
+
+                            Result = jQuery.parseJSON(data);
+
+                        }
+                        catch (exception) {
+                            Result = null;
+                        }
+
+                        if (Result == null)
+                            WriteLog(data.toString());
+
+                    }
+
+                    if (Result != '' && Result != null) {
+
+                        Datas = Result;
+
+                        var length = Datas.length;
+
+                        var table = document.getElementById('EmployeeDetails');
+
+                        for (var i = table.rows.length - 1; i > 0; i--) {
+                            table.deleteRow(i);
+                        }
+
+                        for (var i = 0; i < length; i++) {
+
+
+
+                            $('#EmployeeDetails').append(
+                                '<tr id="' + i + '">' +
+
+                                    '<td>' + Datas[i].EMP_FIRST_NAME + '</td>' +
+                                    '<td>' + Datas[i].ADDRESS + '</td>' +
+                                    '<td>' + Datas[i].C_DATE + '</td>' +
+                               '</tr>');
+
+                        }
+
+                        //setTimeout(function () {
+                        $('#EmployeeDetails').DataTable({
+
+                            //dom: 'Blfrtip',
+                            //buttons: [
+                            //       {
+                            //           extend: 'pdf',
+                            //           footer: true,
+                            //           exportOptions: {
+                            //               columns: [0, 1, 2],
+                            //               orthogonal: "export",
+                            //               rows: function (idx, data, node) {
+                            //                   number = 1;
+                            //                   return true;
+                            //               }
+                            //           }
+
+
+                            //       },
+                            //           {
+                            //               extend: 'csv',
+                            //               footer: false
+
+                            //           },
+                            //           {
+                            //               extend: 'excelHtml5',
+                            //               footer: false,
+                            //               exportOptions: {
+                            //                   columns: [0, 1, 2]
+                            //               }
+                            //           }
+                            //]
+
+                        })
+
+
+                        
+                    }
+
+
+                }
+
+            });
+            $('#hiddenTable').removeClass('hidden');
+        }
+
+
+        function GetDateFormat(sDateTime, dtFormat) {
+
+            //var DateTime = sDateTime ;
+            //var year = DateTime.substring(0, 4);
+            //var month = DateTime.substring(5, 7);
+            //var date = DateTime.substring(8, 10);
+
+            //var dob = month + '/' + date + '/' + year;
+
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+
+            const dateObj = sDateTime; // new Date();
+
+            const month = dateObj.getMonth();
+
+            const day = String(dateObj.getDate()).padStart(2, '0');
+
+            const year = dateObj.getFullYear();
+
+            const output = parseInt(month + 1) + '/' + day + '/' + year;
+
+            return output;
+
+        }
+
+
+    </script>

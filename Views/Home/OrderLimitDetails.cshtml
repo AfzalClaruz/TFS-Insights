@@ -1,0 +1,1114 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "OrderLimitDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .select2-container {
+        width: 100% !important;
+    }
+    th {
+  height: 40px;
+  line-height:20px !important;
+}
+    th .sorting{
+    display: flex  ;
+    /*align-items: center  ;*/
+    }
+    .modal {
+    text-align:center;
+}
+.modal-dialog {
+    display: inline-block;
+    width: auto;
+}
+
+    .table thead th{
+        vertical-align:middle;
+    }
+
+    .dataTables_wrapper .dataTable thead .sorting:after{
+        top:30px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting:before{
+        bottom:30px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_asc:after{
+        top:30px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_desc:after{
+        top:30px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_asc:before{
+        bottom:30px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_desc:before{
+        bottom:30px;
+    }
+
+    .form-control{
+        border: 1px solid #aaa;
+    }
+
+    /*pdf csv button*/
+    .dt-buttons a {
+        width: 32px;
+        line-height: 0;
+        margin-top: 20px;
+        border-radius:10px!important;
+    }
+
+    .dt-buttons span {
+        font-size: 14px;
+        margin-left: -13px;
+    }
+
+    .mistake {
+        border: 1px solid #cc0033 !important;
+    }
+
+    .select2-container{
+        max-width:250px;
+    }
+
+    /*input[type="radio"]:disabled + label {
+        filter: grayscale(100%);
+        opacity: .5;
+        pointer-events: none;
+    }*/
+</style>
+
+<div class="abc">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Order Limit & Incentive</h2>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4 addbtn" style="display:flex; justify-content:flex-end;">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateForm" onclick="modal()">
+                <i class="fa fa-plus" style="margin-right: 5px;" aria-hidden="true" ></i> Add New Limit </button>
+            </div>
+
+        </div>
+    </div>
+
+    @*Add Form*@
+    <div class="modal fade" id="modalCreateForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold">Add Incentive Order Limit</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="removeDetails();">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-5">
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Choose Role</label>
+                            <div class="row" style="border: 1px solid #aaaaaa;border-radius: 4px;">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="radioReasearcher" name="optradio" value="5" checked>Research
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="radioDataentry" name="optradio" value="6">Data Entry
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="md-form mb-5">
+                                <label>Choose Designation</label>
+                                <select class="form-control validate js-example-basic-single w-100" id="ddlDesignation"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="padding-bottom:15px">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <label>Minimum Order : </label>
+                            <input type="number" class="form-control" id="minOrder">
+                        </div>
+                        <div class="col-md-3"></div>
+
+                    </div>
+                    <div class="row" style="padding-bottom:15px">
+                        <div class="col-md-5">
+                            <label>First Slab : </label>
+                            <input type="number" class="form-control" id="FirstInc">
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5">
+                            <label>First Slab Order Amount : </label>
+                            <input type="number" class="form-control" id="FirstIncAmount">
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:15px">
+                        <div class="col-md-5">
+                            <label>Second Slab Order : </label>
+                            <input type="number" class="form-control" id="SecondInc">
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5">
+                            <label>Second Slab Order Amount : </label>
+                            <input type="number" class="form-control" id="SecondIncAmount">
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:15px">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <label>Balance Slab Order Amount : </label>
+                            <input type="number" class="form-control" id="BalanceAmount">
+                        </div>
+                        <div class="col-md-3"></div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="display: flex;justify-content: center;">
+                            <span id="errorMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="create()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Create </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Edit Form*@
+    <div class="modal fade" id="modalEditForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold">Edit Order Limit</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Choose Role</label>
+                            <div class="row chkRole" style=" display: flex; /* justify-content: center; */ align-items: center; border: 1px solid #aaaaaa; flex-direction: row; margin: 0 auto; max-width: 250px;" id="chkDes" >
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="editradioResearch" name="optradio" value="5" disabled>Research
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="editradioDataEntry" name="optradio" value="6" disabled>Data Entry
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-6" >
+                            @*<div class="col-md-6">*@
+                            <label>Choose Designation</label>
+                            <div class="md-form mb-5">
+                                <select class="form-control validate js-example-basic-single w-100" id="ddlEditDesignation" disabled></select>
+                            </div>
+                            @*</div>*@
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>Minimum Order Count : </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" class="form-control" id="EditminOrder">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>First Incentive Order Count : </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" class="form-control" id="EditFirstInc">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>Second Incentive Order Count: </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" class="form-control" id="EditSecondInc">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>First Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" class="form-control" id="EditFirstIncAmount">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>Second Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" class="form-control" id="EditSecondIncAmount">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>Balance Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" class="form-control" id="EditBalanceAmount">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="display: flex;justify-content: center;">
+                            <span id="errorEditMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="updatedata()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Update </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-12" id="Table_orderLimitDetails" style=" margin-top: 50px; ">
+        <table id="OrderLimitDetails" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>SL.NO</th>
+                    @*<th>Role</th>*@
+                    <th class="hidden">OrderLimit Id</th>
+                    <th>ROLE</th>
+                    <th>BASE <br /> SLAB</th>
+                    <th>FIRST <br /> SLAB</th>
+                    <th>FIRST <BR/> SLAB <br /> INCENTIVE  ₹</th>
+                    <th>SECOND <br /> SLAB</th>
+                    <th>SECOND <br /> SLAB <br /> INCENTIVE  ₹</th>
+                    <th>EXTRA <br /> INCENTIVE  ₹</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+<script>
+
+
+    var eDesignation = [];
+
+    //$('#ddlDesignation').select2({
+    //    dropdownParent: $('#modalCreateForm')
+    //});
+    //$('#ddlEditDesignation').select2({
+    //    dropdownParent: $('#modalEditForm')
+    //});
+
+    $.fn.modal.Constructor.prototype.enforceFocus = function () { };
+
+    document.getElementById("EditminOrder").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("EditFirstInc").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    document.getElementById("EditSecondInc").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("EditFirstIncAmount").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    document.getElementById("EditSecondIncAmount").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("EditBalanceAmount").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    document.getElementById("minOrder").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("FirstInc").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    document.getElementById("SecondInc").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("FirstIncAmount").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    document.getElementById("SecondIncAmount").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("BalanceAmount").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    //$("#chkDes").attr("disabled", "disabled").off('click');
+
+
+    $(document).ready(function () {
+        LoadDesignationData();
+        generateTable();
+    });
+
+    function modal() {
+        LoadDesignationData();
+    }
+
+    $("input[name='optradio']").change(function () {
+        LoadDesignationData();
+    });
+
+    function LoadDesignationData(designation) {
+        var sRole = $("input[name='optradio']:checked").val();
+        //var sRole = $("#radioVal").val();
+        var strJsonData = eval({ role: sRole });
+        $.ajax({
+            url: "LoadDesignationData",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(strJsonData),
+            success: function (data) {
+
+
+                ResultDesignationList = jQuery.parseJSON(data.strDesignationList);
+
+                if (ResultDesignationList != "" && ResultDesignationList != null) {
+
+                    eDesignation = ResultDesignationList;
+
+                    $('#ddlDesignation').empty().append('<option value="-1">-Select Designation-</option>');
+                    $('#ddlEditDesignation').empty().append('<option value="-1">-Select Designation-</option>');
+
+                    for (var i = 0; i < ResultDesignationList.length; i++) {
+
+                        $('#ddlDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '">' + ResultDesignationList[i]["designation_name"] + '</option>');
+                        //$('#ddlEditDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '">' + ResultDesignationList[i]["designation_name"] + '</option>');
+
+                        if (designation != null || designation != undefined) {
+                            if (ResultDesignationList[i]["designation_id"] == designation) {
+                                $('#ddlEditDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '" selected>' + ResultDesignationList[i]["designation_name"] + '</option>');
+
+                            }
+                            else {
+                                $('#ddlEditDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '">' + ResultDesignationList[i]["designation_name"] + '</option>');
+                            }
+                        }
+                        else {
+                            $('#ddlEditDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '">' + ResultDesignationList[i]["designation_name"] + '</option>');
+                        }
+
+                    }
+                }
+
+
+
+            }
+        });
+    }
+
+    function create() {
+
+        $('.mistake').removeClass('mistake');
+        $("#errorMsg").text('');
+
+        var sRole = $('input[name="optradio"]:checked').val();
+        var designation = $("#ddlDesignation").val();
+        var minOrder = $("#minOrder").val();
+        var firstInc = $("#FirstInc").val();
+        var secondInc = $("#SecondInc").val();
+        var firstAmount = $("#FirstIncAmount").val();
+        var secondAmount = $("#SecondIncAmount").val();
+        var balanceAmount = $("#BalanceAmount").val();
+
+        if (firstAmount == '' && secondAmount == '' && balanceAmount == '' && minOrder == '' && firstInc == '' && secondInc == '' && designation == -1) {
+            $("body").find("[aria-labelledby='select2-ddlDesignation-container']").addClass('mistake');
+            $("#minOrder").addClass('mistake');
+            $("#FirstInc").addClass('mistake');
+            $("#SecondInc").addClass('mistake');
+            $("#FirstIncAmount").addClass('mistake');
+            $("#SecondIncAmount").addClass('mistake');
+            $("#BalanceAmount").addClass('mistake');
+            $("#errorMsg").text('Please fill all fields');
+            return;
+        }
+
+        if (designation == -1) {
+            $("body").find("[aria-labelledby='select2-ddlDesignation-container']").addClass('mistake');
+            $("#errorMsg").text('Please choose a designation');
+            return;
+        }
+
+        if (minOrder == '') {
+            $("#minOrder").addClass('mistake');
+            $("#errorMsg").text('Please fill minimum incentive order count');
+            return;
+        } else if (minOrder <= 0 || minOrder > 1000) {
+            $("#minOrder").addClass('mistake');
+            $("#errorMsg").text('Please enter valid count. Minimum incentive order count should be less than 1000 and greater than 0');
+            return;
+        }
+
+        if (firstInc == '') {
+            $("#FirstInc").addClass('mistake');
+            $("#errorMsg").text('Please fill first incentive order count');
+            return;
+        } else if (firstInc <= 0 || firstInc > 1000) {
+            $("#FirstInc").addClass('mistake');
+            $("#errorMsg").text('Please enter valid count. First incentive order count should be less than 1000 and greater than 0');
+            return;
+        }
+
+        if (secondInc == '') {
+            $("#SecondInc").addClass('mistake');
+            $("#errorMsg").text('Please fill second incentive order count');
+            return;
+        } else if (secondInc <= 0 || secondInc > 1000) {
+            $("#SecondInc").addClass('mistake');
+            $("#errorMsg").text('Please enter valid count. Second incentive order count should be less than 1000 and greater than 0');
+            return;
+        }
+
+        if (firstAmount == '') {
+            $("#FirstIncAmount").addClass('mistake');
+            $("#errorMsg").text('Please fill first incentive amount');
+            return;
+        } else if (firstAmount <= 0 || firstAmount > 100) {
+            $("#FirstIncAmount").addClass('mistake');
+            $("#errorMsg").text('Please enter valid amount. First incentive amount should be less than 100 and greater than 0');
+            return;
+        }
+
+        if (secondAmount == '') {
+            $("#SecondIncAmount").addClass('mistake');
+            $("#errorMsg").text('Please fill second incentive amount');
+            return;
+        } else if (secondAmount <= 0 || secondAmount > 100) {
+            $("#SecondIncAmount").addClass('mistake');
+            $("#errorMsg").text('Please enter valid amount. Second incentive amount should be less than 100 and greater than 0');
+            return;
+        }
+
+        if (balanceAmount == '') {
+            $("#BalanceAmount").addClass('mistake');
+            $("#errorMsg").text('Please fill balance incentive amount');
+            return;
+        } else if (balanceAmount <= 0 || balanceAmount > 100) {
+            $("#BalanceAmount").addClass('mistake');
+            $("#errorMsg").text('Please enter valid amount. Balance incentive amount should be less than 100 and greater than 0');
+            return;
+        }
+
+        var strJsonDatas = eval({
+            role: sRole, designation: designation, minOrder: minOrder, firstInc: firstInc, secondInc: secondInc,
+            firstAmount: firstAmount, secondAmount: secondAmount, balanceAmount: balanceAmount
+        });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "insertorderlimitdetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                if (data != undefined) {
+                    if (data == "exists") {
+                        swal({
+                            title: 'Error',
+                            text: 'Duplicate Entry Detected',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        })
+                    }
+                    if (data == "Error") {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Dev team',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        })
+                    }
+                    if (data == "success") {
+                        swal({
+                            title: 'Success!',
+                            text: 'New order - incentive limit has been added for selected designation.',
+                            icon: 'success',
+                            button: {
+                                text: "Continue",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(function () {
+                            location.reload();
+                        })
+                    }
+                }
+                else {
+                    location.reload();
+                    //Result = jQuery.parseJSON(data);
+                    ////console.log(Result);
+                    //swal({
+                    //    title: 'Congratulations!',
+                    //    text: 'You entered the correct answer',
+                    //    icon: 'success',
+                    //    button: {
+                    //        text: "Continue",
+                    //        value: true,
+                    //        visible: true,
+                    //        className: "btn btn-primary",
+                    //        timer: 1000,
+                    //    }
+                    //}).then(
+                    //function () {
+                    //    location.reload();
+                    //}
+                    //)
+                }
+
+
+            }
+        });
+    }
+
+    function generateTable() {
+
+        loadergif(1);
+
+        $('#OrderLimitDetails').DataTable().clear().destroy();
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getIncentiveOrderLimitDetails",
+            //data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+
+                Result = jQuery.parseJSON(data);
+                //var Result = jQuery.parseJSON(data);
+                $('#OrderLimitDetails').DataTable().clear().destroy();
+                if (Result != null) {
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+                    //Data = msg.Data;
+
+                    //Datas = jQuery.parseJSON(Data);
+
+                    //var length = Datas.length;
+
+                    var table = document.getElementById('OrderLimitDetails');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+                        //if (Datas[i].Sl_no == undefined)
+                        //    Datas[i].Sl_no = "1";
+                        //if (Datas[i].role_name == "Role 5 (Research)")
+                        //    Datas[i].role_name = "Research";
+                        //else if (Datas[i].role_name == "Role 6 (Data Entry)")
+                        //    Datas[i].role_name = "Data Entry";
+                        if (Datas[i].designation_name == "Research Executive Trainee")
+                            Datas[i].designation_name = "Res Exe. T";
+                        else if (Datas[i].designation_name == "Research Executive")
+                            Datas[i].designation_name = "Res Exe.";
+                        else if (Datas[i].designation_name == "Sr. Research Executive")
+                            Datas[i].designation_name = "Sr. Res Exe.";
+                        else if (Datas[i].designation_name == "Research Team Lead")
+                            Datas[i].designation_name = "Res Team Lead";
+                        else if (Datas[i].designation_name == "Data Entry Executive")
+                            Datas[i].designation_name = "DE Exe.";
+                        else if (Datas[i].designation_name == "Sr. Data Entry Executive")
+                            Datas[i].designation_name = "Sr. DE Exe.";
+                        else if (Datas[i].designation_name == "Data Entry Team Lead")
+                            Datas[i].designation_name = "DE TL";
+                        else if (Datas[i].designation_name == "Data Entry Executive Trainee")
+                            Datas[i].designation_name = "DE Exe. Trainee";
+
+
+                        $('#OrderLimitDetails').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].Sl_no + '</td>' +
+                                //'<td>' + Datas[i].role_name + '</td>' +
+                                '<td class="hidden">' + Datas[i].orderlimit_id + '</td>' +
+                                '<td>' + Datas[i].designation_name + '</td>' +
+                                '<td>' + Datas[i].noIncentive_order_limit + '</td>' +
+                                '<td>' + Datas[i].firstIncentive_order_limit + '</td>' +
+                                '<td>' + Datas[i].firstIncentive_amount + '</td>' +
+                                '<td>' + Datas[i].secondIncentive_order_limit + '</td>' +
+                                '<td>' + Datas[i].secondIncentive_amount + '</td>' +
+                                '<td>' + Datas[i].balanceIncentive_amount + '</td>' +
+                                '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                           '</tr>');
+
+                    }
+
+
+
+                    //setTimeout(function () {
+                    $('#OrderLimitDetails').DataTable({
+
+                        "bpaging": false,
+                        "bDestroy": true,
+                        scrollX: true,
+                        //"sScrollY": "250px",
+                        //"bScrollCollapse": true,
+                        dom: 'Blfrtip',
+                        buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 2, 3, 4 ,5, 6, 7, 8],
+                                       orthogonal: "export",
+                                       rows: function (idx, data, node) {
+                                           number = 1;
+                                           return true;
+                                       }
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 2, 3, 4, 5, 6, 7, 8]
+                                       }
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 2, 3, 4, 5, 6, 7, 8]
+                                       }
+                                   }
+                        ],
+                        columnDefs: [
+                            { orderable: false, targets: [9] }
+                        ]
+
+                    })
+
+                    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                    $(".dt-button").removeClass("dt-button");
+
+                    loadergif(0);
+                }
+
+            }
+        })
+    }
+
+    var referenceId;
+
+
+    function edit(rowid) {
+
+        $('.mistake').removeClass('mistake');
+        $("#errorEditMsg").text('');
+
+
+        referenceId = document.getElementById(rowid).childNodes[1].outerText;
+        console.log(referenceId);
+        var strJsonDatas = eval({ olId: referenceId });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getOrderLimitdetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+                var Result = jQuery.parseJSON(data);
+
+                //for (var i = 0; i < eDesignation.length - 1; i++) {
+                //    if (eDesignation[i].designation_id == Result[0].designation_id) {
+                //        $("#select2-ddlEditDesignation-container").html(eDesignation[i].designation_name);
+
+                //        $("#ddlEditDesignation").val(Result[0].designation_id).change();
+
+                //    }
+                //}
+                if (Result[0].role_id == 5) {
+                    $("input[id=editradioResearch]").prop("checked", true);
+                    LoadDesignationData(Result[0].designation_id);
+
+                }
+                else if (Result[0].role_id == 6) {
+                    $("input[id=editradioDataEntry]").prop("checked", true);
+                    LoadDesignationData(Result[0].designation_id);
+                }
+
+                if (Result[0].designation_id == 3) {
+                    $("input[id=editradioResearch]").prop("checked", false);
+                    $("input[id=editradioDataEntry]").prop("checked", false);
+                }
+
+                for (var i = 0; i < eDesignation.length - 1; i++) {
+                    if (eDesignation[i].designation_id == Result[0].designation_id) {
+                        $("#select2-ddlEditDesignation-container").html(eDesignation[i].designation_name);
+
+                        $("#ddlEditDesignation").val(Result[0].designation_id).change();
+
+                        break;
+                    }
+                    else if (Result[0].designation_id == undefined) {
+                        $("#select2-ddlEditDesignation-container").html("-Select Type-");
+
+                        $("#ddlEditDesignation").val(-1).change();
+                    }
+                }
+
+                //$("#ddlEditDesignation").val(Result[0].designation_id).change();
+
+                //$("input[name='optradios']:checked").val((Result[0].role_id)).change();
+                //$("#ddlDesignation").val((Result[0].designation_id)).change();
+                $("#EditminOrder ").val((Result[0].noIncentive_order_limit)).change();
+                $("#EditFirstInc").val((Result[0].firstIncentive_order_limit)).change();
+                $("#EditSecondInc").val((Result[0].secondIncentive_order_limit)).change();
+                $("#EditFirstIncAmount").val((Result[0].firstIncentive_amount)).change();
+                $("#EditSecondIncAmount").val((Result[0].secondIncentive_amount)).change();
+                $("#EditBalanceAmount").val((Result[0].balanceIncentive_amount)).change();
+
+            }
+        });
+    }
+
+    function updatedata() {
+
+        $('.mistake').removeClass('mistake');
+        $("#errorEditMsg").text('');
+
+        var sRole = $('input[name="optradio"]:checked').val();
+        var designation = $("#ddlEditDesignation").val();
+        if (designation == 3) {
+            sRole=5
+        }
+        var minOrder = $("#EditminOrder").val();
+        var firstInc = $("#EditFirstInc").val();
+        var secondInc = $("#EditSecondInc").val();
+        var firstAmount = $("#EditFirstIncAmount").val();
+        var secondAmount = $("#EditSecondIncAmount").val();
+        var balanceAmount = $("#EditBalanceAmount").val();
+
+        if (firstAmount=='' && secondAmount=='' && balanceAmount=='' && minOrder=='' && firstInc=='' && secondInc=='' ){
+            $("#EditminOrder").addClass('mistake');
+            $("#EditFirstInc").addClass('mistake');
+            $("#EditSecondInc").addClass('mistake');
+            $("#EditFirstIncAmount").addClass('mistake');
+            $("#EditSecondIncAmount").addClass('mistake');
+            $("#EditBalanceAmount").addClass('mistake');
+            $("#errorEditMsg").text('Please fill all fields');
+            return;
+        }
+
+        if (minOrder == '') {
+            $("#EditminOrder").addClass('mistake');
+            $("#errorEditMsg").text('Please fill minimum incentive order count');
+            return;
+        } else if (minOrder <= 0 || minOrder > 1000) {
+            $("#EditminOrder").addClass('mistake');
+            $("#errorEditMsg").text('Please enter valid count. Minimum incentive order count should be less than 1000 and greater than 0');
+            return;
+        }
+
+        if (firstInc == '') {
+            $("#EditFirstInc").addClass('mistake');
+            $("#errorEditMsg").text('Please fill first incentive order count');
+            return;
+        } else if (firstInc <= 0 || firstInc > 1000) {
+            $("#EditFirstInc").addClass('mistake');
+            $("#errorEditMsg").text('Please enter valid count. First incentive order count should be less than 1000 and greater than 0');
+            return;
+        }
+
+        if (secondInc == '') {
+            $("#EditSecondInc").addClass('mistake');
+            $("#errorEditMsg").text('Please fill second incentive order count');
+            return;
+        } else if (secondInc <= 0 || secondInc > 1000) {
+            $("#EditSecondInc").addClass('mistake');
+            $("#errorEditMsg").text('Please enter valid count. Second incentive order count should be less than 1000 and greater than 0');
+            return;
+        }
+
+        if (firstAmount == '') {
+            $("#EditFirstIncAmount").addClass('mistake');
+            $("#errorEditMsg").text('Please fill first incentive amount');
+            return;
+        } else if (firstAmount <= 0 || firstAmount > 100) {
+            $("#EditFirstIncAmount").addClass('mistake');
+            $("#errorEditMsg").text('Please enter valid amount. First incentive amount should be less than 100 and greater than 0');
+            return;
+        }
+
+        if (secondAmount == '') {
+            $("#EditSecondIncAmount").addClass('mistake');
+            $("#errorEditMsg").text('Please fill second incentive amount');
+            return;
+        } else if (secondAmount <= 0 || secondAmount > 100) {
+            $("#EditSecondIncAmount").addClass('mistake');
+            $("#errorEditMsg").text('Please enter valid amount. Second incentive amount should be less than 100 and greater than 0');
+            return;
+        }
+
+        if (balanceAmount == '') {
+            $("#EditBalanceAmount").addClass('mistake');
+            $("#errorEditMsg").text('Please fill balance incentive amount');
+            return;
+        } else if (balanceAmount <= 0 || balanceAmount > 100) {
+            $("#EditBalanceAmount").addClass('mistake');
+            $("#errorEditMsg").text('Please enter valid amount. Balance incentive amount should be less than 100 and greater than 0');
+            return;
+        }
+
+        //if (designation == -1) {
+        //    alert("Please choose designation")
+        //    return;
+        //}
+        //if (firstAmount < 0) {
+        //    alert("Please enter value greater than 0")
+        //    return;
+        //}
+        //if (secondAmount < 0) {
+        //    alert("Please enter value greater than 0")
+        //    return;
+        //}
+        //if (balanceAmount < 0) {
+        //    alert("Please enter value greater than 0")
+        //    return;
+        //}
+        //if (minOrder < 0 && minOrder > 1000) {
+        //    alert("Please enter valid order number")
+        //    return;
+        //}
+        //if (firstInc < 0 && firstInc > 1000) {
+        //    alert("Please enter valid order number")
+        //    return;
+        //}
+        //if (secondInc < 0 && secondInc > 1000) {
+        //    alert("Please enter valid order number")
+        //    return;
+        //}
+        //if (type == "-1") {
+        //    alert("Please choose Order type ");
+        //    return;
+        //}
+        //if (weightage == "") {
+        //    alert("Please type weightage ");
+        //    return;
+        //}
+        //if (weightage > 10) {
+        //    alert("weightage value exceeded the limit")
+        //    return;
+        //}
+        var strJsonDatas = eval({
+            role: sRole, designation: designation, minOrder: minOrder, firstInc: firstInc, secondInc: secondInc,
+            firstAmount: firstAmount, secondAmount: secondAmount, balanceAmount: balanceAmount, olId: referenceId
+        });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "updateOrderLimitDetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                if (data != undefined) {
+                    if (data == "exists") {
+                        swal({
+                            title: 'Error',
+                            text: 'Duplicate Entry Detected',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        })
+                    }
+                    if (data == "Error") {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Development team',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        })
+                    }
+                    if (data == "success") {
+                        swal({
+                            title: 'Updated!',
+                            text: 'Order - Incentive limit has been updated',
+                            icon: 'success',
+                            button: {
+                                text: "Continue",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                    function () {
+                        location.reload();
+                    }
+                    )
+                    }
+                } else {
+                    //Result = jQuery.parseJSON(data);
+                    //swal({
+                    //    title: 'Updated!',
+                    //    text: 'The details have been updated',
+                    //    icon: 'success',
+                    //    button: {
+                    //        text: "Continue",
+                    //        value: true,
+                    //        visible: true,
+                    //        className: "btn btn-primary",
+                    //        timer: 1000,
+                    //    }
+                    //}).then(
+                    //function () {
+                    //    location.reload();
+                    //}
+                    //)
+                }
+            }
+
+        });
+
+    }
+
+    function removeDetails() {
+        $("#errorMsg").text('');
+        $('.mistake').removeClass('mistake')
+        $("#minOrder").val('');
+        $("#FirstInc").val('');
+        $("#SecondInc").val('');
+        $("#FirstIncAmount").val('');
+        $("#SecondIncAmount").val('');
+        $("#BalanceAmount").val('');
+    }
+
+
+</script>

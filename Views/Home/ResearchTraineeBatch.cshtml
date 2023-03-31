@@ -1,0 +1,1081 @@
+﻿
+@{
+    ViewBag.Title = "ResearchTraineeBatch";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    table.dataTable tbody tr.selected > * {
+        box-shadow: inset 0 0 0 9999px rgb(13 110 253 / 90%);
+        color: white;
+    }
+
+    table.dataTable tbody td.select-checkbox:before, table.dataTable tbody th.select-checkbox:before {
+        content: " ";
+        margin-top: -6px;
+        margin-left: -6px;
+        border: 1px solid black;
+        border-radius: 3px;
+    }
+
+    table.dataTable tbody td.select-checkbox:before, table.dataTable tbody td.select-checkbox:after, table.dataTable tbody th.select-checkbox:before, table.dataTable tbody th.select-checkbox:after {
+        display: block;
+        position: absolute;
+        top: 1.2em;
+        left: 50%;
+        width: 12px;
+        height: 12px;
+        box-sizing: border-box;
+    }
+
+    table.dataTable tr.selected td.select-checkbox:before, table.dataTable tr.selected th.select-checkbox:before {
+        border: 1px solid white;
+    }
+
+    table.dataTable tbody td.select-checkbox:before, table.dataTable tbody th.select-checkbox:before {
+        content: " ";
+        margin-top: -6px;
+        margin-left: -6px;
+        border: 1px solid black;
+        border-radius: 3px;
+    }
+
+    table.dataTable tbody td.select-checkbox:before, table.dataTable tbody td.select-checkbox:after, table.dataTable tbody th.select-checkbox:before, table.dataTable tbody th.select-checkbox:after {
+        display: block;
+        position: absolute;
+        top: 1.2em;
+        left: 50%;
+        width: 12px;
+        height: 12px;
+        box-sizing: border-box;
+    }
+
+    table.dataTable tr.selected td.select-checkbox:after, table.dataTable tr.selected th.select-checkbox:after {
+        content: "✓";
+        font-size: 20px;
+        margin-top: -19px;
+        margin-left: -6px;
+        text-align: center;
+        text-shadow: 1px 1px #b0bed9, -1px -1px #b0bed9, 1px -1px #b0bed9, -1px 1px #b0bed9;
+    }
+
+    table.dataTable tbody td.select-checkbox:before, table.dataTable tbody td.select-checkbox:after, table.dataTable tbody th.select-checkbox:before, table.dataTable tbody th.select-checkbox:after {
+        display: block;
+        position: absolute;
+        top: 1.2em;
+        left: 50%;
+        width: 12px;
+        height: 12px;
+        box-sizing: border-box;
+    }
+
+    .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > td, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
+        vertical-align: middle;
+    }
+
+    table.dataTable tbody td.select-checkbox, table.dataTable tbody th.select-checkbox {
+        position: relative;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter label {
+        position: static;
+    }
+
+    .form-control, .asColorPicker-input, .dataTables_wrapper select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text], .jsgrid .jsgrid-table .jsgrid-filter-row select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=number], .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint {
+        border: 1px solid #CED4DA;
+        font-weight: 400;
+        font-size: 0.875rem;
+        border-radius: 4px;
+    }
+
+        .form-control, .asColorPicker-input, .dataTables_wrapper select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text], .jsgrid .jsgrid-table .jsgrid-filter-row select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=number], .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint, .form-control:focus, .asColorPicker-input:focus, .dataTables_wrapper select:focus, .jsgrid .jsgrid-table .jsgrid-filter-row input:focus[type=text], .jsgrid .jsgrid-table .jsgrid-filter-row select:focus, .jsgrid .jsgrid-table .jsgrid-filter-row input:focus[type=number], .select2-container--default .select2-selection--single:focus, .select2-container--default .select2-selection--single .select2-search__field:focus, .typeahead:focus, .tt-query:focus, .tt-hint:focus {
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+            outline: 0;
+        }
+
+    .form-control-sm {
+        height: 2.575rem;
+        padding: 0.5rem 0.81rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border-radius: 0.2rem;
+    }
+
+    .form-control, .asColorPicker-input, .dataTables_wrapper select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text], .jsgrid .jsgrid-table .jsgrid-filter-row select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=number], .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint {
+        display: block;
+        width: 100%;
+        height: 2.875rem;
+        padding: 0.875rem 1.375rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1;
+        color: #495057;
+        background-color: #ffffff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 2px;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .dataTables_wrapper .dataTable thead .sorting:after {
+        top: 10px !important;
+    }
+
+    .dataTables_wrapper .dataTable thead .sorting_asc:after {
+        top: 10px !important;
+    }
+
+    .dataTables_wrapper .dataTable thead .sorting_desc:after {
+        top: 10px !important;
+    }
+
+    .myClass {
+        background-color: #4b49ac;
+        border: 1px solid white;
+        border-radius: 10px;
+        color: white;
+        width: 70%;
+        /*cursor:pointer;*/
+    }
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    .menu {
+        height: 100%;
+        overflow-y: overlay;
+    }
+
+    .mistake {
+        /*background-color: #fce4e4;*/
+        border: 1px solid #cc0033;
+    }
+
+    .menu::-webkit-scrollbar {
+        width: 1em;
+    }
+
+    .menu::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius:15px;
+    }
+
+    .menu::-webkit-scrollbar-thumb {
+        background-color: #4B49AC;
+        outline: 1px solid grey;
+        border-radius: 15px;
+    }
+
+    .batchTable {
+        overflow-y: scroll;
+        height: 400px;
+        padding-top: 20px;
+         /*height: 100%;*/
+        /*overflow-y: overlay;*/
+    }
+
+    .hidden{
+        display:none;
+    }
+
+    button.selected {
+        background-color : red;
+    }
+
+    .active {
+        background-color: #57b657;
+    }
+    .batch-name {
+        color: #4b49ac;
+    }
+
+</style>
+
+<div class="abc">
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Employee - Batch Details</h2>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4 addbtn" style="display:flex; justify-content:flex-end;">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateForm"><i class="fa fa-plus" style="margin-right: 5px;" aria-hidden="true"></i> Add Employee </button>
+            </div>
+
+        </div>
+    </div>
+
+    @*Add Modal*@
+    <div class="modal fade" id="modalCreateForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document" style="display:flex; justify-content:center">
+            <div class="modal-content" style="width: 500px">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold" style="justify-content: center;display: flex;">Add Employee</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding:35px 40px !important">
+                    <div class="row" style="display: flex;justify-content: space-around;">
+
+                        <div class="col-md-12" style="padding-top:10px">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-5"><label>Batch : </label></div>
+                                <div class="col-sm-7">
+                                    <select class="form-control validate js-example-basic-single" id="ddlBatchName">
+                                        @*<option value="" disabled selected>Select your option</option>*@
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-5"><label>Employee Name : </label></div>
+                                <div class="col-sm-7">
+                                    <select class="form-control validate js-example-basic-single" id="ddlEmployee" multiple>
+                                        @*<option value="" disabled selected>Select your option</option>*@
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="display: flex;justify-content: center;">
+                            <span id="errorMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="AddData()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Save </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="height: 600px;padding: 35px 70px;">
+        <div class="col-md-3 menu" style="display: flex; align-content: center; align-items: center; justify-content: center; line-height: 40px; border: 1px solid;">
+            <div style="FLEX-DIRECTION: column; display: flex; PADDING: 30PX 10PX; justify-content: center; align-items: center; align-content: center; 
+             gap: 15px; width: 100%;" id="menuDiv">
+                @*align-self: flex-start;*@ 
+            </div>
+        </div>
+        <div class="col-md-9" style="border:1px solid">
+            <div class="row" style="display: flex;align-content: center;justify-content: space-around;align-items: center; border-bottom:1px solid; height:100px">
+                <div class="col-md-2"><h3 class="batch-name" id="batch-name"></h3></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-3" style="height: 100px">
+                    <div class="md-form mb-5">
+                        <label>Batch</label>
+                        <select class="form-control validate js-example-basic-single w-100" id="ddlBatchNames">
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2" style="height: 100px">
+                    <label><br></label>
+                    <div class="md-form mb-5">
+                        <button type="button" class="btn btn-success saved" id="btnSelectedRows">SAVE</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-12 batchTable" id="hiddenTable_EmployeeBatch">
+                <table id="EmployeeBatch" class="table dataTable no-footer" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>EMPLOYEE CODE</th>
+                            <th>EMPLOYEE NAME</th>
+                            <th class="hidden">EMPLOYEE ID</th>
+                            <th>DELETE</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/JavaScript" src="https://MomentJS.com/downloads/moment-with-locales.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+<script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js" defer></script>
+
+<script>
+
+
+    $(document).ready(function () {
+        var RefId;
+        var TempId = 0;
+        var batchText = '';
+        BatchData();
+        EmployeeData();
+        //getData();
+        
+        
+    })
+
+
+    function EmployeeData() {
+        var strJsonData = eval({ CurrentUser: 1, EmployeeId: 1 });
+        var Result = "";
+        $.ajax({
+            url: "LoadTableData",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            //data: JSON.stringify(strJsonData),
+            success: function (data) {
+
+
+                ResultEmployeeList = jQuery.parseJSON(data.strTrainees);
+                ResultBatchList = jQuery.parseJSON(data.strBatch);
+
+                employeeNames=ResultEmployeeList;
+
+
+                if (ResultEmployeeList != "" && ResultEmployeeList != null) {
+
+                    //$('#ddlEmployee').empty().append('<option value="-1">-Select Employee-</option>');
+
+                    for (var i = 0; i < ResultEmployeeList.length; i++) {
+                        $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '" >' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                    }
+
+            //            if(employeeNames!="")
+            //            {
+            //                if(ResultEmployeeList[i]["emp_ref_no"]==employeeNames)
+            //                {
+            //                    $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '" selected>' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+            //            }
+            //            else
+            //            {
+            //                $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+            //            }
+            //        }
+            //    else
+            //    {
+            //                $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+            //    }
+            //    //$('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+            //}
+        }
+
+                if (ResultBatchList != "" && ResultBatchList != null) {
+
+                    //$('#ddlBatchName').empty().append('<option value="-1">-Select Batch-</option>');
+                    $('#ddlBatchNames').empty().append('<option value="-1">-Select Batch-</option>');
+
+                    for(var i=0;i<ResultBatchList.length;i++){
+                        $('#ddlBatchName').append('<option value="' + ResultBatchList[i]["id"] + '" >' + ResultBatchList[i]["batchName"] + '</option>');
+                        $('#ddlBatchNames').append('<option value="' + ResultBatchList[i]["id"] + '" >' + ResultBatchList[i]["batchName"] + '</option>');
+                    }
+
+                }
+
+        }
+    });
+    }
+
+    function BatchData(){
+        id = 7;
+        var strJsonDatas = eval({ Id: id });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getBatchData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                ResultData = jQuery.parseJSON(msg);
+                for (var i = 0; i < ResultData.length; i++) {
+                    let div = document.createElement("button")
+
+                    div.innerHTML = ResultData[i].batchName;
+
+                    div.className = "myClass";
+
+                    //div.id = "but"+(i+1);
+
+                    div.id = ResultData[i].id;
+
+                    var c = ResultData[0].id;
+
+                    div.setAttribute("onclick","BatchWiseList("+(ResultData[i].id)+")");
+
+                    //div.addEventListener("click", BatchWiseList(i));
+
+                    //var buttons = document.querySelectorAll('button');
+
+                    ////for (var i=0; i<buttons.length; ++i) {
+                    //    buttons[i].addEventListener('click', BatchWiseList(i+1));
+                    //}
+
+                    //function clickFunc() {
+                    //    alert(this.id); 
+                    //}
+
+                    //div.onclick = function() { BatchWiseList(i+1) };
+
+                    //div.onclick = BatchWiseList(i);
+
+                        document.getElementById("menuDiv").append(div);
+                       /// document.getElementsByClassName("myClass").append(buttons)
+                }
+                BatchWiseList(c);
+                //var el = document.querySelectorAll(".myClass"); // this element contains more than 1 DOMs.
+                //for(var i =0; i < el.length; i++) {
+                //    el[i].onclick = function() { console.log(i+1)};
+                //}
+            }
+        });
+    }
+
+    function getData() {
+        var  Results = @Html.Raw(Json.Encode(ViewBag.Data));
+        Data = Results.Data;
+        Result = jQuery.parseJSON(Data);
+        $('#EmployeeBatch').DataTable().clear().destroy();
+        if (Result != null) {
+
+            Datas = Result;
+
+            var length = Datas.length;
+
+            var table = document.getElementById('EmployeeBatch');
+
+            for (var i = table.rows.length - 1; i > 0; i--) {
+                table.deleteRow(i);
+            }
+
+            for (var i = 0; i < length; i++) {
+
+
+                $('#EmployeeBatch').append(
+                    '<tr id="' + i + '">' +
+                    '<td></td>' +
+                        '<td>' + Datas[i].EM_EMPLOYEE_CODE + '</td>' +
+                        '<td>' + Datas[i].EM_NAME + '</td>' +
+                        '<td class="hidden">' + Datas[i].emp_id + '</td>' +
+                   '</tr>');
+
+            }
+
+            tables =  $('#EmployeeBatch').DataTable({
+                "bpaging": false,
+                "bDestroy": true,
+                "scrollX": true,
+                select: {
+                    style: 'multi',
+                    info: false
+                },
+                columnDefs: [ {
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets:   [0]
+                } ],
+            })
+
+            $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+            $(".dt-button").removeClass("dt-button");
+
+            loadergif(0);
+        }
+    }
+
+
+
+    function BatchWiseList(id) {
+        loadergif(1);
+        RefId = 1
+        TempId = id;
+        batchText = $("#"+id).text();
+        $('.myClass').removeClass('active');
+        $("#"+id).addClass('active')
+        $('#EmployeeBatch').DataTable().clear().destroy();
+        rowNo = 0;
+        var strJsonDatas = eval({ RefId : RefId,Id: id });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getBatchWiseDetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+
+                Result = jQuery.parseJSON(data);
+                $('#EmployeeBatch').DataTable().clear().destroy();
+                if (Result != null) {
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+
+                    var table = document.getElementById('EmployeeBatch');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+
+
+                        $('#EmployeeBatch').append(
+                            '<tr id="' + i + '">' +
+                            '<td></td>' +
+                                '<td>' + Datas[i].EM_EMPLOYEE_CODE + '</td>' +
+                                '<td>' + Datas[i].EM_NAME + '</td>' +
+                                '<td class="hidden">' + Datas[i].emp_id + '</td>' +
+                                '<td><a href="#" onclick="deleteId(' + i + ') "><i class="fa fa-trash" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                           '</tr>');
+
+                    }
+
+                    tables =  $('#EmployeeBatch').DataTable({
+                        "bpaging": false,
+                        "bDestroy": true,
+                        "scrollX": true,
+                        select: {
+                            style: 'multi',
+                            info: false
+                        },
+                        columnDefs: [ {
+                            orderable: false,
+                            className: 'select-checkbox',
+                            targets:   [0]
+                        } ],
+                    })
+
+                    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                    $(".dt-button").removeClass("dt-button");
+
+                    loadergif(0);
+
+                    $("#batch-name").text(batchText);
+                    //$("#ddlBatchNames").val(id).change;
+                }
+
+            }
+        })
+    }
+   
+
+    var tblLength=0;
+    var tblData=null;
+    var tmpData=null;
+
+
+    $('#btnSelectedRows').on('click', function() {
+        tblData = tables.rows('.selected').data();
+        tblLength = tables.rows( { selected: true } ).count();
+        if(tblLength<=0){
+            swal({
+                title: 'Error',
+                text: 'Employee not selected',
+                icon: 'error',
+                button: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary",
+                    timer: 1000,
+                }
+            })
+        }
+        else{
+            var BatchId = $("#ddlBatchNames").val();
+            if(BatchId==-1){
+                swal({
+                    title: 'Error',
+                    text: 'Batch not selected',
+                    icon: 'error',
+                    button: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-primary",
+                        timer: 1000,
+                    }
+                })
+            }
+            else if(BatchId==TempId){
+                swal({
+                    title: 'Error',
+                    text: 'Same batch selected. Please choose another one',
+                    icon: 'error',
+                    button: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-primary",
+                        timer: 1000,
+                    }
+                })
+            }
+            else{
+                swal({
+                    title: 'Are you sure to move the employee to another batch?',
+                    //text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3f51b5',
+                    cancelButtonColor: '#ff4081',
+                    confirmButtonText: 'Great ',
+                    buttons: {
+                        cancel: {
+                            text: "NO",
+                            value: null,
+                            visible: true,
+                            className: "btn btn-danger",
+                            closeModal: true,
+                        },
+                        confirm: {
+                            text: "YES",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-primary",
+                            closeModal: true
+                        }
+                    }
+                }).then(
+function (isConfirm) {
+    if (isConfirm) {
+        //var BatchId = $("#ddlBatchNames").val();
+        //if(BatchId==TempId||BatchId==-1){
+        //    swal({
+        //        title: 'Error',
+        //        text: 'Please choose another batch',
+        //        icon: 'error',
+        //        button: {
+        //            text: "OK",
+        //            value: true,
+        //            visible: true,
+        //            className: "btn btn-primary",
+        //            timer: 1000,
+        //        }
+        //    })
+        //}else{
+            BatchChange();
+        //}
+        ////alert("hi");
+                
+    }
+    else {
+        return false;
+    }
+})
+            }
+
+            //BatchChange();
+        }
+    })
+
+
+
+    function BatchChange(){
+        RefId = 3
+        var BatchId = $("#ddlBatchNames").val();
+
+        //if(BatchId==TempId||BatchId==-1){
+        //    swal({
+        //        title: 'Error',
+        //        text: 'Please choose another batch',
+        //        icon: 'error',
+        //        button: {
+        //            text: "Continue",
+        //            value: true,
+        //            visible: true,
+        //            className: "btn btn-primary",
+        //            timer: 1000,
+        //        }
+        //    })
+        //}else{
+            for(i=0;i<tblLength;i++){
+                tmpData = tblData[i];
+                var EmpId = tmpData[3];
+                //return;
+                var strJsonDatas = eval({ RefId:RefId,EmpId: EmpId,BatchId:BatchId });
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "getBatchWiseDetails",
+                    data: JSON.stringify(strJsonDatas),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (msg) {
+                        var Result = jQuery.parseJSON(msg);
+                        var data = Result[0].resultmsg
+                        if(data=="SUCCESS")
+                        {
+                            //Result = jQuery.parseJSON(data);
+                            //Result = data;
+                            swal({
+                                title: 'Updated!',
+                                text: 'The batch has been changed',
+                                icon: 'success',
+                                button: {
+                                    text: "OK",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-primary",
+                                    timer: 1000,
+                                }
+                            }).then(
+                            function(){
+                                //location.reload();
+                                BatchWiseList(TempId);
+                            }
+                            )
+                        }
+                        //BatchWiseList(TempId);
+                        //location.reload();
+                        //alert("success")
+                    }
+                })
+            }
+        //}
+
+    }
+
+    function AddData() {
+
+        RefId = 2
+        var BatchId = $("#ddlBatchName").val();
+        var EmpData = $("#ddlEmployee").val();
+
+        if(BatchId==-1){
+            alert("Please choose a valid batch");
+            return;
+        }
+
+        if(EmpData.length==0 ){
+            swal({
+                title: 'Error',
+                text: 'Please choose an employee',
+                icon: 'error',
+                button: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary",
+                    timer: 1000,
+                }
+            })
+            return;
+        }
+
+        for (var i=0;i<EmpData.length;i++){
+            var EmpId = EmpData[i];
+            var strJsonDatas = eval({ RefId: RefId, BatchId: BatchId,EmpId : EmpId })
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "getBatchWiseDetails",
+                data: JSON.stringify(strJsonDatas),
+                contentType: "application/json; charset=utf-8",
+                success: function (msg) {
+                    var datas = msg;
+                    var Result = jQuery.parseJSON(datas);
+                    var data = Result[0].resultmsg
+                    if (data != undefined) {
+                        if (data == "SUCCESS") {
+                            swal({
+                                title: 'Success!',
+                                text: 'Employee added successfully',
+                                icon: 'success',
+                                button: {
+                                    text: "OK",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-primary",
+                                    timer: 1000,
+                                }
+                            }).then(
+                            function () {
+                                location.reload();
+                            }
+                            )
+                        }
+                        else if (data == "NAME UPDATED") {
+                            swal({
+                                title: 'Success!',
+                                text: 'Name updated successfully',
+                                icon: 'success',
+                                button: {
+                                    text: "OK",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-primary",
+                                    timer: 1000,
+                                }
+                            }).then(
+                            function () {
+                                location.reload();
+                            }
+                            )
+                        }
+                        else if (data == "EMPLOYEE EXISTS") {
+                            swal({
+                                title: 'Error!',
+                                text: 'Employee already exist.',
+                                icon: 'error',
+                                button: {
+                                    text: "OK",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-primary",
+                                    timer: 1000,
+                                }
+                            }).then(
+                            function () {
+                                //location.reload();
+                            }
+                            )
+                        }
+                        else if (data == "NAME EXISTS") {
+                            swal({
+                                title: 'Error!',
+                                text: 'Batch name already exist. Please give another name',
+                                icon: 'error',
+                                button: {
+                                    text: "OK",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-primary",
+                                    timer: 1000,
+                                }
+                            }).then(
+                            function () {
+                                //location.reload();
+                            }
+                            )
+                        }
+                    }
+                    else {
+                    }
+
+
+                }
+            })
+            //alert (EmpId);
+            
+        }
+        //return;
+
+        ////var strJsonDatas = eval({ RefId: RefId, BatchId: BatchId,EmpId : EmpId })
+        ////$.ajax({
+        ////    type: "POST",
+        ////    async: false,
+        ////    url: "getBatchWiseDetails",
+        ////    data: JSON.stringify(strJsonDatas),
+        ////    contentType: "application/json; charset=utf-8",
+        ////    success: function (msg) {
+        ////        var datas = msg;
+        ////        var Result = jQuery.parseJSON(datas);
+        ////        var data = Result[0].resultmsg
+        ////        if (data != undefined) {
+        ////            if (data == "SUCCESS") {
+        ////                swal({
+        ////                    title: 'Success!',
+        ////                    text: 'Employee added successfully',
+        ////                    icon: 'success',
+        ////                    button: {
+        ////                        text: "OK",
+        ////                        value: true,
+        ////                        visible: true,
+        ////                        className: "btn btn-primary",
+        ////                        timer: 1000,
+        ////                    }
+        ////                }).then(
+        ////                function () {
+        ////                    location.reload();
+        ////                }
+        ////                )
+        ////            }
+        ////            else if (data == "NAME UPDATED") {
+        ////                swal({
+        ////                    title: 'Success!',
+        ////                    text: 'Name updated successfully',
+        ////                    icon: 'success',
+        ////                    button: {
+        ////                        text: "OK",
+        ////                        value: true,
+        ////                        visible: true,
+        ////                        className: "btn btn-primary",
+        ////                        timer: 1000,
+        ////                    }
+        ////                }).then(
+        ////                function () {
+        ////                    location.reload();
+        ////                }
+        ////                )
+        ////            }
+        ////            else if (data == "EMPLOYEE EXISTS") {
+        ////                swal({
+        ////                    title: 'Error!',
+        ////                    text: 'Employee already exist.',
+        ////                    icon: 'error',
+        ////                    button: {
+        ////                        text: "OK",
+        ////                        value: true,
+        ////                        visible: true,
+        ////                        className: "btn btn-primary",
+        ////                        timer: 1000,
+        ////                    }
+        ////                }).then(
+        ////                function () {
+        ////                    //location.reload();
+        ////                }
+        ////                )
+        ////            }
+        ////            else if (data == "NAME EXISTS") {
+        ////                swal({
+        ////                    title: 'Error!',
+        ////                    text: 'Batch name already exist. Please give another name',
+        ////                    icon: 'error',
+        ////                    button: {
+        ////                        text: "OK",
+        ////                        value: true,
+        ////                        visible: true,
+        ////                        className: "btn btn-primary",
+        ////                        timer: 1000,
+        ////                    }
+        ////                }).then(
+        ////                function () {
+        ////                    //location.reload();
+        ////                }
+        ////                )
+        ////            }
+        ////        }
+        ////        else {
+        ////        }
+
+
+        ////    }
+        ////})
+    }
+
+    function deleteId(rowid) {
+
+        RefId = 4;
+        rowNo = document.getElementById(rowid).childNodes[3].outerText;
+
+        var strJsonDatas = eval({ RefId: RefId, EmpId : rowNo });
+        
+        swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3f51b5',
+            cancelButtonColor: '#ff4081',
+            confirmButtonText: 'Great ',
+            buttons: {
+                cancel: {
+                    text: "Cancel",
+                    value: null,
+                    visible: true,
+                    className: "btn btn-danger",
+                    closeModal: true,
+                },
+                confirm: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary",
+                    closeModal: true
+                }
+            }
+        }).then(
+        function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "getBatchWiseDetails",
+                    data: JSON.stringify(strJsonDatas),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (msg) {
+                        var datas = msg;
+                        var Result = jQuery.parseJSON(datas);
+                        var data = Result[0].resultmsg
+                        if (data != undefined) {
+                            if (data == "Error") {
+                                swal({
+                                    title: 'Error',
+                                    text: 'Something went wrong.Contact Development team',
+                                    icon: 'error',
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary",
+                                        timer: 1000,
+                                    }
+                                }).then(
+                                function () {
+                                    location.reload();
+                                })
+                            }
+                            if (data == "DELETED") {
+                                //Result = jQuery.parseJSON(data);
+                                swal({
+                                    title: 'Deleted!',
+                                    text: 'Employee has been deleted.',
+                                    type: "success",
+                                    timer: 1000,
+                                    button: false
+                                }).then(
+                                function () {
+                                    location.reload();
+                                })
+                            }
+                        } else {
+                            ////Result = jQuery.parseJSON(data);
+                            //Result=data;
+                            //swal({
+                            //    title: 'Deleted!',
+                            //    text: 'Your file has been deleted.',
+                            //    type:"success",
+                            //    timer: 1000,
+                            //    button: false
+                            //}).then(
+                            //    function() {
+                            //        location.reload();
+                            //    })
+                        }
+                    }
+                });
+            }
+            else {
+                return false;
+            }
+        }
+        )
+    }
+
+    //$(":button").on('click', function(){
+    //    $('button').removeClass('selected');
+    //    $(this).addClass('selected');
+    //});
+
+</script>
+

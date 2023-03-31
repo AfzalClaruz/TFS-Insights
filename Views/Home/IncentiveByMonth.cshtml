@@ -1,0 +1,428 @@
+﻿
+@{
+    ViewBag.Title = "IncentiveByMonth";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden{
+        display:none;
+    }
+    /*div.dataTables_filter label {
+        position: relative !important;
+    }*/
+
+.table-responsive{
+    overflow-x: hidden !important;
+}
+.highlightRow {
+outline: thin solid black;
+      box-shadow: inset 0 0 5px;
+}
+
+.btn-outline-primary{
+border-radius: 5px!important;
+    height: 25px;
+    width: 70px;
+
+}
+.backIcon{
+    cursor:pointer;
+}
+
+/*sorting icon stop get closer*/
+.dataTables_wrapper .dataTable thead .sorting:after{
+    top:20px !important;
+}
+.dataTables_wrapper .dataTable thead .sorting_asc:after{
+    top:20px !important;
+}
+.dataTables_wrapper .dataTable thead .sorting_desc:after{
+    top:20px !important;
+}
+
+
+    /*pdf csv button*/
+    .dt-buttons a {
+        width: 32px;
+        line-height: 0;
+        margin-top: 20px;
+        border-radius: 10px !important;
+    }
+
+    .dt-buttons span {
+        font-size: 14px;
+        margin-left: -13px;
+    }
+
+/*.dataTable > thead > tr > th[class*="sort"]:before,
+.dataTable > thead > tr > th[class*="sort"]:after {
+    content: "" !important;
+}*/
+
+</style>
+
+<div class="abc">
+    <h2 style="margin-bottom:30px; display:flex; justify-content:space-between">Incentive By Month 
+    <span class="backIcon hidden" id="backIcon"><i class="fa fa-arrow-left " aria-hidden="true" title="Go Back to Incentive By Month Page!" onclick="goBack();" style="font-size:20px;"></i> </span>
+    </h2>
+    <div class="row" id="chooseYear" style="align-items: center;">
+        <div class="col-md-3">
+            <div class="md-form mb-5">
+                <label>Choose year : </label>
+                <select class="form-control validate js-example-basic-single w-100" id="ddlYear">
+                    <option value="1">2023</option>
+                    <option value="2">2022</option>
+                    <option value="3">2021</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2" style="margin-top: -22px">
+            <button type="button" class="btn btn-primary" onclick="incentiveByMonth()">Apply</button>
+        </div>
+    </div>
+    <div class="row" style="justify-content:center" id="monthByIncentive">
+
+
+        <div class="col-lg-10 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body" style=" background: azure;">
+
+                    <div class="table-responsive" id="hiddenTable_month">
+                        <table id="Incentive_By_Month" class="table">
+                            <thead>
+                                <tr>
+                                    <th>MONTH</th>
+                                    <th>COUNT</th>
+                                    <th>INCENTIVE ₹</th>
+                                    <th class="hidden">FROM DATE</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 72px;">
+        <div class="col-sm-12 hidden" id="hiddenTable_employee">
+            <table id="EmployeeDetails" class="table dataTable no-footer" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>SL.NO</th>
+                        <th class="hidden">ORDER ID</th>
+                        <th>ADDRESS</th>
+                        <th>WEIGHTAGE</th>
+                        <th>LOSS</th>
+                        <th>GAIN</th>
+                        @*<th>COMPLETED DATE</th>*@
+                        <th>COMPLETED <br /> DATE</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://cdn.datatables.net/plug-ins/1.12.1/api/sum().js" defer></script>
+
+<script>
+
+
+
+
+    $(document).ready(function () {
+        incentiveByMonth();
+    });
+
+
+    function incentiveByMonth() {
+        var year = $("#ddlYear option:selected").text() + "-12-01 00:00:00.000";
+        const monthNames = ["","January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+
+        const d = new Date();
+        var a = monthNames[d.getMonth() + 1];
+        //var year = '2022-01-01 00:00:00.000'
+        var strJsonDatas = eval({ year: year });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getIncentiveByMonth",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+
+                $('#Incentive_By_Month').DataTable().clear().destroy();
+
+                if (data == '[]') {
+                    var table = document.getElementById('Incentive_By_Month');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    $('#Incentive_By_Month').append(
+                            '<tr id="' + i + '">' +
+                            '<td></td>' +
+                                '<td><span style="color:red;">No Datas Found</span></td>' +
+                                '<td></td>' +
+                                //'<td>' + Datas[i].C_DATE + '</td>' +
+                           '</tr>');
+
+                }
+
+                Result = jQuery.parseJSON(data);
+
+                if (Result != '' && Result != null) {
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+
+                    var table = document.getElementById('Incentive_By_Month');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+
+                        if (Datas[i].count == undefined)
+                            Datas[i].count = "-";
+                        if (Datas[i].incentive == undefined)
+                            Datas[i].incentive = "0";
+
+
+
+                        $('#Incentive_By_Month').append(
+                            '<tr id="' + i + '">' +
+
+                                '<td>' + monthNames[Datas[i].month] + '</td>' +
+                                '<td>' + Datas[i].count + '</td>' +
+                                '<td>' + Datas[i].incentive + '</td>' +
+                                '<td class="hidden">' + Datas[i].fromDate + '</td>' +
+                                '<td> <button class="btn-outline-primary" onclick="incentiveOrders(' + i + ')">View</button>  </td>' +
+
+
+                           '</tr>');
+
+                    }
+
+                    $('#Incentive_By_Month').DataTable({
+                        bFilter: false,
+                        bInfo: false,
+                        bPaginate: false,
+                        //"ordering": false,
+                        "aaSorting": [],
+                        createdRow: function (row, data, dataIndex) {
+                            console.log('ok');
+                            if (data[0] == a) {
+                                $(row).addClass('highlightRow');
+                            }
+                        },
+                        columnDefs: [
+
+                               { orderable: false, targets: [0,1,2,4] }
+                               
+                               ]
+
+                    })
+
+
+
+                }
+            }
+
+        });
+    }
+
+    var refDate;
+    function incentiveOrders(rowId) {
+        refDate = document.getElementById(rowId).childNodes[3].outerText;//Fetching the date from Incentive_By_Month datatable
+        var strJsonDatas = eval({ StartDate: refDate });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "employeeIncentivedetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+
+                Result = jQuery.parseJSON(data);
+
+                if (Result != null) {
+
+
+                    $('#hiddenTable_employee').removeClass('hidden');
+                    $('#EmployeeDetails').DataTable().clear().destroy();
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+
+                    var table = document.getElementById('EmployeeDetails');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+                        if (Datas[i].weightage_value == undefined)
+                            Datas[i].weightage_value = "-";
+                        if (Datas[i].initial_value == undefined)
+                            Datas[i].initial_value = "-";
+                        if (Datas[i].final_value == undefined)
+                            Datas[i].final_value = "-";
+                        if (Datas[i].amount < 0)
+                            Datas[i].amount = "0";
+
+                        var final_value = Datas[i].final_value;
+                        var amount = Datas[i].amount;
+
+                        //var initial_value = Datas[i].initial_value;
+
+                        if (Datas[i].amount > 0) {
+                            amount = "<span style='color:red;'>" + Datas[i].amount + "</span>"
+                        }
+                        if (Datas[i].updated_date != null) {
+                            var date = Datas[i].updated_date;
+                            date = date.split('T')[0];
+                            //var updatedDate = new Date().toLocaleDateString('en-US')
+                        }
+
+                        //if(Datas[i].initial_value>Datas[i].final_value)
+                        //{
+                        //    final_value="<span style='color:red;'>"+Datas[i].final_value+"</span>"
+                        //}
+
+                        $('#EmployeeDetails').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].Sl_no + '</td>' +
+                                '<td class="hidden">' + Datas[i].order_id + '</td>' +
+                                '<td>' + Datas[i].subject_address + '</td>' +
+                                '<td>' + Datas[i].weightage_value + '</td>' +
+                                '<td>' + amount + '</td>' +
+                                '<td>' + final_value + '</td>' +
+                                '<td>' + date + '</td>' +
+                                //'<td><a href="#" onclick="historyId(' + i + ')"><i class="fa fa-list-ul" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                                //'<td></td>' +
+                           '</tr>');
+
+                    }
+
+                    var table = $('#EmployeeDetails').DataTable();
+                    h = table.column(3).data().sum();
+                    var b = table.column(4).data().sum();
+                    var c = table.column(5).data().sum();
+
+                    if (Result != [] && c != 0) {
+                        $("#EmployeeDetails").append(
+                            '<tfoot><tr style="color: #4b49ac;">' +
+                             '<th></th>' +
+                             '<th class="hidden"></th>' +
+                             '<th style="text-align:center">Total:</th>' +
+                             '<th id="wSum">-</th>' +
+                             '<th id="iniSum">-</th>' +
+                             '<th id="finSum">-</th>' +
+                             '<th></th>' +
+                             '</tr>' +
+                             '</tfoot>');
+                        $('#wSum').text(h.toFixed(2));
+                        $('#iniSum').text(b.toFixed(2));
+                        $('#finSum').text(c.toFixed(2));
+                    }
+
+                    $('#hiddenTable_employee').removeClass('hidden');
+                    $("#hiddenTable_employee_incentive").addClass('hidden')
+
+
+
+                    //setTimeout(function () {
+                    $('#EmployeeDetails').DataTable({
+
+                        "bpaging": false,
+                        "bDestroy": true,
+                        dom: 'Blfrtip',
+                        buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 2, 3, 4,5,6],
+                                       orthogonal: "export",
+                                       rows: function (idx, data, node) {
+                                           number = 1;
+                                           return true;
+                                       }
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: true,
+                                       exportOptions: {
+                                           columns: [0, 2, 3, 4, 5, 6]
+                                       }
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: true,
+                                       exportOptions: {
+                                           columns: [0, 2, 3, 4, 5, 6]
+                                       }
+                                   }
+                        ],
+                        columnDefs: [
+                                {
+                                    render: function (data, type, full, meta) {
+                                        return "<div class='text-wrap width-200'>" + data + "</div>";
+                                    },
+                                    targets: 2
+                                }
+                        ]
+
+                    })
+
+                    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                    $(".dt-button").removeClass("dt-button");
+                    $('#monthByIncentive').addClass('hidden');
+                    $('#hiddenTable_employee').removeClass('hidden');
+                    $('#backIcon').removeClass('hidden');
+                    $('#chooseYear').addClass('hidden');
+                    
+
+                }
+            }
+
+        });
+
+        
+
+
+    }
+
+    function goBack() {
+        $('#hiddenTable_employee').addClass('hidden');
+        $('#monthByIncentive').removeClass('hidden');
+        $('#backIcon').addClass('hidden');
+        $('#chooseYear').removeClass('hidden');
+    }
+</script>
+

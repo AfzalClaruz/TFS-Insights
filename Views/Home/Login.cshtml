@@ -1,0 +1,84 @@
+﻿@model Insights.Models.LoginViewModel
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>INSIGHTS - @ViewBag.Title</title>
+    <link href="~/Content/images/insights_logo_collapsed.png" rel="shortcut icon" type="image/x-icon" />
+    <link rel="stylesheet" href="~/Content/css/main.css">
+    <link rel="stylesheet" href="~/Content/css/style.css">
+    <link rel="stylesheet" href="~/Content/css/color.css">
+    <link rel="stylesheet" href="~/Content/css/design.css">
+    <link rel="stylesheet" href="~/Content/css/select2-bootsrap.min.css">
+    <link rel="stylesheet" href="~/Content/css/icon.css">
+    <link rel="stylesheet" href="~/Content/css/mdi.css">
+
+
+
+@*<link rel="shortcut icon" href="~/Content/images/favicon.png" />*@
+</head>
+
+<body>
+
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper full-page-wrapper">
+            <div class="content-wrapper d-flex log-wrap align-items-stretch auth auth-img-bg">
+                <div class="row flex-grow">
+                    <div class="col-lg-6 d-flex align-items-center justify-content-center">
+                        <div class="int" style="background-color:white; border-radius:15px 50px; width: 70%;">
+                            <div class="auth-form-transparent text-left p-3">
+                                <div class="brand-logo">
+                                    <img src="~/Content/images/Login_logo.png" style="height: 60px;" alt="logo">
+                                </div>
+                                <h4>Welcome back!</h4>
+                                <h6 class="font-weight-light">Happy to see you again!</h6>
+                                @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { name = "frm", id = "frm" }))
+                            {
+                                    <form class="pt-3">
+                                        <div class="form-group" style=" display :flex;">
+
+                                            <i class="mdi mdi-account" style="font-size: 21px; padding-top: 10px; padding-right: 10px;"> </i>
+                                            @Html.TextBoxFor(a => a.Username, new { @class = "form-control icon", placeholder = "Username", autocomplete = "off", required = "" })
+                                        </div>
+                                        <div class="form-group" style="display: flex;">
+
+                                            <i class="mdi mdi-textbox-password" style="font-size: 21px; padding-top: 10px; padding-right: 10px;"> </i>
+                                            @Html.PasswordFor(a => a.Password, new { @class = "form-control icon", placeholder = "Password", autocomplete = "off", required = "" })
+                                        </div>
+                                        <div class="mt-3">
+                                            <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="#">SIGN IN</button>
+                                        </div>
+                                    </form>
+                            }
+                                <center>
+                                    <div style="color:red; padding-top: 10px;" id="errormsg">@ViewBag.Message</div>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 login-half-bg d-flex flex-row">
+                        <p class="text-white font-weight-medium text-center flex-grow align-self-end">Copyright © 2021  All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="~/Content/vendors/js/vendor.bundle.base.js"></script>
+    <script src="~/Content/js/off-canvas.js"></script>
+    <script src="~/Content/js/hoverable-collapse.js"></script>
+    <script src="~/Content/js/template.js"></script>
+    <script src="~/Content/js/settings.js"></script>
+    <script src="~/Content/js/todolist.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,479 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "StaticWeightage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    th {
+        height: 40px;
+        line-height: 20px !important;
+    }
+
+    th .sorting {
+            display: flex;
+            /*align-items: center  ;*/
+        }
+
+    .modal {
+        text-align: center;
+    }
+
+    .modal-dialog {
+        display: inline-block;
+        width: auto;
+    }
+
+    .table thead th {
+        vertical-align: middle;
+    }
+
+     .dataTables_wrapper .dataTable thead .sorting:after{
+        top:15px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting:before{
+        bottom:15px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_asc:after{
+        top:15px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_desc:after{
+        top:15px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_asc:before{
+        bottom:15px;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_desc:before{
+        bottom:15px;
+    }
+
+    .form-control {
+        border: 1px solid #aaa;
+    }
+    table.dataTable {
+      width: auto;
+    }
+
+    /*pdf csv button*/
+    .dt-buttons a {
+        width: 32px;
+        line-height: 0;
+        margin-top: 20px;
+        border-radius:10px!important;
+    }
+
+    .dt-buttons span {
+        font-size: 14px;
+        margin-left: -13px;
+    }
+
+    .mistake {
+        border: 1px solid #cc0033 !important;
+    }
+
+</style>
+
+<div class="abc">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Static Weightages</h2>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        @*<div class="col-md-4 addbtn" style="display:flex; justify-content:flex-end;">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateForm" onclick="modal()"><i class="fa fa-plus" style="margin-right: 5px;" aria-hidden="true"></i> Add Item </button>
+            </div>
+
+        </div>*@
+    </div>
+
+    @*Edit Form*@
+    <div class="modal fade" id="modalEditForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="width: 500px">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold">Edit Value</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="display: flex;justify-content: space-around;">
+
+                        @*<div class="col-md-12">
+                                <div class="md-form mb-5">
+                                    <label>Role : </label>
+                                    <input class="form-control" type="text" id="role" value="role" readonly="readonly" />
+                                </div>
+                            </div>
+                            <div class="col-md-12" >
+                                <div class="md-form mb-5">
+                                    <label>Reason : </label>
+                                    <input class="form-control" type="text" id="staticReason" value="staticReason" />
+                                </div>
+                            </div>*@
+                        <div class="col-sm-12">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-3"><label>Role : </label></div>
+                                <div class="col-sm-9"><input class="form-control" type="text" id="role" value="role" readonly="readonly" /></div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="padding-top:10px">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-3"><label>Reason : </label></div>
+                                <div class="col-sm-9">
+                                    @*<input class="form-control" type="text" id="staticReason" value="staticReason" />*@
+                                    <textarea class="form-control" style="height:100px" type="text" id="staticReason" value="staticReason"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="padding-top:10px">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-3"><label>Points : </label></div>
+                                <div class="col-sm-9"><input class="form-control" style="width:100px" type="number" id="point" value="point" /></div>
+                                @*<div class="md-form mb-5">
+                                        <label>Points : </label>
+                                        <input class="form-control" type="number" id="point" value="point" />
+                                    </div>*@
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="display: flex;justify-content: center;">
+                            <span id="errorMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="updatedata()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Update </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12" id="Table_staticWeighatge" style=" margin-top: 50px; ">
+        <table id="staticWeightageDetails" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>SL.NO</th>
+                    <th class="hidden">sId</th>
+                    <th>ROLE</th>
+                    <th>REASON</th>
+                    <th>POINTS</th>
+                    <th>EDIT</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+<script>
+
+    document.getElementById("point").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    var rowNo;
+
+    $(document).ready(function () {
+        generateTable();
+    });
+
+    function generateTable() {
+
+        loadergif(1);
+        $('#staticWeightageDetails').DataTable().clear().destroy();
+        rowNo = 0;
+        var strJsonDatas = eval({ Id: rowNo });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getStaticWeightageDetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+
+                Result = jQuery.parseJSON(data);
+                $('#staticWeightageDetails').DataTable().clear().destroy();
+                if (Result != null) {
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+
+                    var table = document.getElementById('staticWeightageDetails');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+
+
+                        $('#staticWeightageDetails').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].Sl_no + '</td>' +
+                                '<td class="hidden">' + Datas[i].sId + '</td>' +
+                                '<td>' + Datas[i].role + '</td>' +
+                                '<td>' + Datas[i].reason + '</td>' +
+                                '<td>' + Datas[i].value + '</td>' +
+                                '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                           '</tr>');
+
+                    }
+
+
+
+                    //setTimeout(function () {
+                    $('#staticWeightageDetails').DataTable({
+
+                        "bpaging": false,
+                        "bDestroy": true,
+                        scrollX: true,
+                        "bScrollCollapse": true,
+                        dom: 'Blfrtip',
+                        buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 2, 3, 4],
+                                       orthogonal: "export",
+                                       rows: function (idx, data, node) {
+                                           number = 1;
+                                           return true;
+                                       }
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 2, 3, 4]
+                                       }
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 2 ,3 ,4]
+                                       }
+                                   }
+                        ],
+                        columnDefs: [
+                        //    {
+                        //    render: function (data, type, full, meta) {
+                        //        return "<div class='text-wrap width-25'>" + data + "</div>";
+                        //    },
+                        //    targets: 2
+                            
+                        //},
+                    { width: "10%", targets: 0 }, { width: "20%", targets: 2 }, { width: "15%", targets: 4 }, { width: "10%", targets: 5 }
+                        ]
+
+                    })
+
+                    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                    $(".dt-button").removeClass("dt-button");
+
+                    loadergif(0);
+                }
+
+            }
+        })
+    }
+
+    function edit(rowid) {
+
+        $('.mistake').removeClass('mistake');
+        $("#errorMsg").text('')
+
+        rowNo = document.getElementById(rowid).childNodes[1].outerText;
+        var strJsonDatas = eval({ Id: rowNo });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getStaticWeightageDetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+                var Result = jQuery.parseJSON(data);
+                console.log(msg, Result)
+
+                $('#staticReason').val(Result[0].reason);
+                $('#point').val(Result[0].value);
+                $('#role').val(Result[0].role);
+                //$("#point").val((Result[0].value)).change();
+
+            }
+        });
+    }
+
+    function updatedata() {
+
+        //rowNo = document.getElementById(rowid).childNodes[1].outerText;
+        var reason = $("#staticReason").val();
+        var point = $("#point").val();
+        $("#errorMsg").text('');
+        $('.mistake').removeClass('mistake');
+
+
+        //var alphaExp = /^[a-zA-Z]+$/;
+        //var regEx = /^[a-zA-Z\s]+$/;
+
+        var regEx = /^[a-zA-Z\s]+$/;
+
+        reason = reason.trim();
+
+        reason = reason.replace(/  +/g, ' ');
+
+        if (reason == '' && point=='') {
+            $('#staticReason').addClass('mistake');
+            $('#point').addClass('mistake');
+            $("#errorMsg").text('Please enter the reason');
+            return;
+        }
+        else if (!reason.match(regEx)) {
+            $('#staticReason').addClass('mistake');
+            $("#errorMsg").text('No special characters or numbers allowed.Please enter valid reason.');
+            return;
+        }
+        else {
+            $('#staticReason').removeClass('mistake');
+            $('#point').removeClass('mistake');
+            $("#errorMsg").text('');
+        }
+
+        if (point < 0) {
+            $('#point').addClass('mistake');
+            $("#errorMsg").text('Please enter the value greater than 0');
+            return;
+        } else if (point > 10) {
+            $('#point').addClass('mistake');
+            $("#errorMsg").text('Please enter the value below than 10');
+            return;
+        }
+
+        var strJsonDatas = eval({reason:reason,point:point, Id: rowNo});
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "updateStaticWeightage",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+                if (data != undefined) {
+                    if (data == "exists") {
+                        swal({
+                            title: 'Error',
+                            text: 'Duplicate Entry Detected',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        })
+                    }
+                    if (data == "Error") {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Development team',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        })
+                    }
+                    else if (data == "success") {
+                        swal({
+                            title: 'Updated!',
+                            text: 'The details have been updated',
+                            icon: 'success',
+                            button: {
+                                text: "Continue",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                    function () {
+                        location.reload();
+                    }
+                    )
+                    }
+                    else if (data == "exists") {
+                        swal({
+                            title: 'Error',
+                            text: 'The value already exists',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        })
+                    }
+                } else {
+                }
+            }
+
+        });
+
+    }
+
+</script>
+
+

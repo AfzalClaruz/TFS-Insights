@@ -1,0 +1,1019 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "MyOrders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int cId = Convert.ToInt16(ViewBag.role);
+   // var dte = @TempData["StartDate"].ToString();
+}
+
+<style>
+
+    .hidden {
+        display: none;
+    }
+
+    .refreshicon {
+
+        font-size: 0.7em;
+        cursor: pointer;
+    }
+
+     /*pdf csv button*/
+    .dt-buttons a {
+        width: 32px;
+        line-height: 0;
+        margin-top: 20px;
+        border-radius:10px!important;
+    }
+
+    .dt-buttons span {
+        font-size: 14px;
+        margin-left: -13px;
+    }
+
+    /*.dt-buttons a {
+        width: 32px;
+        line-height: 0;
+        margin-top: 20px;
+    }
+
+    .dt-buttons span {
+        font-size: 14px;
+        margin-left: -13px;
+    }*/
+            .ti-calendar{
+            background-color:white;
+        }
+        .dateProp{
+            background-color:white !important;
+        }
+    .dataTables_wrapper .dataTable thead .sorting:after{
+        top:15px !important;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_asc:after{
+        top:15px !important;
+    }
+    .dataTables_wrapper .dataTable thead .sorting_desc:after{
+        top:15px !important;
+    }
+</style>
+@*@if (Session["crStatus"] != null)
+{
+    <div class="error-msg">
+        <i class="fa fa-times-circle"></i>
+        @Session["crStatus"].ToString();
+    </div>
+}*@
+
+@*<h1>@Html.Raw(Json.Encode(ViewBag.StatusData));</h1>*@
+@*<h1>"@TempData["Id"].ToString()"</h1>*@
+@*<h1>"@TempData["status"].ToString()"</h1>
+<h1>"a.ToString()"</h1>*@
+<div class="abc">
+    <h2 style="margin-bottom:30px; display:flex; justify-content:space-between" id="statusName">Orders - Status Details <span class="refreshicon"><i class="fa fa-refresh " aria-hidden="true" onclick="refreshPage();"></i> </span></h2>
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    
+    
+
+    <div class="modal fade" id="modalHistory" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold" id="addressValue" name="addressValue"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="col-sm-12 " id="Table_orderHistory">
+                        <table id="HistoryDetails" class="table dataTable no-footer" style="width:100%">
+                            <thead>
+                                <tr>
+                                    @*<th>Sl.No</th>*@
+                                    @*<th>Order Id</th>*@
+                                    @*<th>Address</th>*@
+                                    @*<th>Employee Name</th>*@
+                                    <th>Status</th>
+                                    <th>Status reason</th>
+                                    <th>Weightage</th>
+                                    <th>Updated Time</th>
+
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex ">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+        <div class="col-md-12">
+            <div class="row" style="margin-bottom:40px;">
+@using (Html.BeginForm("MyOrders", "Home", FormMethod.Post, new { @class = "col-md-9", style = "display:contents;", name = "frm", id = "frm", onsubmit = "loadergif(1);" }))
+{
+    <div class="col-md-3" id="statusDropdown">
+        <div class="md-form mb-5" id="statusDropdown">
+            <label>Current Status</label>
+            <select name="currentStatus" class="form-control validate js-example-basic-single w-100" id="ddlCurrentStatus">
+                @*<option selected="selected" value="-1">--Choose the status--</option>*@
+                @if (Convert.ToInt64(Session["role"]) == 3)
+                {
+                    @*<option value="5">All Orders</option>*@
+                    <option value="1">Completed Orders</option>
+                    @*<option value="2">Pending Orders</option>*@
+                    @*<option value="3">Revision Orders</option>*@
+                }
+                @if (Convert.ToInt64(Session["role"]) == 5)
+                {
+                    <option value="5">All Orders</option>
+                    <option value="1">Completed Orders</option>
+                    <option value="2">Pending Orders</option>
+                    @*<option value="3">Revision Orders</option>*@
+                }
+                @if (Convert.ToInt64(Session["role"]) == 6)
+                {
+                    <option value="5">All Orders</option>
+                    <option value="1">Completed Orders</option>
+                    <option value="2">Pending Orders</option>
+                    <option value="4">Other Orders</option>
+                    <option value="3">Revision Orders</option>
+                }
+                @if (Convert.ToInt64(Session["role"]) == 7)
+                {
+                    <option value="5">All Orders</option>
+                    <option value="1">Submitted Orders</option>
+                    <option value="6">Picture Uploaded Orders</option>
+                }
+                @if (Convert.ToInt64(Session["role"]) == 4)
+                {
+                    <option value="1">All Orders</option>
+                }
+
+                @*@if (roleId == 5 && roleId == 0)
+            {
+                <option selected="selected" value="5">Researcher</option>
+            }
+            else
+            {
+                <option value="5">Researcher</option>
+            }
+            @if (roleId == 6)
+            {
+                <option selected="selected" value="6">Data Entry</option>
+            }
+            else
+            {
+                <option value="6">Data Entry</option>
+            }
+            <option value="3">Revision</option>*@
+                    @*<option selected="selected" value="5"></option>
+                <option value="5"></option>
+                <option selected="selected" value="6"></option>
+                <option value="6"></option>
+                <option value="3"></option>*@
+                </select>
+            </div>
+            @*<div class="form-group">
+                    <label style="font-size:1rem;">Choose the Status</label>
+                    <select class="js-example-basic-single w-100" id="ddlCurrentStatus" name="currentStatus" selected="@Html.Raw(Json.Encode(ViewBag.currentStatus))">
+                        <option value="1">Completed Orders</option>
+                        <option value="2">Pending Orders</option>
+                        <option value="3">Revision Orders</option>
+                    </select>
+                </div>*@
+        </div>
+                <div class="col-md-3">
+                    <label>From Date</label>
+                    <div id="date-form" class="input-group date txtfromdate">
+                        @Html.TextBoxFor(a => a.StartDate, new { @class = "form-control dateProp", id = "txtfromdate",  placeholder = "StartDate", autocomplete = "off", required = "" , @readonly="true"})
+                        @*<input type="text" id="txtfromdate" class="form-control" />*@
+                        <span class="input-group-addon input-group-append border-left">
+                            <span class="ti-calendar input-group-text">
+                            </span>
+                        </span>
+                        @Html.ValidationMessageFor(a => a.StartDate)
+                    </div>
+                    <label style="font: italic 13px/21px serif; color: #9d9d9d;">(MM / DD / YYYY)</label>
+                    
+                    @*<label style="font: italic small-caps 13px/21px Georgia, serif;">(DD - MM - YYYY)</label>*@
+                </div>
+                <div class="col-md-3">
+                    <label>To Date</label>
+                    <div id="to-date-form" class="input-group date txttodate">
+                        @Html.TextBoxFor(a => a.EndDate, new { @class = "form-control icon dateProp", id = "txttodate", placeholder = "EndDate", autocomplete = "off", required = "", @readonly = "true" })
+                        @*<input type="text" id="txttodate" class="form-control" />*@
+                        <span class="input-group-addon input-group-append border-left">
+                            <span class="ti-calendar input-group-text"></span>
+                        </span>
+                        @Html.ValidationMessageFor(a => a.EndDate)
+                    </div>
+                    <label style="font: italic 13px/21px serif; color: #9d9d9d;">(MM / DD / YYYY)</label>
+                </div>
+    <div class="col-md-3">
+        <label><br /></label>
+        <div class="md-form mb-5">
+            <button type="submit" id="generate" class="btn btn-primary" title="Generate Report" ><i class="fa fa-cogs" style="margin-right: 5px;" aria-hidden="true"></i> Generate Report </button>
+        </div>
+    </div>
+}               
+                
+
+            </div>
+        </div>
+
+    @if (Convert.ToInt64(Session["role"]) == 3)
+    {
+        <div class="col-sm-12 hidden" id="S_hiddenTable_employee">
+            <table id="S_EmployeeDetails" class="table dataTable no-footer" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>SL.NO</th>
+                        <th class="hidden">ORDER ID</th>
+                        <th>ADDRESS</th>
+                        <th>STATUS</th>
+                        <th>STATUS REASON</th>
+                        <th id="dateChange" name="dateChange">COMPLETED <br /> DATE</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="col-sm-12 hidden" id="hiddenTable_employee">
+            <table id="EmployeeDetails" class="table dataTable no-footer" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>SL.NO</th>
+                        <th class="hidden">ORDER ID</th>
+                        @*<th>Order Id</th>*@
+                        <th>ADDRESS</th>
+                        <th id="weightageChange">WEIGHTAGE</th>
+                        <th id="loss">LOSS</th>
+                        <th id="gain">GAIN</th>
+                        <th id="dateChange" name="dateChange">COMPLETED <br /> DATE</th>
+                        <th id="historyOrder" name="historyOrder">HISTORY</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    }
+
+
+</div>
+
+<script type="text/JavaScript" src="https://MomentJS.com/downloads/moment-with-locales.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://cdn.datatables.net/plug-ins/1.12.1/api/sum().js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+
+
+
+
+<script>
+    var  Results='';
+
+    $(document).ready(function () {
+        //var currentStatus = $("#ddlCurrentStatus").val();
+
+        var status;
+        if(@Session["crStatus"].ToString()==1)
+            status='Completed Orders'
+        else if(@Session["crStatus"].ToString()==2)
+            status='Pending Orders'
+        else if(@Session["crStatus"].ToString()==5)
+            status='All Orders'
+        else if(@Session["crStatus"].ToString()==4)
+            status='Other Orders'
+        else if(@Session["crStatus"].ToString()==6)
+            status='Picture Uploaded Orders'
+        else if(@Session["crStatus"].ToString()==3)
+            status='Revision Orders'
+        
+
+       // $('#ddlCurrentStatus').val(@Session["crStatus"].ToString()).change();
+        $("#select2-ddlCurrentStatus-container").html(status);
+
+        @*if(@Session["crStatus"].ToString()==3){
+            var a = 1
+        }else{
+            var a = @Session["crStatus"].ToString();
+        }*@
+
+        $("#ddlCurrentStatus").val(@Session["crStatus"].ToString()).change();
+
+
+        //$("#txttodate").val(endDate);
+
+
+        var cudt = new Date();
+
+        $('#date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        $('#to-date-form').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            format: "mm/dd/yyyy",
+            todayHighlight: false
+        });
+
+        //var cudate = GetDateFormat(cudt, 'mm/dd/yy');
+
+        var startDate = "@TempData["StartDate"].ToString()";
+
+        var startSplit = startDate.split(" ");
+
+        startDate = startSplit[0];
+
+        var endDate = "@TempData["EndDate"].ToString()";
+
+        var endSplit = endDate.split(" ");
+
+        endDate = endSplit[0];
+
+        $("#txttodate").val(endDate);
+        $("#txtfromdate").val(startDate);
+
+        var endDate = new Date($("#txttodate").val());
+        var startDate = (startOfMonth(endDate).toString());
+
+        $(".input-group.date.txttodate").datepicker("setDate", new Date(endDate));
+        $(".input-group.date.txtfromdate").datepicker("setDate", new Date(startDate));
+
+        $("#txtfromdate").change(function(){
+            var a = $("#txtfromdate").val();
+            var myDate = new Date(a);
+            var lastDay = new Date(myDate.getFullYear(), myDate.getMonth() + 1, 0);
+            lastDay = GetDateFormat(lastDay, 'mm/dd/yy');
+            $(".input-group.date.txttodate").datepicker("setDate", new Date(lastDay));
+            //console.log(lastDay)
+            //var endSplit = lastDay.split(" ");
+            //lastDay=endSplit[0];
+            $("#txttodate").val(lastDay);
+
+        });
+
+        $("#txttodate").change(function(){
+            var b = $("#txttodate").val();
+            var myDate = new Date(b);
+            var firstDay = new Date(myDate.getFullYear(), myDate.getMonth(), 1);
+            firstDay = GetDateFormat(firstDay, 'mm/dd/yy');
+            $("#txtfromdate").val(firstDay);
+            $(".input-group.date.txtfromdate").datepicker("setDate", firstDay);
+        });
+
+
+
+
+        generatetable();
+
+
+    });
+
+    function GetDateFormat(sDateTime, dtFormat) {
+
+        //var DateTime = sDateTime ;
+        //var year = DateTime.substring(0, 4);
+        //var month = DateTime.substring(5, 7);
+        //var date = DateTime.substring(8, 10);
+
+        //var dob = month + '/' + date + '/' + year;
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
+
+        const dateObj = sDateTime; // new Date();
+
+        const month = dateObj.getMonth();
+
+        const day = String(dateObj.getDate()).padStart(2, '0');
+
+        const year = dateObj.getFullYear();
+
+        const output = parseInt(month + 1) + '/' + day + '/' + year;
+
+        return output;
+
+    }
+
+    function startOfMonth(date) {
+
+        return new Date(date.getFullYear(), date.getMonth(), 1);
+
+    }
+
+
+    function generatetable() {
+
+        loadergif(1);
+
+        //var status = @Html.Raw(Json.Encode(ViewBag.Id));
+        Results = @Html.Raw(Json.Encode(ViewBag.Data));
+        var  StartDate = @Html.Raw(Json.Encode(ViewBag.fromDate));
+        var  EndDate = @Html.Raw(Json.Encode(ViewBag.toDate));
+        var currentStatus = $("#ddlCurrentStatus").val();
+
+        if(Results=="Revision"){
+            swal({
+                title: 'Error',
+                text: 'Revision status not updated',
+                icon: 'error',
+                button: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary",
+                    timer: 1000,
+                }
+            }).then(
+            function () {
+                //$("#ddlCurrentStatus").val(1);
+                //location.reload();
+                loadergif(0);
+                return;
+            });
+        }
+
+        if(currentStatus==1)
+        {
+            if(@Convert.ToInt64(Session["role"]) == 7)
+            {
+                $('#statusName').text("Submitted Orders");
+            }else
+                $('#statusName').text("Completed Orders");
+        }
+        else if(currentStatus==2)
+        {
+            $('#statusName').text("Pending Orders");
+            $('#dateChange').html("UPDATED <br/> DATE");
+            $('#weightageChange').html("EXPECTED <br/> WEIGHTAGE");
+            //$('#historyOrder').addClass('hidden');
+            //$('#historyIcon').addClass('hidden');
+
+            //$('#loss').addClass('hidden');
+            //$('#gain').addClass('hidden');
+
+        }else if(currentStatus==5)
+        {
+            $('#statusName').text("All Orders");
+        }else if(currentStatus==6)
+        {
+            $('#statusName').text("Picture Uploaded Orders");
+        }else if(currentStatus==4)
+        {
+            $('#statusName').text("Correction Orders");
+        }
+
+
+        //Result = Result.Data;
+        //var sEmployee = $("#ddlEmployee").val();
+
+        $('#EmployeeDetails').DataTable().clear().destroy();
+
+
+        Data = Results.Data;
+        
+
+
+        if(@Convert.ToInt64(Session["role"]) == 3)
+        {
+            if(Data.Message !="Error" )
+            {
+
+                $('#hiddenTable_employee').removeClass('hidden');
+                Datas = jQuery.parseJSON(Data);
+
+                var length = Datas.length;
+
+                var table = document.getElementById('S_EmployeeDetails');
+
+                for (var i = table.rows.length - 1; i > 0; i--) {
+                    table.deleteRow(i);
+                }
+
+                for (var i = 0; i < length; i++) {
+                    if(Datas[i].updated_date != null){
+                        //var updatedDate = new Date(Datas[i].updated_date).toLocaleDateString('en-US')
+                        var date = Datas[i].updated_date;
+                        date = date.split('T')[0];
+                        //console.log(d);
+                    }
+
+
+                    $('#S_EmployeeDetails').append(
+                        '<tr id="' + i + '">' +
+                            '<td>' + Datas[i].Sl_no + '</td>' +
+                            '<td class="hidden">' + Datas[i].order_id + '</td>' +
+                            '<td>' + Datas[i].subject_address + '</td>' +
+                            '<td>' + Datas[i].status_desc + '</td>' +
+                            '<td>' + Datas[i].status_reason_desc + '</td>' +
+                            //'<td>' + updatedDate + '</td>' +
+                            '<td>' + date + '</td>' +
+                            '</tr>');
+
+
+
+                }
+
+
+
+                //setTimeout(function () {
+                $('#S_EmployeeDetails').DataTable({
+
+                    "bpaging": false,
+                    "bDestroy": true,
+                    dom: 'Blfrtip',
+                    buttons: [
+                           {
+                               extend: 'pdf',
+                               footer: true,
+                               exportOptions: {
+                                   columns: [0, 2, 3, 4, 5],
+                                   orthogonal: "export",
+                                   rows: function (idx, data, node) {
+                                       number = 1;
+                                       return true;
+                                   }
+                               }
+                           },
+                               {
+                                   extend: 'csv',
+                                   footer: false,
+                                   exportOptions: {
+                                       columns: [0, 2, 3, 4, 5]
+                                   }
+
+                               },
+                               {
+                                   extend: 'excelHtml5',
+                                   footer: false,
+                                   exportOptions: {
+                                       columns: [0, 2, 3, 4, 5]
+                                   }
+                               }
+                    ]
+
+                })
+
+                $("#statusDropdown").addClass("hidden");
+                $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                $(".dt-button").removeClass("dt-button");
+                $("#S_hiddenTable_employee").removeClass("hidden");
+
+            }
+        }
+        else
+        {
+
+            if(Data.Message !="Error" )
+            {
+
+                $('#hiddenTable_employee').removeClass('hidden');
+                Datas = jQuery.parseJSON(Data);
+
+                var length = Datas.length;
+
+                var table = document.getElementById('EmployeeDetails');
+
+                for (var i = table.rows.length - 1; i > 0; i--) {
+                    table.deleteRow(i);
+                }
+
+                for (var i = 0; i < length; i++) {
+                    if (Datas[i].weightage_value == undefined)
+                        Datas[i].weightage_value = "0";
+                    if (Datas[i].initial_value == undefined){
+                        Datas[i].initial_value = "0";
+                        //$('#historyIcon' + i ).addClass('hidden');
+                    }
+
+                    if (Datas[i].final_value == undefined)
+                        Datas[i].final_value = "0";
+                    if (Datas[i].updated_date == undefined)
+                        Datas[i].updated_date = "0";
+                    if (Datas[i].amount == undefined)
+                        Datas[i].amount = "0";
+                    if (Datas[i].amount < 0)
+                        Datas[i].amount = "0";
+                    var final_value = Datas[i].final_value;
+                    var amount = Datas[i].amount;
+
+                    if(Datas[i].amount>0)
+                    {
+                        amount="<span style='color:red;'>"+Datas[i].amount+"</span>"
+                    }
+                    if(Datas[i].updated_date != null){
+                        //var updatedDate = new Date(Datas[i].updated_date).toLocaleDateString('en-US')
+                        var date = Datas[i].updated_date;
+                        date = date.split('T')[0];
+                        //console.log(d);
+                    }
+
+
+                    //if(Datas[i].amount>Datas[i].final_value)
+                    //{
+                    //    final_value="<span style='color:red;'>"+Datas[i].final_value+"</span>"
+                    //}
+
+                    $('#EmployeeDetails').append(
+                        '<tr id="' + i + '">' +
+                            '<td>' + Datas[i].Sl_no + '</td>' +
+                            '<td class="hidden">' + Datas[i].order_id + '</td>' +
+                            '<td>' + Datas[i].subject_address + '</td>' +
+                            '<td>' + Datas[i].weightage_value + '</td>' +
+                            '<td id="loss" >' + amount + '</td>' +
+                            '<td id="gain">' + final_value + '</td>' +
+                            //'<td>' + updatedDate + '</td>' +
+                            '<td>' + date + '</td>' +
+                            '<td id="historyIcon' + i + '" name="historyIcon"><a href="#" onclick="historyId(' + i + ')"><i class="fa fa-history" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                       '</tr>');
+
+                    if (Datas[i].initial_value == "-"){
+                        //$('#historyIcon' + i ).addClass('hidden');
+                    }
+
+                }
+
+                var table = $('#EmployeeDetails').DataTable();
+                h = table.column( 3 ).data().sum();
+                var b = table.column( 4 ).data().sum();
+                var c = table.column( 5 ).data().sum();
+
+                if(Data !="[]" && c!=0){
+                    $("#EmployeeDetails").append(
+                        '<tfoot><tr style="color: #4b49ac;">'+
+                        '<th></th>'+
+                        '<th class="hidden"></th>'+
+                        '<th style="text-align:center">Total:</th>'+
+                        '<th id="wSum">-</th>'+
+                        '<th id="iniSum">-</th>' +
+                        '<th id="finSum">-</th>' +
+                        '<th></th>' +
+                        '</tr>'+
+                        '</tfoot>');
+                    $('#wSum').text(h.toFixed(2));
+                    $('#iniSum').text(b.toFixed(2));
+                    $('#finSum').text(c.toFixed(2));
+
+
+                }
+
+
+
+                //setTimeout(function () {
+                $('#EmployeeDetails').DataTable({
+
+                    "bpaging": false,
+                    "bDestroy": true,
+                    dom: 'Blfrtip',
+                    buttons: [
+                           {
+                               extend: 'pdf',
+                               footer: true,
+                               exportOptions: {
+                                   columns: [0, 2, 3, 4, 5, 6],
+                                   orthogonal: "export",
+                                   rows: function (idx, data, node) {
+                                       number = 1;
+                                       return true;
+                                   }
+                               }
+                               //exportOptions: {
+                               //    columns: [0, 2, 3, 4, 5, 6]
+                               //    //orthogonal: "export"
+                               //    //rows: function (idx, data, node) {
+                               //    //    number = 1;
+                               //    //    return true;
+                               //    //}
+                               //}
+                           },
+                               {
+                                   extend: 'csv',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 2, 3, 4, 5, 6]
+                                   }
+
+                               },
+                               {
+                                   extend: 'excelHtml5',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 2, 3, 4, 5, 6]
+                                   }
+                               }
+                    ],
+                    columnDefs:[
+                        {
+                            render: function (data, type, full, meta) {
+                                return "<div class='text-wrap width-200'>" + data + "</div>";
+                            },
+                            targets: 2
+                        }
+                    ]
+
+                });
+
+                
+
+                $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                $(".dt-button").removeClass("dt-button");
+                $("#hiddenTable_employee").removeClass("hidden");
+
+
+            }
+        }
+
+        loadergif(0);
+
+    }
+
+
+    function refreshPage(){
+        location.href=location.href;
+    }
+
+    function generate(){
+
+        $('#EmployeeDetails').DataTable().clear().destroy();
+
+        var currentStatus = $("#ddlCurrentStatus").val();
+        var fromdate = $("#txtfromdate").val();
+        var toDate = $("#txttodate").val();
+
+        if(currentStatus==2)
+        {
+            $('#dateChange').text("Updated Date");
+        }
+        else
+        {
+            $('#dateChange').text("Completed Date");
+        }
+
+        var strJsonDatas = eval({ f_date:fromdate,l_date:toDate,id: currentStatus });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getemployeeincentivedetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data=msg;
+
+                Result = jQuery.parseJSON(data);
+                //var Result = jQuery.parseJSON(data);
+                $('#EmployeeDetails').DataTable().clear().destroy();
+                if(Result !=null )
+                {
+
+
+                    $('#hiddenTable_employee').removeClass('hidden');
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+                    //Data = msg.Data;
+
+                    //Datas = jQuery.parseJSON(Data);
+
+                    //var length = Datas.length;
+
+                    var table = document.getElementById('EmployeeDetails');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+                        if (Datas[i].weightage_value == undefined)
+                            Datas[i].weightage_value = "-";
+                        if (Datas[i].initial_value == undefined)
+                            Datas[i].initial_value = "-";
+                        if (Datas[i].final_value == undefined)
+                            Datas[i].final_value = "-";
+                        if(Datas[i].updated_date != null){
+                            var updatedDate = new Date(Datas[i].updated_date).toLocaleDateString('en-US')
+                        }
+
+                        var final_value = Datas[i].final_value;
+                        var initial_value = Datas[i].initial_value;
+
+                        if(Datas[i].initial_value>0)
+                        {
+                            initial_value="<span style='color:red;'>"+Datas[i].initial_value+"</span>"
+                        }
+
+                        if(Datas[i].initial_value>Datas[i].final_value)
+                        {
+                            final_value="<span style='color:red;'>"+Datas[i].final_value+"</span>"
+                        }
+
+                        $('#EmployeeDetails').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].Sl_no + '</td>' +
+
+                                '<td>' + Datas[i].subject_address + '</td>' +
+                                '<td>' + Datas[i].weightage_value + '</td>' +
+                                '<td>' + initial_value + '</td>' +
+                                '<td>' + final_value + '</td>' +
+                                '<td>' + updatedDate + '</td>' +
+                           '</tr>');
+
+                    }
+
+
+
+                    //setTimeout(function () {
+                    $('#EmployeeDetails').DataTable({
+
+                        "bpaging": false,
+                        "bDestroy": true,
+                        dom: 'Blfrtip',
+                        buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 1, 2, 3, 4, 5],
+                                       orthogonal: "export",
+                                       rows: function (idx, data, node) {
+                                           number = 1;
+                                           return true;
+                                       }
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 1, 2, 3, 4, 5]
+                                       }
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 1, 2, 3, 4, 5]
+                                       }
+                                   }
+                        ]
+
+                    });
+
+                    var table = $('#EmployeeDetails').DataTable();
+                    h = table.column( 3 ).data().sum();
+                    var b = table.column( 4 ).data().sum();
+                    var c = table.column( 5 ).data().sum();
+
+                    $("#EmployeeDetails").append('<tfoot><tr style="color: #4b49ac;">'+
+                        '<th></th>'+
+                        '<th style="text-align:center">Total:</th>'+
+                        '<th id="wSum">-</th>'+
+                        '<th id="iniSum">-</th>' +
+                        '<th id="finSum">-</th>' +
+                        '<th></th>' +
+                        '</tr>'+
+                        '</tfoot>');
+                    $('#wSum').text(h.toFixed(2));
+                    $('#iniSum').text(b.toFixed(2));
+                    $('#finSum').text(c.toFixed(2));
+
+                    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                    $(".dt-button").removeClass("dt-button");
+                    $('#hiddenTable_date').addClass('hidden');
+                    $('#hiddenTable_employee').removeClass('hidden');
+
+
+                }
+
+            }
+        })
+    }
+
+    function historyId(rowid){
+
+        $('#HistoryDetails').DataTable().clear().destroy();
+
+        var order_Id = document.getElementById(rowid).childNodes[1].outerText;
+        address = document.getElementById(rowid).childNodes[2].outerText;
+
+        var strJsonDatas = eval({ orderId: order_Id })
+        //console.log(order_Id)
+        //console.log(address)
+        $('#addressValue').text("History of address " + address);
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getEmployeeHistoryDetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+
+                var Details = msg;
+                var Result = jQuery.parseJSON(Details);
+
+
+
+                if (Result != '' && Result != null) {
+
+                    //Result = Result.Data;
+
+
+                    Datas = Result;
+
+                    //Datas = jQuery.parseJSON(Data);
+
+                    var length = Datas.length;
+
+                    var table = document.getElementById('HistoryDetails');
+
+                    //for (var i = table.rows.length - 1; i > 0; i--) {
+                    //    table.deleteRow(i);
+                    //}
+                    var a,b;
+                    for (var i = 0; i < length; i++) {
+                        if(Datas[i].Status=="Research" && (Datas[i].StatusReason == "Need Review" ||Datas[i].StatusReason == "X-Completed" )){
+                            b=Datas[i].WeightageAmount
+                        }
+                        if(Datas[i].Status=="Research" && Datas[i].StatusReason == "Need Correction" ){
+                            a=b+Datas[i].WeightageAmount + "<span style='color:red;'>("+Datas[i].WeightageAmount+")</span>"
+                        }
+                        if(Datas[i].Status=="Data Entry" && Datas[i].StatusReason == "Research Need Correction" ){
+                            a=b+Datas[i].WeightageAmount + "<span style='color:red;'>("+Datas[i].WeightageAmount+")</span>"
+                        }
+                        else
+                            a=Datas[i].WeightageAmount
+
+
+                        $('#HistoryDetails').append(
+                            '<tr id="' + i + '">' +
+
+                                //'<td>' + Datas[i].EmployeeName + '</td>' +
+                                '<td>' + Datas[i].Status + '</td>' +
+                                '<td>' + Datas[i].StatusReason + '</td>' +
+                                '<td>' + a + '</td>' +
+                                '<td>' + Datas[i].UpdatedTime + '</td>' +
+                           '</tr>');
+
+                    }
+
+                    //setTimeout(function () {
+                    $('#HistoryDetails').DataTable({
+                        searching: false, paging: false, info: false,"aaSorting": []
+                    })
+                }
+            }
+        })
+
+        $(".dt-button").addClass("btn btn-outline-primary btn-fw")
+        $(".dt-button").removeClass("dt-button")
+
+
+        $("#modalHistory").modal('show');
+    }
+
+    function DateConvert(date){
+        alert(((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear());
+    }
+
+    //$('#generate').click(function() {  
+    //    if($('#ddlCurrentStatus').val()==3){
+    //        alert(")
+    //    }
+    //});
+
+</script>

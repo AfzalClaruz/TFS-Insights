@@ -1,0 +1,751 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "OrderLimitDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden{
+        display:none;
+    }
+     .select2-container {
+        width: 100% !important;
+    }
+</style>
+
+<div class="abc">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Order Limit & Incentive</h2>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4 addbtn" style="display:flex; justify-content:flex-end;">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateForm" onclick="modal()"><i class="fa fa-plus" style="margin-right: 5px;" aria-hidden="true"></i> Add Item </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalCreateForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold">Add Incentive Order Limit</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Choose Role</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="radioReasearcher" name="optradio" value="5" checked>Research
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="radioDataentry" name="optradio" value="6">Data Entry
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6">
+                                <label>Choose Designation</label>
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlDesignation"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Minimum Order : </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" id="minOrder">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>First Incentive Order : </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" id="FirstInc">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Second Incentive Order : </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" id="SecondInc">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <label>First Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="number" class="form-control" id="FirstIncAmount">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <label>Second Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="number" class="form-control" id="SecondIncAmount">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <label>Balance Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="number" class="form-control" id="BalanceAmount">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="create()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Create </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Edit Form*@
+    <div class="modal fade" id="modalEditForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold">Add Weightage</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Choose Role</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="editradioResearch" name="optradio" value="5">Research
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="editradioDataEntry" name="optradio" value="6">Data Entry
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6">
+                                <label>Choose Designation</label>
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditDesignation"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Minimum Order : </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" id="EditminOrder">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>First Incentive Order : </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" id="EditFirstInc">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Second Incentive Order : </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" id="EditSecondInc">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <label>First Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="number" class="form-control" id="EditFirstIncAmount">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <label>Second Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="number" class="form-control" id="EditSecondIncAmount">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <label>Balance Incentive Order Amount : </label>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="number" class="form-control" id="EditBalanceAmount">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="updatedata()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Update </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-12" id="Table_orderLimitDetails" style=" margin-top: 50px; ">
+        <table id="OrderLimitDetails" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Sl.No</th>
+                    @*<th>Role</th>*@
+                    <th class="hidden">OrderLimit Id</th>
+                    <th>Role</th>
+                    <th>Min. Order</th>
+                    <th>1st Limit</th>
+                    <th>1st Limit  ₹</th>
+                    <th>2nd Limit</th>
+                    <th>2nd Limit  ₹</th>
+                    <th>Bal Limit  ₹</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+<script>
+
+
+    var eDesignation = [];
+
+    $('#ddlDesignation').select2({
+        dropdownParent: $('#modalCreateForm')
+    });
+    $('#ddlEditDesignation').select2({
+        dropdownParent: $('#modalEditForm')
+    });
+
+    $.fn.modal.Constructor.prototype.enforceFocus = function () { };
+
+
+    $(document).ready(function () {
+        LoadDesignationData();
+        generateTable();
+    });
+
+    function modal() {
+        LoadDesignationData();
+    }
+
+    $("input[name='optradio']").change(function () {
+        LoadDesignationData();
+    });
+
+    function LoadDesignationData(designation) {
+        var sRole = $("input[name='optradio']:checked").val();
+        //var sRole = $("#radioVal").val();
+        var strJsonData = eval({ role:sRole });
+        $.ajax({
+            url: "LoadDesignationData",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(strJsonData),
+            success: function (data) {
+
+
+                ResultDesignationList = jQuery.parseJSON(data.strDesignationList);
+
+                if (ResultDesignationList != "" && ResultDesignationList != null) {
+
+                    eDesignation = ResultDesignationList;
+
+                    $('#ddlDesignation').empty().append('<option value="-1">-Select Designation-</option>');
+                    $('#ddlEditDesignation').empty().append('<option value="-1">-Select Designation-</option>');
+
+                    for (var i = 0; i < ResultDesignationList.length; i++) {
+
+                        $('#ddlDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '">' + ResultDesignationList[i]["designation_name"] + '</option>');
+                        //$('#ddlEditDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '">' + ResultDesignationList[i]["designation_name"] + '</option>');
+
+                        if(designation != null || designation != undefined)
+                        {
+                            if (ResultDesignationList[i]["designation_id"] == designation)
+                            {
+                                $('#ddlEditDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '" selected>' + ResultDesignationList[i]["designation_name"] + '</option>');
+
+                            }
+                            else
+                            {
+                                $('#ddlEditDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '">' + ResultDesignationList[i]["designation_name"] + '</option>');
+                            }
+                        }
+                        else
+                        {
+                            $('#ddlEditDesignation').append('<option value="' + ResultDesignationList[i]["designation_id"] + '">' + ResultDesignationList[i]["designation_name"] + '</option>');
+                        }
+
+                    }
+                }
+
+
+                
+            }
+        });
+    }
+
+    function create() {
+
+        var sRole = $('input[name="optradio"]:checked').val();
+        var designation = $("#ddlDesignation").val();
+        var minOrder = $("#minOrder").val();
+        var firstInc = $("#FirstInc").val();
+        var secondInc = $("#SecondInc").val();
+        var firstAmount = $("#FirstIncAmount").val();
+        var secondAmount = $("#SecondIncAmount").val();
+        var balanceAmount = $("#BalanceAmount").val();
+
+        var strJsonDatas = eval({
+            role: sRole, designation: designation, minOrder: minOrder, firstInc: firstInc, secondInc: secondInc,
+            firstAmount: firstAmount, secondAmount: secondAmount, balanceAmount: balanceAmount
+        });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "insertorderlimitdetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                if (data != undefined) {
+                    if (data == "Error") {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Dev team',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        })
+                    }
+                    if (data == "success")
+                    {
+                        swal({
+                            title: 'Congratulations!',
+                            text: 'You entered the correct answer',
+                            icon: 'success',
+                            button: {
+                                text: "Continue",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(function () {
+                                location.reload();
+                        })
+                    }
+                }
+                else {
+                    location.reload();
+                    //Result = jQuery.parseJSON(data);
+                    ////console.log(Result);
+                    //swal({
+                    //    title: 'Congratulations!',
+                    //    text: 'You entered the correct answer',
+                    //    icon: 'success',
+                    //    button: {
+                    //        text: "Continue",
+                    //        value: true,
+                    //        visible: true,
+                    //        className: "btn btn-primary",
+                    //        timer: 1000,
+                    //    }
+                    //}).then(
+                    //function () {
+                    //    location.reload();
+                    //}
+                    //)
+                }
+
+
+            }
+        });
+    }
+
+    function generateTable() {
+
+        loadergif(1);
+
+        $('#OrderLimitDetails').DataTable().clear().destroy();
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getIncentiveOrderLimitDetails",
+            //data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+
+                Result = jQuery.parseJSON(data);
+                //var Result = jQuery.parseJSON(data);
+                $('#OrderLimitDetails').DataTable().clear().destroy();
+                if (Result != null) {
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+                    //Data = msg.Data;
+
+                    //Datas = jQuery.parseJSON(Data);
+
+                    //var length = Datas.length;
+
+                    var table = document.getElementById('OrderLimitDetails');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+                        //if (Datas[i].Sl_no == undefined)
+                        //    Datas[i].Sl_no = "1";
+                        //if (Datas[i].role_name == "Role 5 (Research)")
+                        //    Datas[i].role_name = "Research";
+                        //else if (Datas[i].role_name == "Role 6 (Data Entry)")
+                        //    Datas[i].role_name = "Data Entry";
+                        if (Datas[i].designation_name == "Research Executive Trainee")
+                            Datas[i].designation_name = "Res Exe. T";
+                        else if (Datas[i].designation_name == "Research Executive")
+                            Datas[i].designation_name = "Res Exe.";
+                        else if (Datas[i].designation_name == "Sr. Research Executive")
+                            Datas[i].designation_name = "Sr. Res Exe.";
+                        else if (Datas[i].designation_name == "Research Team Lead")
+                            Datas[i].designation_name = "Res Team Lead";
+                        else if (Datas[i].designation_name == "Data Entry Executive")
+                            Datas[i].designation_name = "DE Exe.";
+                        else if (Datas[i].designation_name == "Sr. Data Entry Executive")
+                            Datas[i].designation_name = "Sr. DE Exe.";
+                        else if (Datas[i].designation_name == "Data Entry Team Lead")
+                            Datas[i].designation_name = "DE TL";
+                        else if (Datas[i].designation_name == "Data Entry Executive Trainee")
+                            Datas[i].designation_name = "DE Exe. Trainee";
+
+
+                        $('#OrderLimitDetails').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].Sl_no + '</td>' +
+                                //'<td>' + Datas[i].role_name + '</td>' +
+                                '<td class="hidden">' + Datas[i].orderlimit_id + '</td>' +
+                                '<td>' + Datas[i].designation_name + '</td>' +
+                                '<td>' + Datas[i].noIncentive_order_limit + '</td>' +
+                                '<td>' + Datas[i].firstIncentive_order_limit + '</td>' +
+                                '<td>' + Datas[i].firstIncentive_amount + '</td>' +
+                                '<td>' + Datas[i].secondIncentive_order_limit + '</td>' +
+                                '<td>' + Datas[i].secondIncentive_amount + '</td>' +
+                                '<td>' + Datas[i].balanceIncentive_amount + '</td>' +
+                                '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                           '</tr>');
+
+                    }
+
+
+
+                    //setTimeout(function () {
+                    $('#OrderLimitDetails').DataTable({
+
+                        "bpaging": false,
+                        "bDestroy": true,
+                        //"sScrollY": "250px", 
+                        //"bScrollCollapse": true,
+                        dom: 'Blfrtip',
+                        buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 1, 2, 3, 4],
+                                       orthogonal: "export",
+                                       rows: function (idx, data, node) {
+                                           number = 1;
+                                           return true;
+                                       }
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 1, 2, 3, 4]
+                                       }
+                                   }
+                        ],
+                        columnDefs: [
+                            { orderable: false, targets: [9] }
+                        ]
+
+                    })
+
+                    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                    $(".dt-button").removeClass("dt-button");
+
+                    loadergif(0);
+                }
+
+            }
+        })
+    }
+
+    var referenceId;
+
+
+    function edit(rowid) {
+        referenceId = document.getElementById(rowid).childNodes[1].outerText;
+        console.log(referenceId);
+        var strJsonDatas = eval({ olId: referenceId });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getOrderLimitdetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+                var Result = jQuery.parseJSON(data);
+
+                //for (var i = 0; i < eDesignation.length - 1; i++) {
+                //    if (eDesignation[i].designation_id == Result[0].designation_id) {
+                //        $("#select2-ddlEditDesignation-container").html(eDesignation[i].designation_name);
+
+                //        $("#ddlEditDesignation").val(Result[0].designation_id).change();
+
+                //    }
+                //}
+                if (Result[0].role_id == 5)
+                {
+                    $("input[id=editradioResearch]").prop("checked", true);
+                    LoadDesignationData(Result[0].designation_id);
+
+                }
+                else if (Result[0].role_id == 6) {
+                    $("input[id=editradioDataEntry]").prop("checked", true);
+                    LoadDesignationData(Result[0].designation_id);
+                }
+
+                for (var i = 0; i < eDesignation.length - 1; i++) {
+                    if (eDesignation[i].designation_id == Result[0].designation_id) {
+                        $("#select2-ddlEditDesignation-container").html(eDesignation[i].designation_name);
+
+                        $("#ddlEditDesignation").val(Result[0].designation_id).change();
+
+                        break;
+                    }
+                    else if (Result[0].designation_id == undefined) {
+                        $("#select2-ddlEditDesignation-container").html("-Select Type-");
+
+                        $("#ddlEditDesignation").val(-1).change();
+                    }
+                }
+
+                //$("#ddlEditDesignation").val(Result[0].designation_id).change();
+
+                //$("input[name='optradios']:checked").val((Result[0].role_id)).change();
+                //$("#ddlDesignation").val((Result[0].designation_id)).change();
+                $("#EditminOrder ").val((Result[0].noIncentive_order_limit)).change();
+                $("#EditFirstInc").val((Result[0].firstIncentive_order_limit)).change();
+                $("#EditSecondInc").val((Result[0].secondIncentive_order_limit)).change();
+                $("#EditFirstIncAmount").val((Result[0].firstIncentive_amount)).change();
+                $("#EditSecondIncAmount").val((Result[0].secondIncentive_amount)).change();
+                $("#EditBalanceAmount").val((Result[0].balanceIncentive_amount)).change();
+
+            }
+        });
+    }
+
+    function updatedata() {
+
+        var sRole = $('input[name="optradio"]:checked').val();
+        var designation = $("#ddlEditDesignation").val();
+        var minOrder = $("#EditminOrder").val();
+        var firstInc = $("#EditFirstInc").val();
+        var secondInc = $("#EditSecondInc").val();
+        var firstAmount = $("#EditFirstIncAmount").val();
+        var secondAmount = $("#EditSecondIncAmount").val();
+        var balanceAmount = $("#EditBalanceAmount").val();
+
+        if (firstAmount < 0)
+        {
+            alert("Please enter value greater than 0")
+            return;
+        }
+        if (secondAmount < 0) {
+            alert("Please enter value greater than 0")
+            return;
+        }
+        if (balanceAmount < 0) {
+            alert("Please enter value greater than 0")
+            return;
+        }
+        //if (type == "-1") {
+        //    alert("Please choose Order type ");
+        //    return;
+        //}
+        //if (weightage == "") {
+        //    alert("Please type weightage ");
+        //    return;
+        //}
+        //if (weightage > 10) {
+        //    alert("weightage value exceeded the limit")
+        //    return;
+        //}
+        var strJsonDatas = eval({
+            role: sRole, designation: designation, minOrder: minOrder, firstInc: firstInc, secondInc: secondInc,
+            firstAmount: firstAmount, secondAmount: secondAmount, balanceAmount: balanceAmount, olId: referenceId
+        });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "updateOrderLimitDetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                if (data != undefined) {
+                    if (data == "Error") {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Development team',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        })
+                    }
+                    if (data == "success") {
+                        swal({
+                            title: 'Updated!',
+                            text: 'The details have been updated',
+                            icon: 'success',
+                            button: {
+                                text: "Continue",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                    function () {
+                        location.reload();
+                    }
+                    )
+                    }
+                } else {
+                    //Result = jQuery.parseJSON(data);
+                    //swal({
+                    //    title: 'Updated!',
+                    //    text: 'The details have been updated',
+                    //    icon: 'success',
+                    //    button: {
+                    //        text: "Continue",
+                    //        value: true,
+                    //        visible: true,
+                    //        className: "btn btn-primary",
+                    //        timer: 1000,
+                    //    }
+                    //}).then(
+                    //function () {
+                    //    location.reload();
+                    //}
+                    //)
+                }
+            }
+
+        });
+
+    }
+
+
+</script>

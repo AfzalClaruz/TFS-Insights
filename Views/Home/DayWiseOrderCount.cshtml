@@ -1,0 +1,299 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "DayWiseOrderCount";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    
+}
+@{
+    int a = Convert.ToInt32(TempData["employee"]);
+
+    int month = Convert.ToInt16(ViewBag.month);
+    int year = Convert.ToInt16(ViewBag.year);
+        
+}
+
+<style>
+    .hidden{
+        display:none;
+    }
+    div.dataTables_wrapper div.dataTables_filter label {
+        position: static;
+    }
+</style>
+
+
+<div class="abc">
+    <h2 style="margin-bottom:30px; display:flex; justify-content:space-between">
+        <span id="heading">Employee - Orders Monthly Report </span>
+        <span class="refreshicon" id="refreshicon"><i class="fa fa-refresh " aria-hidden="true" onclick="refreshPage();" style="font-size:20px;"></i> </span>
+        @*<span class="backIcon hidden" id="backIcon"><i class="fa fa-arrow-left " aria-hidden="true" title="Go Back to report page!" onclick="goBack();" style="font-size:20px;"></i> </span>*@
+    </h2>
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+
+
+    @using (Html.BeginForm("DayWiseOrderCount", "Home", FormMethod.Post, new { @class = "col-md-9", style = "display:contents;", name = "frm", id = "frm", onsubmit = "loadergif(1);" }))
+    {
+        <div class="col-md-12" id="SelectDiv">
+            <div class="row" style="margin-bottom:40px;">
+                @if (Convert.ToInt64(Session["role"]) == 2 || Convert.ToInt64(Session["role"]) == 1)
+                {
+                 <div class="col-md-3" id="empSection">
+                        <div class="form-group">
+                            <label style="font-size:1rem;">Select Your Employee</label>
+                            <select class="form-control validate js-example-basic-single" id="ddlEmployee" name="empRef"></select>
+                        </div>
+                </div>
+                }
+
+                <div class="col-md-2">
+                    <div class="md-form mb-5">
+                        <label>Month</label>
+                        <select name="month" class="form-control validate js-example-basic-single" id="month">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10" >October</option>
+                            <option value="11" >November</option>
+                            <option value="12" >December</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label>Year</label>
+                    <select name="year" class="form-control validate js-example-basic-single" id="year">
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        @*<option value="2021">2021</option>
+                        <option value="2020">2020</option>*@
+                    </select>
+                </div>
+                <div class="col-md-2" id="gButton">
+                    <label><br /></label>
+                    <div class="md-form mb-5">
+                        <button type="submit" class="btn btn-primary" title="Generate Report"><i class="fa fa-cogs" style="margin-right: 5px;" aria-hidden="true"></i> Generate Report </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+    <div class="col-sm-12 hidden" id="hiddenTable_OrdersByDay">
+        <table id="OrdersByDay" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>DATE</th>
+                    <th>ORDER LIMIT</th>
+                    <th>ACHIEVED ORDERS</th>
+                    <th>EXTRA ORDERS</th>
+                    <th>SPECIAL INCENTIVES</th>
+                    <th>TOTAL</th>
+                    <th>INCREMENT PERCENTAGE(%)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/JavaScript" src="https://MomentJS.com/downloads/moment-with-locales.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+<script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js" defer></script>
+
+
+
+<script>
+
+    if (@Convert.ToInt64(Session["role"]) == 2)
+    {
+        EmployeeData();
+    }
+
+    var monthName
+
+    $(document).ready(function () {
+
+        //var previousMonth = (new Date().getMonth());
+
+        //var previousYear = (new Date().getFullYear())-1;
+
+        const monthnames = ["January", "February", "March", "April", "May", "June",
+                                "July", "August", "September", "October", "November", "December"];
+
+        monthName = monthnames[@month-1]
+
+        //var month = previousMonth;
+
+        //var option = "";
+        //var option1 = "";
+
+
+
+        //var j = 1;
+        //for(var i=0; i<month; i++){
+        //    option+= '<option value="'+ j +'">' + monthnames[i] + "</option>"
+        //    j++;
+        //}
+        //document.getElementById("month").innerHTML = option;
+
+        main();
+        
+
+        @*$("#ddlEmployee").val(@a).change()
+        var name = $("#ddlEmployee").val(@a).text();
+        $("#select2-ddlEmployee-container").html(name);*@
+    });
+
+
+    function EmployeeData() {
+        var empRef=@Html.Raw(Json.Encode(ViewBag.empRef));
+        var strJsonData = eval({ CurrentUser: 1, EmployeeId: 1 });
+        var Result = "";
+        $.ajax({
+            url: "LoadTableData",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            //data: JSON.stringify(strJsonData),
+            success: function (data) {
+
+
+                ResultEmployeeList = jQuery.parseJSON(data.strEmployeeList);
+
+                employeeNames=ResultEmployeeList;
+
+
+                if (ResultEmployeeList != "" && ResultEmployeeList != null) {
+
+                    $('#ddlEmployee').empty().append('<option value="-1">-Select Employee-</option>');
+
+                    for (var i = 0; i < ResultEmployeeList.length; i++) {
+
+                        if(@a!="")
+                        {
+                            if(ResultEmployeeList[i]["emp_ref_no"]==@a)
+                            {
+                                $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '" selected>' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                            }
+                            else
+                            {
+                                $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                            }
+                        }
+                        else
+                        {
+                            $('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                        }
+                        //$('#ddlEmployee').append('<option value="' + ResultEmployeeList[i]["emp_ref_no"] + '">' + ResultEmployeeList[i]["emp_first_name"] + '</option>');
+                    }
+                }
+
+            }
+        });
+    }
+
+    function main() {
+
+        loadergif(1);
+        var  Result = @Html.Raw(Json.Encode(ViewBag.DayWiseData));
+
+        if (Result != '' && Result != null) {
+
+
+            $('#hiddenTable_OrdersByDay').removeClass('hidden')
+
+            $('#OrdersByDay').DataTable().clear().destroy();
+
+            Data = Result.Data;
+
+            Datas = jQuery.parseJSON(Data);
+
+            var length = Datas.length;
+
+            var table = document.getElementById('OrdersByDay');
+
+            
+
+            for (var i = 0; i < length; i++) {
+                if (Datas[i].date != null) {
+                    var dates = Datas[i].date;
+                    dates = dates.split('T')[0];
+                    //var updatedDate = new Date().toLocaleDateString('en-US')
+                }
+
+
+                $('#OrdersByDay').append(
+                    '<tr id="' + i + '">' +
+                        //'<td><input type="checkbox" id='+Datas[i].emp_id+' /></td>' +
+                        //'<td class="hidden">' + Datas[i].emp_id + '</td>' +
+                        '<td>' + dates + '</td>' +
+                        '<td>' + Datas[i].order_limit + '</td>' +
+                        '<td>' + Datas[i].achieved_orders + '</td>' +
+                        '<td>' + Datas[i].extra_orders + '</td>' +
+                        '<td>' + Datas[i].special_incentive + '</td>' +
+                        '<td>' + Datas[i].total + '</td>' +
+                        '<td>' + Datas[i].increment_percentage + '</td>' +
+                   '</tr>');
+
+            }
+
+            $('#OrdersByDay').DataTable({});
+
+            $("#select2-month-container").html(monthName);
+
+            $("#month").val(@month).change();
+
+            //var yearDigit =  $("#year").val(@year).text;
+
+            $("#select2-year-container").html(@year);
+
+            $("#year").val(@year).change();
+
+
+
+
+            //setTimeout(function () {
+            //tables =  $('#OrdersByDay').DataTable({
+            //    "bpaging": false,
+            //    "bDestroy": true,
+            //    "scrollX": true,
+            //    select: {
+            //        style: 'multi',
+            //        info: false
+            //    }
+            //    //,
+            //    //columnDefs: [ {
+            //    //    orderable: false,
+            //    //    className: 'select-checkbox',
+            //    //    targets:   [0]
+            //    //} ],
+            //})
+        }
+
+
+
+        loadergif(0);
+
+        //$(".dt-button").addClass("btn btn-outline-primary btn-fw")
+        //$(".dt-button").removeClass("dt-button")
+    }
+
+
+</script>

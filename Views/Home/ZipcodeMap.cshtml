@@ -1,0 +1,916 @@
+﻿
+@{
+    ViewBag.Title = "Zipcode_MLS_Map";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden {
+        display: none;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter label {
+        position: inherit;
+        float: right;
+    }
+    /*.select2 select2-container select2-container--default{
+            width:200px !important;
+        }*/
+    .select2-container {
+        width: 200px !important;
+    }
+
+    .mistake {
+        /*background-color: #fce4e4;*/
+        border: 1px solid #cc0033 !important;
+    }
+
+
+    .form-control {
+        border: 1px solid #aaa;
+    }
+</style>
+
+<div class="abc">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Manage ZIPCODE & MLS</h2>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4 addbtn" style="display:flex; justify-content:flex-end;">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateForm"><i class="fa fa-plus" style="margin-right: 5px;" aria-hidden="true"></i> Add Zipcode - MLS Map </button>
+            </div>
+
+        </div>
+    </div>
+
+    @*Create Form*@
+    <div class="modal fade" id="modalCreateForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document" style="display:flex; justify-content:center">
+            <div class="modal-content" style="width: 500px">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold" style="justify-content: center;display: flex;">Add Zipcode</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="removeDetails()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 27px 66px!important">
+                    <div class="row" style="display: flex;justify-content: space-around;">
+                        <div class="col-sm-12">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-5"><label>Zipcode : </label></div>
+                                <div class="col-sm-7"><input class="form-control" type="number" placeholder="Enter the zipcode" id="zipcode" /></div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="padding-top:10px">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-5"><label>MLS Name : </label></div>
+                                <div class="col-sm-7">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlMlsName">
+                                        <option value="" disabled selected>Select your option</option>
+                                    </select>
+                                    @*<input class="form-control" type="text" id="platformName" />*@
+                                </div>
+                            </div>
+                        </div>
+
+                        @*form-control validate js-example-basic-multiple w-100*@
+                        <div class="col-md-12" style="padding-top:10px">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-5"><label>Platform Name : </label></div>
+                                <div class="col-sm-7">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlPlatformName"></select>
+                                    @*<input class="form-control" type="text" id="platformName" />*@
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="display: flex;justify-content: center;">
+                            <span id="errorMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                        </div>
+
+                        @*js-example-basic-multiple w-100 select2-hidden-accessible*@
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="addData()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Add </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Edit Form*@
+    <div class="modal fade" id="modalEditForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document" style="display:flex; justify-content:center">
+            <div class="modal-content" style="width: 500px">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold" style="justify-content: center;display: flex;">Edit Zipcode</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 27px 66px!important">
+                    <div class="row" style="display: flex;justify-content: space-around;">
+                        <div class="col-sm-12">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-5"><label>Zipcode : </label></div>
+                                <div class="col-sm-7"><input class="form-control" type="number" id="newZipcode" /></div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="padding-top:10px">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-5"><label>MLS Name : </label></div>
+                                <div class="col-sm-7">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlNewMlsName"></select>
+                                    @*<input class="form-control" type="text" id="platformName" />*@
+                                </div>
+                            </div>
+                        </div>
+
+                        @*form-control validate js-example-basic-multiple w-100*@
+                        <div class="col-md-12" style="padding-top:10px">
+                            <div class="row" style="align-items: center;">
+                                <div class="col-sm-5"><label>Platform Name : </label></div>
+                                <div class="col-sm-7">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlNewPlatformName"></select>
+                                    @*<input class="form-control" type="text" id="platformName" />*@
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="display: flex;justify-content: center;">
+                            <span id="errorEditMsg" style="color: red; font-size: 13px; padding-top: 16px;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="updateData()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Update </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12" id="Table_manageZipMls" >
+        <table id="manageZipMls" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>SL.NO</th>
+                    <th class="hidden">zipMapId</th>
+                    <th>ZIPCODE</th>
+                    <th>MLS NAME</th>
+                    <th>PLATFORM</th>
+                    <th>EDIT</th>
+                    <th>DELETE</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+@*<script type="text/JavaScript" src="https://MomentJS.com/downloads/moment-with-locales.js"></script>*@
+
+@*<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>*@
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+<script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js" defer></script>
+
+
+<script>
+
+    document.getElementById("zipcode").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+    document.getElementById("newZipcode").addEventListener("keypress", function (evt) {
+        if (evt.which != 8 && evt.which != 0 && evt.which != 46 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    $('select').select2({
+        placeholder: "-Select an option-",
+    });
+
+    //if ($(".js-example-basic-multiple").length) {
+    //    $(".js-example-basic-multiple").select2();
+    //}
+
+    //$('select').select2({
+    //    placeholder: "-Select an option-",
+    //    //allowClear: true
+    //});
+
+    var ResultMlsNames;
+    var ResultPlatform;
+    var ResultPlatformMlsMap;
+    var rowNo;
+    var id;
+
+    $(document).ready(function () {
+        loadData();
+        generateTable();
+        //var table = $('#manageZipMls').DataTable({
+        //    drawCallback: function () {
+        //        $('.paginate_button.next:not(.disabled)', this.api().table().container())
+        //           .on('click', function () {
+        //               var a = 2
+        //               get(a);
+                       
+        //           });
+        //    }
+        //});
+        //var table = $('#manageZipMls').DataTable();
+        //$('#manageZipMls').on('page.dt', function () {
+        //    var info = table.page.info();
+        //    $('#pageInfo').html('Showing page: ' + info.page + ' of ' + info.pages);
+        //    var a = 2
+        //    get(a);
+        //   // alert("hi")
+        //});
+
+    })
+
+    //function get(page){
+    //    id = 1;
+    //    var strJsonDatas = eval({ Id: id, mapId: page });
+    //    $.ajax({
+    //        type: "POST",
+    //        async: false,
+    //        url: "getZipMlsData",
+    //        data: JSON.stringify(strJsonDatas),
+    //        contentType: "application/json; charset=utf-8",
+    //        success: function (msg) {
+    //            var data = msg;
+
+    //            Result = jQuery.parseJSON(data);
+    //            $('#manageZipMls').DataTable().clear().destroy();
+    //            if (Result != null) {
+
+    //                Datas = Result;
+
+    //                var length = Datas.length;
+
+    //                var table = document.getElementById('manageZipMls');
+
+    //                for (var i = table.rows.length - 1; i > 0; i--) {
+    //                    table.deleteRow(i);
+    //                }
+
+    //                for (var i = 0; i < length; i++) {
+
+
+    //                    $('#manageZipMls').append(
+    //                        '<tr id="' + i + '">' +
+    //                            '<td>' + Datas[i].Sl_no + '</td>' +
+    //                            '<td class="hidden">' + Datas[i].zip_map_id + '</td>' +
+    //                            '<td>' + Datas[i].zipcode + '</td>' +
+    //                            '<td>' + Datas[i].mls_name + '</td>' +
+    //                            '<td>' + Datas[i].platform_name + '</td>' +
+    //                            '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+    //                            '<td><a href="#" onclick="deleteId(' + i + ') "><i class="fa fa-trash" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+    //                       '</tr>');
+
+    //                }
+
+
+
+    //                //setTimeout(function () {
+    //                $('#manageZipMls').DataTable({
+
+    //                    "bpaging": false,
+    //                    "bDestroy": true,
+    //                    scrollX: true,
+    //                    "bScrollCollapse": true,
+    //                    dom: 'Blfrtip',
+    //                    buttons: [
+    //                           {
+    //                               extend: 'pdf',
+    //                               footer: true,
+    //                               exportOptions: {
+    //                                   columns: [0, 2],
+    //                                   orthogonal: "export",
+    //                                   rows: function (idx, data, node) {
+    //                                       number = 1;
+    //                                       return true;
+    //                                   }
+    //                               }
+    //                           },
+    //                               {
+    //                                   extend: 'csv',
+    //                                   footer: false,
+    //                                   exportOptions: {
+    //                                       columns: [0, 2]
+    //                                   }
+
+    //                               },
+    //                               {
+    //                                   extend: 'excelHtml5',
+    //                                   footer: false,
+    //                                   exportOptions: {
+    //                                       columns: [0, 2]
+    //                                   }
+    //                               }
+    //                    ],
+    //                    columnDefs: [
+    //                { width: "10%", targets: 0 }, { width: "20%", targets: 2 }
+    //                    ]
+
+    //                })
+
+    //                $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+    //                $(".dt-button").removeClass("dt-button");
+
+    //                loadergif(0);
+    //            }
+
+    //        }
+    //    })
+    //}
+
+    function loadData() {
+        //var id = 1;
+        //var strJsonDatas = eval({ Id:id });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "LoadTableData",
+            //data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function(msg){
+                data = msg;
+                ResultMlsNames = jQuery.parseJSON(data.strMlsNames);
+                ResultPlatform = jQuery.parseJSON(data.strPlatform);
+                ResultPlatformMlsMap = jQuery.parseJSON(data.strMlsPlatformMap);
+
+                if (ResultMlsNames != "" && ResultMlsNames != null) {
+
+                    for (var i = 0; i < ResultMlsNames.length; i++) {
+
+                        $('#ddlMlsName').append('<option value="' + ResultMlsNames[i]["mls_id"] + '">' + ResultMlsNames[i]["mls_name"] + '</option>');
+                        $('#ddlNewMlsName').append('<option value="' + ResultMlsNames[i]["mls_id"] + '">' + ResultMlsNames[i]["mls_name"] + '</option>');
+                    }
+                }
+
+                //if (ResultPlatform != "" && ResultPlatform != null) {
+
+                //    for (var i = 0; i < ResultPlatform.length; i++) {
+
+                //        $('#ddlPlatformName').append('<option value="' + ResultPlatform[i]["platform_id"] + '">' + ResultPlatform[i]["platform_name"] + '</option>');
+                //        $('#ddlNewPlatformName').append('<option value="' + ResultPlatform[i]["platform_id"] + '">' + ResultPlatform[i]["platform_name"] + '</option>');
+                //    }
+                //}
+
+            }
+        })
+    }
+
+    function generateTable() {
+        id = 1;
+        loadergif(1);
+        $('#manageZipMls').DataTable().clear().destroy();
+        rowNo = 0;
+        var strJsonDatas = eval({ Id: id });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getZipMlsData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+
+                Result = jQuery.parseJSON(data);
+                $('#manageZipMls').DataTable().clear().destroy();
+                if (Result != null) {
+
+                    Datas = Result;
+
+                    var length = Datas.length;
+
+                    var table = document.getElementById('manageZipMls');
+
+                    for (var i = table.rows.length - 1; i > 0; i--) {
+                        table.deleteRow(i);
+                    }
+
+                    for (var i = 0; i < length; i++) {
+
+
+                        $('#manageZipMls').append(
+                            '<tr id="' + i + '">' +
+                                '<td>' + Datas[i].Sl_no + '</td>' +
+                                '<td class="hidden">' + Datas[i].zip_map_id + '</td>' +
+                                '<td>' + Datas[i].zipcode + '</td>' +
+                                '<td>' + Datas[i].mls_name + '</td>' +
+                                '<td>' + Datas[i].platform_name + '</td>' +
+                                '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                                '<td><a href="#" onclick="deleteId(' + i + ') "><i class="fa fa-trash" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                           '</tr>');
+
+                    }
+
+
+
+                    //setTimeout(function () {
+                    $('#manageZipMls').DataTable({
+
+                        "bpaging": false,
+                        "bDestroy": true,
+                        scrollX: true,
+                        "bScrollCollapse": true,
+                        dom: 'Blfrtip',
+                        buttons: [
+                               {
+                                   extend: 'pdf',
+                                   footer: true,
+                                   exportOptions: {
+                                       columns: [0, 2],
+                                       orthogonal: "export",
+                                       rows: function (idx, data, node) {
+                                           number = 1;
+                                           return true;
+                                       }
+                                   }
+                               },
+                                   {
+                                       extend: 'csv',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 2]
+                                       }
+
+                                   },
+                                   {
+                                       extend: 'excelHtml5',
+                                       footer: false,
+                                       exportOptions: {
+                                           columns: [0, 2]
+                                       }
+                                   }
+                        ],
+                        columnDefs: [
+                    { width: "10%", targets: 0 }, { width: "20%", targets: 2 }
+                        ]
+
+                    })
+
+                    $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+                    $(".dt-button").removeClass("dt-button");
+
+                    loadergif(0);
+                }
+
+            }
+        })
+    }
+
+    function addData() {
+
+        id = 2
+        var platformId = $("#ddlPlatformName").val()
+        var mlsId = $("#ddlMlsName").val()
+        var zipcode = $("#zipcode").val()
+        var regEx = /(^\d{5}$)|(^\d{5}-\d{4}$)/
+
+        //$('#select2-ddlMlsName-container').val(null).trigger('change');
+        //return;
+
+        if (zipcode == '' && mlsId == null && platformId == null) {
+            $('#zipcode').addClass('mistake');
+            $("body").find("[aria-labelledby='select2-ddlPlatformName-container']").addClass('mistake');
+            $("body").find("[aria-labelledby='select2-ddlMlsName-container']").addClass('mistake');
+            $("#errorMsg").text('Please enter all values');
+            return;
+        }
+        else {
+            $('#zipcode').removeClass('mistake');
+            $("body").find("[aria-labelledby='select2-ddlPlatformName-container']").removeClass('mistake')
+            $("body").find("[aria-labelledby='select2-ddlMlsName-container']").removeClass('mistake')
+            $("#errorMsg").text('');
+        }
+
+        if (!zipcode.match(regEx)) {
+            $("#errorMsg").text('Zipcode should be 5 digit number. Please enter valid zipcode');
+            $('#zipcode').addClass('mistake');
+            return;
+        }
+
+        if (mlsId == null) {
+            $("body").find("[aria-labelledby='select2-ddlMlsName-container']").addClass('mistake');
+            $("#errorMsg").text('Please choose MLS name');
+            return;
+        }
+        if (platformId == null) {
+            $("body").find("[aria-labelledby='select2-ddlPlatformName-container']").addClass('mistake');
+            $("#errorMsg").text('Platform cannot be empty');
+            return;
+        }
+
+        var strJsonDatas = eval({ Id: id, platformId: platformId , mlsId : mlsId, zipcode:zipcode})
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getZipMlsData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var datas = msg;
+                var Result = jQuery.parseJSON(datas);
+                var data = Result[0].resultmsg
+                if (data != undefined) {
+                    if (data == "success") {
+                        swal({
+                            title: 'Success!',
+                            text: 'Zipcode mapped with MLS.',
+                            icon: 'success',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        }
+                        )
+                    }
+                    if (data == "exists") {
+                        swal({
+                            title: 'Error!',
+                            text: 'Zipcode already exist.',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        }
+                        )
+                    }
+                }
+                else {
+                }
+
+
+            }
+        })
+    }
+
+    function edit(rowid) {
+
+        $('#newZipcode').removeClass('mistake');
+        $("body").find("[aria-labelledby='select2-ddlNewPlatformName-container']").removeClass('mistake');
+        $("body").find("[aria-labelledby='select2-ddlNewMlsName-container']").removeClass('mistake');
+        $("#errorEditMsg").text('');
+
+
+
+        id = 3;
+        rowNo = document.getElementById(rowid).childNodes[1].outerText;
+        var strJsonDatas = eval({ Id: id, mapId: rowNo });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getZipMlsData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var data = msg;
+                var Result = jQuery.parseJSON(data);
+
+                if (ResultMlsNames != "" && ResultMlsNames != null) {
+                    for (i = 0; i < ResultMlsNames.length; i++) {
+                        if (Result[0].mls_id == ResultMlsNames[i].mls_id) {
+
+                            $("#select2-ddlNewMlsName-container").html(ResultMlsNames[i].mls_name);
+
+                            $("#ddlNewMlsName").val(Result[0].mls_id).change();
+
+                            break;
+                        }
+                        else if (Result[0].mls_id == undefined || Result[0].mls_id == 0) {
+                            $("#select2-ddlNewMlsName-container").html("-Select an option-");
+
+                            //$("#ddlEditPortal").val(Result[0].portal_id).change();
+
+                        }
+                    }
+                }
+
+                if (ResultPlatform != "" && ResultPlatform != null) {
+                    for (var i = 0; i < ResultPlatform.length; i++) {
+                        $('#ddlNewPlatformName').append('<option value="' + ResultPlatform[i]["platform_id"] + '">' + ResultPlatform[i]["platform_name"] + '</option>');
+                    }
+                }
+
+                if (ResultPlatform != "" && ResultPlatform != null) {
+                    for (i = 0; i < ResultPlatform.length; i++) {
+                        if (Result[0].platform_id == ResultPlatform[i].platform_id) {
+
+                            $("#select2-ddlNewPlatformName-container").html(ResultPlatform[i].platform_name);
+
+                            $("#ddlNewPlatformName").val(Result[0].platform_id).change();
+
+                            break;
+                        }
+                        else if (Result[0].platform_id == undefined || Result[0].platform_id == 0) {
+                            $("#select2-ddlNewPlatformName-container").html("-Select an option-");
+
+                            //$("#ddlEditPortal").val(Result[0].portal_id).change();
+
+                        }
+                    }
+                }
+
+                //alert($("#ddlNewMlsName").val());
+
+                $('#newZipcode').val((Result[0].zipcode)).change();
+                //$('#newMlsName').val(Result[0].platform_name);
+
+            }
+        });
+    }
+
+    function updateData() {
+        id = 4
+        var platformId = $("#ddlNewPlatformName").val();
+        var mlsId = $("#ddlNewMlsName").val();
+        //rowNo = document.getElementById(rowid).childNodes[3].outerText;
+        var zipcode = $("#newZipcode").val()
+
+        var regEx = /(^\d{5}$)|(^\d{5}-\d{4}$)/
+
+        if (zipcode == '' && mlsId == null && platformId == null) {
+            $('#newZipcode').addClass('mistake');
+            $("body").find("[aria-labelledby='select2-ddlNewPlatformName-container']").addClass('mistake');
+            $("body").find("[aria-labelledby='select2-ddlNewMlsName-container']").addClass('mistake');
+            $("#errorEditMsg").text('Please enter all values');
+            return;
+        }
+        else {
+            $('#newZipcode').removeClass('mistake');
+            $("body").find("[aria-labelledby='select2-ddlNewPlatformName-container']").removeClass('mistake')
+            $("body").find("[aria-labelledby='select2-ddlNewMlsName-container']").removeClass('mistake')
+            $("#errorEditMsg").text('');
+        }
+
+        if (!zipcode.match(regEx)) {
+            $("#errorEditMsg").text('Zipcode should be 5 digit number. Please enter valid zipcode');
+            $('#newZipcode').addClass('mistake');
+            return;
+        }
+
+        //if (mlsId == null) {
+        //    $("body").find("[aria-labelledby='select2-ddlNewMlsName-container']").addClass('mistake');
+        //    $("#errorEditMsg").text('Please choose MLS name');
+        //    return;
+        //}
+        //if (platformId == null) {
+        //    $("body").find("[aria-labelledby='select2-ddlNewPlatformName-container']").addClass('mistake');
+        //    $("#errorEditMsg").text('Platform cannot be empty');
+        //    return;
+        //}
+
+
+        var strJsonDatas = eval({ Id: id, platformId: platformId, mlsId: mlsId, zipcode: zipcode, mapId: rowNo })
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getZipMlsData",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                var datas = msg;
+                var Result = jQuery.parseJSON(datas);
+                var data = Result[0].resultmsg
+                if (data != undefined) {
+                    if (data == "success") {
+                        swal({
+                            title: 'Success!',
+                            text: 'Zipcode Details updated.',
+                            icon: 'success',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            location.reload();
+                        }
+                        )
+                    }
+                    if (data == "exists") {
+                        swal({
+                            title: 'Error!',
+                            text: 'Zipcode already exist.',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        }
+                        )
+                    }
+                    if (data == "zipcode duplicate") {
+                        swal({
+                            title: 'Error!',
+                            text: 'Duplicate Zipcode ',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function () {
+                            //location.reload();
+                        }
+                        )
+                    }
+                }
+                else {
+                }
+
+
+            }
+        })
+    }
+
+    function deleteId(rowid) {
+        id = 5
+        rowNo = document.getElementById(rowid).childNodes[1].outerText;
+        var strJsonDatas = eval({ Id: id, mapId: rowNo })
+
+        swal({
+            title: 'Are you sure do you want to delete the selected zipcode?',
+            //text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3f51b5',
+            cancelButtonColor: '#ff4081',
+            confirmButtonText: 'Great ',
+            buttons: {
+                cancel: {
+                    text: "NO",
+                    value: null,
+                    visible: true,
+                    className: "btn btn-danger",
+                    closeModal: true,
+                },
+                confirm: {
+                    text: "YES",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary",
+                    closeModal: true
+                }
+            }
+        }).then(
+        function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "getZipMlsData",
+                    data: JSON.stringify(strJsonDatas),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (msg) {
+                        var datas = msg;
+                        var Result = jQuery.parseJSON(datas);
+                        var data = Result[0].resultmsg
+                        if (data != undefined) {
+                            if (data == "Error") {
+                                swal({
+                                    title: 'Error',
+                                    text: 'Something went wrong.Contact Development team',
+                                    icon: 'error',
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary",
+                                        timer: 1000,
+                                    }
+                                }).then(
+                                function () {
+                                    location.reload();
+                                })
+                            }
+                            if (data == "success") {
+                                swal({
+                                    title: 'Deleted!',
+                                    text: 'Zipcode has been removed.',
+                                    icon: 'success',
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary",
+                                        timer: 1000,
+                                    }
+                                }).then(
+                                function () {
+                                    location.reload();
+                                }
+                                )
+                            }
+                        } else {
+                        }
+                    }
+                });
+            }
+            else {
+                return false;
+            }
+        }
+        )
+    }
+
+    $('#ddlMlsName').change(function () {
+        $('#ddlPlatformName').val('');
+        $('#ddlPlatformName').text('');
+        var mls_id = $('#ddlMlsName').val();
+        if (ResultPlatformMlsMap != "" && ResultPlatformMlsMap != null) {
+            for (var i = 0; i < ResultPlatformMlsMap.length; i++) {
+                if (ResultPlatformMlsMap[i]["mls_id"] == mls_id) {
+                    $('#ddlPlatformName').append('<option value="' + ResultPlatformMlsMap[i]["platform_id"] + '">' + ResultPlatformMlsMap[i]["platform_name"] + '</option>');
+                    //$('#ddlEditPlatform').append('<option value="' + ResultPlatformMlsMap[i]["platform_id"] + '">' + ResultPlatformMlsMap[i]["platform_name"] + '</option>');
+                }
+            }
+
+        }
+    })
+
+    $('#ddlNewMlsName').change(function () {
+        $('#ddlNewPlatformName').val('');
+        $('#ddlNewPlatformName').text('');
+        var mls_id = $('#ddlNewMlsName').val();
+        if (ResultPlatformMlsMap != "" && ResultPlatformMlsMap != null) {
+            for (var i = 0; i < ResultPlatformMlsMap.length; i++) {
+                if (ResultPlatformMlsMap[i]["mls_id"] == mls_id) {
+                    $('#ddlNewPlatformName').append('<option value="' + ResultPlatformMlsMap[i]["platform_id"] + '">' + ResultPlatformMlsMap[i]["platform_name"] + '</option>');
+                    //$('#ddlEditPlatform').append('<option value="' + ResultPlatformMlsMap[i]["platform_id"] + '">' + ResultPlatformMlsMap[i]["platform_name"] + '</option>');
+                }
+            }
+
+        }
+    })
+
+    function removeDetails() {
+        
+        $("#zipcode").val('')
+        $(".mistake").removeClass('mistake');
+        $("#errorMsg").text('');
+
+        $("#ddlMlsName").html("").trigger("change");
+        $("#ddlPlatformName").html("").trigger("change");
+
+        if (ResultMlsNames != "" && ResultMlsNames != null) {
+
+            for (var i = 0; i < ResultMlsNames.length; i++) {
+
+                $('#ddlMlsName').append('<option value="' + ResultMlsNames[i]["mls_id"] + '">' + ResultMlsNames[i]["mls_name"] + '</option>');
+            }
+
+            $("#ddlMlsName").val(null).trigger("change");
+        }
+
+        //$('select.select2 option:selected').attr('selected', false).attr('data-select2-id', false);
+        //$('select.select2').val('').trigger('change');
+    }
+
+
+
+
+
+</script>
+

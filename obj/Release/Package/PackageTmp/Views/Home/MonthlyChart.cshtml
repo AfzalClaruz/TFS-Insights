@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewBag.Title = "MonthlyChart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>MonthlyChart</h2>
+<style>
+.error-msg {
+  color: #D8000C;
+  background-color: #FFBABA;
+}
+</style>
+
+
+@if (TempData["exError"] != null)
+{
+    <div class="error-msg">
+        <i class="fa fa-times-circle"></i>
+        This is a error message.
+    </div>
+}

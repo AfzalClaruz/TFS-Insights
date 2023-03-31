@@ -1,0 +1,1152 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "Weightage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int roleId = Convert.ToInt16(ViewBag.role);
+}
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .hides {
+        display: none;
+    }
+
+    .addbtn {
+        justify-content: flex-end;
+        display: flex;
+    }
+
+    .dt-buttons a {
+        width: 32px;
+        line-height: 0;
+        margin-top: 20px;
+    }
+
+    .dt-buttons span {
+        font-size: 14px;
+        margin-left: -13px;
+    }
+
+    .select2-container {
+        width: 100% !important;
+    }
+</style>
+@*<h1>@Html.Raw(Json.Encode(ViewBag.WeightageData));</h1>*@
+@*<h1>@roleId</h1>*@
+<div class="abc">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Order Weightage </h2>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4 addbtn">
+            <label><br /></label>
+            <div class="md-form mb-5">
+                <button style="line-height: 1;" class="btn btn-primary" data-toggle="modal" data-target="#modalRegisterForm"><i class="fa fa-plus" style="margin-right: 5px;" aria-hidden="true"></i> Add Item </button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    @using (Html.BeginForm("Weightage", "Home", FormMethod.Post, new { name = "frm", id = "frm", onsubmit = "loadergif(1);" }))
+    {
+        <div class="row">
+            <div class="col-md-3">
+                <div class="md-form mb-5">
+                    <label>Select Role</label>
+                    <select name="role" class="form-control validate" id="ddlRole">
+                        @if (roleId == 5 && roleId == 0)
+                        {
+                            <option selected="selected" value="5">Researcher</option>
+                        }
+                        else
+                        {
+                            <option value="5">Researcher</option>
+                        }
+                        @if (roleId == 6)
+                        {
+                            <option selected="selected" value="6">Data Entry</option>
+                        }
+                        else
+                        {
+                            <option value="6">Data Entry</option>
+                        }
+                        <option value="3">Revision</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label><br /></label>
+                <div class="md-form mb-5">
+                    <button style="line-height: 1;" type="submit" class="btn btn-primary" id="btngenerate"><i class="fa fa-cogs" style="margin-right: 5px;" aria-hidden="true"></i> Generate </button>
+                    @*onclick="generatetable()"*@
+                </div>
+            </div>
+
+
+        </div>
+    }
+
+
+
+
+
+
+
+    @*Create Form*@
+
+    @*<div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header ">
+                        <h4 class="modal-title w-100 font-weight-bold">Add Weightage</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body mx-3">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="md-form mb-5">
+                                        <select class="form-control validate" id="ddlClient"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="md-form mb-5">
+                                        <select class="form-control validate" id="ddlPortal"></select>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="md-form mb-5">
+                                        <select class="form-control validate" id="ddlorderType"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="md-form mb-5">
+                                        <select class="form-control validate" id="ddlState"></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="md-form mb-5">
+                                        <select class="form-control validate" id="ddlSoftware">
+                                            <option value="0">Software</option>
+                                            <option value="1">WS</option>
+                                            <option value="2">WOS</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="md-form mb-5">
+                                        <input type="number" id="txtWeightage" class="form-control validate" placeholder="Weightage">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button class="btn btn-primary" onclick="create()">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+    <div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold">Add Weightage</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="col-md-12">
+                        <div class="row">
+                            
+                            @*<div class="col-md-5">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlUserRole"></select>
+                                </div>
+                            </div>*@
+                            <div class="col-md-5">
+                                <div class="md-form mb-5">
+                                    <label>Select Role</label>
+                                    <select name="role" class="form-control validate" id="ddllUserRole">
+                                            @*<option selected="selected" value="5">Researcher</option>*@
+                                            <option value="3">Researcher</option>
+                                            @*<option selected="selected" value="6">Data Entry</option>*@
+                                            <option value="5">Data Entry</option>
+                                    </select>
+                                </div>
+                            </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-5">
+                                    <div class="md-form mb-5">
+                                        <select class="form-control validate js-example-basic-single w-100" id="ddlTypes"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="md-form mb-5">
+                                        <select class="form-control validate js-example-basic-single w-100" id="ddlClient"></select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlPortal"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlorderType"></select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlState"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4" >
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate" id="ddlSoftware">
+                                        <option value="0">-Select Software-</option>
+                                        <option value="1">WS</option>
+                                        <option value="2">WOS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <input type="number" id="txtWeightage" class="form-control validate" placeholder="Weightage">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @*<div class="row">
+
+                        </div>*@
+
+
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="create()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Create </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*id="modalEditForm"
+        <button class="btn btn-primary" onclick="updatedata()">Update</button>*@
+
+    
+    @*Edit Form*@
+    <div class="modal fade" id="modalEditForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h4 class="modal-title w-100 font-weight-bold" name="editRoleName" id="editRoleName"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="col-md-12">
+                        @*<div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditUserRole"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>*@
+                        <div class="row">
+
+                            @*<div class="col-md-5">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditUserRole"></select>
+                                </div>
+                            </div>*@
+                            @*<div class="col-md-5">
+                                <div class="md-form mb-5">
+                                    <label>Select Role</label>
+                                    <select name="role" class="form-control validate js-example-basic-single w-100" id="ddllEUserRole">
+                                        <option value="3">Researcher</option>
+                                        <option value="5">Data Entry</option>
+                                    </select>
+                                </div>
+                            </div>*@
+                            <div class="col-md-2"></div>
+                            <div class="col-md-5">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditTypes"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditClient" ></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditPortal"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditorderType"></select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate js-example-basic-single w-100" id="ddlEditState"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4" >
+                                <div class="md-form mb-5">
+                                    <select class="form-control validate " id="ddlEditSoftware">
+                                        <option value="0">-Select Software-</option>
+                                        <option value="1">WS</option>
+                                        <option value="2">WOS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-form mb-5">
+                                    <input type="number" id="txtEditWeightage" class="form-control validate " placeholder="Weightage">
+                                </div>
+                            </div>
+                        </div>
+
+                        @*<div class="row">
+
+                            </div>*@
+                    </div>
+
+
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-primary" onclick="updatedata()"><i class="fa fa-check" style="margin-right: 5px;" aria-hidden="true"></i> Update </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12" id="hiddenTable_R">
+        <table id="tblOrderDetails_R" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th class="hidden">Id</th>
+                    <th class="hidden">Role</th>
+                    <th>Sl</th>
+                    <th>State</th>
+                    <th>Client</th>
+                    <th>Order Type</th>
+                    <th>Portal Name</th>
+                    <th>Types</th>
+                    <th>Software</th>
+                    <th>Weightage</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js" defer></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js" defer></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js" defer></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/vendors/select2/select2.min.js"></script>
+<script src="https://www.bootstrapdash.com/demo/skydash/template/js/select2.js"></script>
+
+<script>
+
+    var eClient,eState,ePortal,eType,eRole,eOtherType,optionValues,optionValuess=[];
+    var rolename;
+    var a = [];
+
+    $('#ddlClient,#ddlPortal,#ddlorderType,#ddlState,#ddlTypes').select2({
+        dropdownParent: $('#modalRegisterForm')
+    });
+
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+
+    $(document).ready(function () {
+        //$.fn.modal.Constructor.prototype._enforceFocus = function() {};
+        LoadTableData();
+        main();
+    });
+
+    function LoadTableData() {
+
+        var strJsonData = eval({ CurrentUser: 1, EmployeeId: 1 });
+        var Result = "";
+        $.ajax({
+            url: "LoadTableData",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+
+
+                ResultClientList = jQuery.parseJSON(data.strClientList);
+                ResultPortalList = jQuery.parseJSON(data.strPortalList);
+                ResultOrderTypeList = jQuery.parseJSON(data.strOrderTypeList);
+                ResultStateList = jQuery.parseJSON(data.strStateList);
+                ResultRoleList = jQuery.parseJSON(data.strEmployeeRoleList);
+                ResultOtherTypes = jQuery.parseJSON(data.strOtherTypesList);
+
+
+                if (ResultClientList != "" && ResultClientList != null) {
+
+                    eClient=ResultClientList;
+
+                    $('#ddlClient').empty().append('<option value="-1">-Select Client-</option>');
+                    $('#ddlEditClient').empty().append('<option value="-1">-Select Client-</option>');
+
+                    var data = [];
+
+                    var j = 0;
+
+
+                    for (var i = 0; i < ResultClientList.length; i++) {
+
+
+
+                        $('#ddlClient').append('<option value="' + ResultClientList[i]["ref_no"] + '">' + ResultClientList[i]["full_name"] + '</option>');
+                        $('#ddlEditClient').append('<option value="' + ResultClientList[i]["ref_no"] + '">' + ResultClientList[i]["full_name"] + '</option>');
+
+                    }
+                }
+
+                if (ResultPortalList != "" && ResultPortalList != null) {
+
+                    ePortal=ResultPortalList;
+
+                    $('#ddlPortal').empty().append('<option value="-1">-Select Portal-</option>');
+                    $('#ddlEditPortal').empty().append('<option value="-1">-Select Portal-</option>');
+                    
+                    for (var i = 0; i < ResultPortalList.length; i++) {
+
+                        $('#ddlPortal').append('<option value="' + ResultPortalList[i]["portal_id"] + '">' + ResultPortalList[i]["portal_name"] + '</option>');
+                        $('#ddlEditPortal').append('<option value="' + ResultPortalList[i]["portal_id"] + '">' + ResultPortalList[i]["portal_name"] + '</option>');
+                    }
+                }
+
+
+                if (ResultOrderTypeList != "" && ResultOrderTypeList != null) {
+
+                    eType=ResultOrderTypeList;
+
+                    $('#ddlorderType').empty().append('<option value="-1">-Select Order type-</option>');
+                    $('#ddlEditorderType').empty().append('<option value="-1">-Select Order type-</option>');
+
+                    for (var i = 0; i < ResultOrderTypeList.length; i++) {
+
+                        $('#ddlorderType').append('<option value="' + ResultOrderTypeList[i]["value"] + '">' + ResultOrderTypeList[i]["display_value"] + '</option>');
+                        $('#ddlEditorderType').append('<option value="' + ResultOrderTypeList[i]["value"] + '">' + ResultOrderTypeList[i]["display_value"] + '</option>');
+                    }
+                }
+
+
+                if (ResultStateList != "" && ResultStateList != null) {
+
+                    eState=ResultStateList;
+
+                    $('#ddlState').empty().append('<option value="-1">-Select State-</option>');
+                    $('#ddlEditState').empty().append('<option value="-1">-Select State-</option>');
+
+                    for (var i = 0; i < ResultStateList.length; i++) {
+
+                        $('#ddlState').append('<option value="' + ResultStateList[i]["state_id"] + '">' + ResultStateList[i]["state_name"] + '</option>');
+                        $('#ddlEditState').append('<option value="' + ResultStateList[i]["state_id"] + '">' + ResultStateList[i]["state_name"] + '</option>');
+                    }
+                }
+
+                if (ResultRoleList != "" && ResultRoleList != null) {
+
+                    eRole=ResultRoleList;
+
+                    $('#ddlUserRole').empty().append('<option value="-1">-Select Role-</option>');
+                    $('#ddlEditUserRole').empty().append('<option value="-1">-Select Role-</option>');
+                    
+                    for (var i = 0; i < ResultRoleList.length; i++) {
+
+                        $('#ddlUserRole').append('<option value="' + ResultRoleList[i]["status_role_id"] + '">' + ResultRoleList[i]["role_name"] + '</option>');
+                        $('#ddlEditUserRole').append('<option value="' + ResultRoleList[i]["status_role_id"] + '">' + ResultRoleList[i]["role_name"] + '</option>');
+                    }
+                }
+
+                if (ResultOtherTypes != "" && ResultOtherTypes != null) {
+
+                    eOtherType=ResultOtherTypes;
+
+                    $('#ddlTypes').empty().append('<option value="-1">-Select Type-</option>');
+                    $('#ddlEditTypes').empty().append('<option value="-1">-Select Type-</option>');
+
+                    for (var i = 0; i < ResultOtherTypes.length; i++) {
+
+                        $('#ddlTypes').append('<option value="' + ResultOtherTypes[i]["id"] + '">' + ResultOtherTypes[i]["types"] + '</option>');
+                        $('#ddlEditTypes').append('<option value="' + ResultOtherTypes[i]["id"] + '">' + ResultOtherTypes[i]["types"] + '</option>');
+                    }
+                }
+            }
+        });
+    }
+
+    function main() {
+        var  Result = @Html.Raw(Json.Encode(ViewBag.WeightageData));
+
+        if (Result != '' && Result != null) {
+
+            //Result = Result.Data;
+            $('#tblOrderDetails_R').DataTable().clear().destroy();
+
+            Data = Result.Data;
+
+            Datas = jQuery.parseJSON(Data);
+
+            var length = Datas.length;
+
+            var table = document.getElementById('tblOrderDetails_R');
+
+            //for (var i = table.rows.length - 1; i > 0; i--) {
+            //    table.deleteRow(i);
+            //}
+
+            for (var i = 0; i < length; i++) {
+
+                if (Datas[i].order_type == undefined)
+                    Datas[i].order_type = "-";
+                if (Datas[i].software == 1)
+                    Datas[i].software = "WS";
+                else if (Datas[i].software == 2)
+                    Datas[i].software = "WOS";
+                else if (Datas[i].software == undefined)
+                    Datas[i].software = "-";
+                else if (Datas[i].software == 0)
+                    Datas[i].software = "-";
+                if (Datas[i].state_name == undefined)
+                    Datas[i].state_name = "-";
+                if (Datas[i].full_name == undefined)
+                    Datas[i].full_name = "-";
+                if (Datas[i].portal_name == undefined)
+                    Datas[i].portal_name = "-";
+                if (Datas[i].types == undefined)
+                    Datas[i].types = "-";
+
+                $('#tblOrderDetails_R').append(
+                    '<tr id="' + i + '">' +
+
+                        '<td class="hidden">' + Datas[i].wid + '</td>' +
+                        '<td class="hidden">' + Datas[i].status_role_id + '</td>' +
+                        '<td>' + Datas[i].Sl_no + '</td>' +
+                        '<td>' + Datas[i].state_name + '</td>' +
+                        '<td>' + Datas[i].full_name + '</td>' +
+                        '<td>' + Datas[i].order_type + '</td>' +
+                        '<td>' + Datas[i].portal_name + '</td>' +
+                        '<td>' + Datas[i].types + '</td>' +
+                        '<td align="center">' + Datas[i].software + '</td>' +
+                        '<td align="center">' + Datas[i].weightage + '</td>' +
+                        '<td><a href="#" data-toggle="modal" data-target="#modalEditForm" onclick="edit(' + i + ')"><i class="fa fa-pencil-square-o" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                        '<td><a href="#" onclick="deleteId(' + i + ') "><i class="fa fa-trash" style="color: #4B49AC;" aria-hidden="true"></i></a></td>' +
+                   '</tr>');
+
+            }
+
+            //setTimeout(function () {
+            $('#tblOrderDetails_R').DataTable({
+                "bpaging": false,
+                "bDestroy": true,
+                "scrollX": true,
+                //"autoWidth" : false,
+                //bAutoWidth: false,
+                //aoColumns : [
+                //  { sWidth: '15%' },
+                //  { sWidth: '15%' },
+                //  { sWidth: '15%' },
+                //  { sWidth: '15%' },
+                //  { sWidth: '15%' },
+                //  { sWidth: '15%' },
+                //  { sWidth: '10%' }
+                //],
+                dom: 'Blfrtip',
+                buttons: [
+                           {
+                               extend: 'pdf',
+                               footer: true,
+                               exportOptions: {
+                                   columns: [1, 2, 3, 4, 5, 6, 7],
+                                   orthogonal: "export",
+                                   //rows: function (idx, data, node) {
+                                   //    number = 1;
+                                   //    return true;
+                                   //}
+                               }
+                           },
+                               {
+                                   extend: 'csv',
+                                   footer: false
+
+                               },
+                               {
+                                   extend: 'excelHtml5',
+                                   footer: false,
+                                   exportOptions: {
+                                       columns: [1, 2, 3, 4, 5, 6, 7]
+                                   }
+                               }
+                ],
+
+                columnDefs: [
+                            { orderable: false, targets: [8] },
+                            { orderable: false, targets: [9] }
+                ]
+            })
+        }
+
+        $(".dt-button").addClass("btn btn-outline-primary btn-fw")
+        $(".dt-button").removeClass("dt-button")
+    }
+
+
+
+    function create() {
+
+        var sRole = $("#ddllUserRole").val();
+        var state = $("#ddlState").val();
+        var client = $("#ddlClient").val();
+        var portal = $("#ddlPortal").val();
+        var type = $("#ddlorderType").val();
+        var software = $("#ddlSoftware").val();
+        var weightage = $("#txtWeightage").val();
+        var sOtherType = $("#ddlTypes").val();
+
+
+        if (weightage > 10) {
+            alert("weightage value exceeded the limit")
+            return;
+        }
+
+        if (weightage == "") {
+            alert("There is no value for weightage");
+            return;
+        }
+        //if (type == "-1") {
+        //    alert("Please choose Order type ");
+        //    return;
+        //}
+        if (weightage == "") {
+            alert("Please type weightage ");
+            return;
+        }
+
+        if(sRole==-1){
+            alert("Please select the role ");
+            return;
+        }
+
+        var strJsonDatas = eval({ client: client, state: state, portal: portal, type: type, software: software, weightage: weightage, role: sRole ,otherTypes : sOtherType });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "insertalldetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                if(data!=undefined)
+                {
+                    if(data=="Error")
+                    {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Development team',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            location.reload();
+                        })
+                    }
+                    if(data=="success")
+                    {
+                        //Result = jQuery.parseJSON(data);
+                        //Result=data;
+                        //console.log(Result);
+                        swal({
+                            title: 'Congratulations!',
+                            text: 'New weightage added.',
+                            icon: 'success',
+                            button: {
+                                text: "Continue",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            location.reload();
+                        }
+                        )
+                    }
+                }
+                else{
+                    //Result = jQuery.parseJSON(data);
+                    //Result=data;
+                    ////console.log(Result);
+                    //swal({
+                    //    title: 'Congratulations!',
+                    //    text: 'New weightage added.',
+                    //    icon: 'success',
+                    //    button: {
+                    //        text: "Continue",
+                    //        value: true,
+                    //        visible: true,
+                    //        className: "btn btn-primary",
+                    //        timer: 1000,
+                    //    }
+                    //}).then(
+                    //function(){
+                    //    location.reload();
+                    //}
+                    //)
+                }
+
+
+            }
+        });
+    }
+
+    function updatedata() {
+        //var $newOption = $("<option selected='selected'></option>").val("TheID").text("The text")
+
+        //$("#myMultipleSelect2").append($newOption).trigger('change');
+
+        //var state = $("#ddlEditState").val(2).trigger('change');
+        //var state = $("#ddlEditState").select2("val", "0");
+        var state = $("#ddlEditState").val();
+        var client = $("#ddlEditClient").val();
+        var portal = $("#ddlEditPortal").val();
+        var type = $("#ddlEditorderType").val();
+        var othertype = $("#ddlEditTypes").val();
+
+
+
+        //var state = $("#select2-ddlEditState-container").val();
+        //var client = $("#select2-ddlEditClient-container").val();
+        //
+        //var client = $("#ddlEditClient").val();
+        //
+        //alert(client);
+        //
+        //var portal = $("#select2-ddlEditPortal-container").val();
+        //var type = $("#select2-ddlEditorderType-container").val();
+
+        //alert(type);
+
+        var software = $("#ddlEditSoftware").val();
+        var weightage = $("#txtEditWeightage").val();
+        //if (type == "-1") {
+        //    alert("Please choose Order type ");
+        //    return;
+        //}
+        if (weightage == "") {
+            alert("Please type weightage ");
+            return;
+        }
+        if (weightage > 10) {
+            alert("weightage value exceeded the limit")
+            return;
+        }
+        var strJsonDatas = eval({ wid: refId, client: client, state: state, portal: portal, type: type, software: software, weightage: weightage,othertype_id :othertype });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "updatedetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                if(data!=undefined){
+                    if(data=="Error")
+                    {
+                        swal({
+                            title: 'Error',
+                            text: 'Something went wrong.Contact Development team.',
+                            icon: 'error',
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            location.reload();
+                        })
+                    }
+                    if(data=="success")
+                    {
+                        //Result = jQuery.parseJSON(data);
+                        //Result = data;
+                        swal({
+                            title: 'Updated!',
+                            text: 'The details have been updated',
+                            icon: 'success',
+                            button: {
+                                text: "Continue",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary",
+                                timer: 1000,
+                            }
+                        }).then(
+                        function(){
+                            location.reload();
+                        }
+                        )
+                    }
+                }else
+                {
+                    //Result = jQuery.parseJSON(data);
+                    //swal({
+                    //    title: 'Updated!',
+                    //    text: 'The details have been updated',
+                    //    icon: 'success',
+                    //    button: {
+                    //        text: "Continue",
+                    //        value: true,
+                    //        visible: true,
+                    //        className: "btn btn-primary",
+                    //        timer: 1000,
+                    //    }
+                    //}).then(
+                    //function(){
+                    //    location.reload();
+                    //}
+                    //)
+                }
+            }
+
+
+
+            //alert("Weightage details updated succesfully....");
+            ////$('#tblOrderDetails_R').DataTable().ajax.reload();
+
+            //$('#modalEditForm').modal('toggle');
+            //$(".modal-backdrop").remove();
+            //$("#btngenerate").click();
+            //location.reload();
+            //setTimeout(function () {
+            //    generatetable();
+            //}, 1000);
+            //reloads();
+
+        });
+
+    }
+
+    var refId,roleid,roleName;
+
+    function edit(rowid) {
+        refId = document.getElementById(rowid).childNodes[0].outerText;
+        roleid = document.getElementById(rowid).childNodes[1].outerText;
+
+        if(roleid==3){
+            roleName="Researcher"
+        }else if(roleid==5){
+            roleName="Data Entry"
+        }
+        $('#editRoleName').text("Edit " + roleName + " Weightage ");
+        //console.log(refId);
+        var strJsonDatas = eval({ wid: refId });
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "getweightagedetails",
+            data: JSON.stringify(strJsonDatas),
+            contentType: "application/json; charset=utf-8",
+            //dataType: "local",
+            success: function (msg) {
+                var data = msg;
+                var Result = jQuery.parseJSON(data);
+                //console.log(data)
+                //console.log(Result)
+
+                //console.log("22222222222",eClient)
+                //console.log(optionValuess)
+                //console.log(eClient[2].full_name); 
+
+                for(var i=0;i<eType.length-1;i++)
+                {
+                    if(eType[i].value==Result[0].ordertype_id)
+                    {
+                        $("#select2-ddlEditorderType-container").html(eType[i].short_display);
+
+                        $("#ddlEditorderType").val(Result[0].ordertype_id).change();
+
+                    }
+                }
+
+                for(var i=0;i<eClient.length-1;i++)
+                {
+                    if(eClient[i].ref_no==Result[0].client_id)
+                    {
+                        $("#select2-ddlEditClient-container").html(eClient[i].full_name);
+
+                        $("#ddlEditClient").val(Result[0].client_id).change();
+                    }
+                }
+
+                for(var i=0;i<ePortal.length-1;i++)
+                {
+                    if(ePortal[i].portal_id==Result[0].portal_id)
+                    {
+                        $("#select2-ddlEditPortal-container").html(ePortal[i].portal_name);
+
+                        $("#ddlEditPortal").val(Result[0].portal_id).change();
+
+                    }
+                }
+
+                for(var i=0;i<eState.length-1;i++)
+                {
+                    if(eState[i].state_id==Result[0].state_id)
+                    {
+                        $("#select2-ddlEditState-container").html(eState[i].state_name);
+
+                        $("#ddlEditState").val(Result[0].state_id).change();
+
+                    }
+                    else if(eState[i].state_id==undefined)
+                    {
+                        $("#select2-ddlEditState-container").html("-Select Type-");
+
+                        $("#ddlEditState").val(-1).change();
+
+                    }
+                }
+
+                for(var i=0;i<eRole.length-1;i++)
+                {
+                    if(eRole[i].status_role_id==Result[0].status_role_id)
+                    {
+                        $("#select2-ddlEditUserRole-container").html(eRole[i].role_name);
+
+                        $("#ddlEditUserRole").val(Result[0].status_role_id).change();
+
+                    }
+                    else if(eRole[i].status_role_id==undefined)
+                    {
+                        $("#select2-ddlEditUserRole-container").html("-Select Type-");
+
+                        $("#ddlEditUserRole").val(-1).change();
+
+                    }
+                }
+
+                for(var i=0;i<eOtherType.length-1;i++)
+                {
+                    if(eOtherType[i].id==Result[0].othertype_id)
+                    {
+                        $("#select2-ddlEditTypes-container").html(eOtherType[i].types);
+
+                        $("#ddlEditTypes").val(Result[0].othertype_id).change();
+
+                        break;
+                    }
+                    else if(Result[0].othertype_id == undefined)
+                    {
+                        $("#select2-ddlEditTypes-container").html("-Select Type-");
+
+                        $("#ddlEditTypes").val(-1).change();
+                    }
+                }
+
+
+
+
+
+                //$("#ddlEditClient").val((Result[0].client_id)).change();
+                //$("#ddlEditPortal ").val((Result[0].portal_id)).change();
+                //$("#ddlEditorderType").val((Result[0].ordertype_id)).change();
+                //$("#ddlEditState").val((Result[0].state_id)).change();
+                if(Result[0].software == undefined)
+                {
+                    $("#ddlEditSoftware").val(0).change();
+                }
+                else
+                {
+                    $("#ddlEditSoftware").val((Result[0].software)).change();
+                }
+                
+                $("#txtEditWeightage").val((Result[0].weightage)).change();
+
+                //$("#ddlEditClient").addClass("js-example-basic-single w-100");
+
+            }
+        });
+    }
+
+
+
+    function deleteId(rowid) {
+        refId = document.getElementById(rowid).childNodes[0].outerText;
+        var strJsonDatas = eval({ wid: refId })
+        console.log(refId);
+
+        swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3f51b5',
+            cancelButtonColor: '#ff4081',
+            confirmButtonText: 'Great ',
+            buttons: {
+                cancel: {
+                    text: "Cancel",
+                    value: null,
+                    visible: true,
+                    className: "btn btn-danger",
+                    closeModal: true,
+                },
+                confirm: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary",
+                    closeModal: true
+                }
+            }
+        }).then(
+        function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "deletedetails",
+                    data: JSON.stringify(strJsonDatas),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (msg) {
+                        var data = msg;
+                        if(data!=undefined){
+                            if(data=="Error")
+                            {
+                                swal({
+                                    title: 'Error',
+                                    text: 'Something went wrong.Contact Development team',
+                                    icon: 'error',
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary",
+                                        timer: 1000,
+                                    }
+                                }).then(
+                                function(){
+                                    location.reload();
+                                })
+                            }
+                            if(data=="success")
+                            {
+                               //Result = jQuery.parseJSON(data);
+                                swal({
+                                    title: 'Deleted!',
+                                    text: 'Your file has been deleted.',
+                                    type:"success",
+                                    timer: 1000,
+                                    button: false
+                                }).then(
+                                function() {
+                                    location.reload();
+                                })
+                            }
+                        }else
+                        {
+                            ////Result = jQuery.parseJSON(data);
+                            //Result=data;
+                            //swal({
+                            //    title: 'Deleted!',
+                            //    text: 'Your file has been deleted.',
+                            //    type:"success",
+                            //    timer: 1000,
+                            //    button: false
+                            //}).then(
+                            //    function() {
+                            //        location.reload();
+                            //    })
+                        }
+                    }
+                });
+            }
+            else {
+                return false;
+            }
+        }
+        )
+    }
+
+
+
+</script>
+

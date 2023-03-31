@@ -1,0 +1,160 @@
+﻿@model Insights.Models.DateClassModel
+@{
+    ViewBag.Title = "SearchByAddress";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden {
+        display: none;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter label {
+        position: static;
+    }
+</style>
+
+<div class="abc">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <h2 style="margin-bottom:30px;">Address History</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+@using (Html.BeginForm("SearchByAddress", "Home", FormMethod.Post, new { @class = "col-md-9", style = "display:contents;", name = "frm", id = "frm", onsubmit = "loadergif(1);" }))
+{
+    <div class="col-sm-6" style="display: flex; align-items: center; justify-content: center;">
+        <label>Address : </label>
+        <input type="text" name="address" id="address" placeholder="Enter the Address" />
+    </div>
+    <div class="col-md-3">
+        <label><br /></label>
+        <div class="md-form mb-5">
+            <button type="submit" class="btn btn-primary" title="Generate Report"><i class="fa fa-cogs" style="margin-right: 5px;" aria-hidden="true"></i> Search </button>
+        </div>
+    </div>
+
+}
+    </div>
+
+    <div class="col-sm-12" id="Table_addressSearch">
+        <table id="addressSearch" class="table dataTable no-footer" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Status Reason</th>
+                    <th>Employee Name</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        generateDetails()
+    })
+
+    function generateDetails() {
+        //loadergif(1);
+        var  Result = @Html.Raw(Json.Encode(ViewBag.AddressData));
+
+        //Result = jQuery.parseJSON(Results);
+        $('#addressSearch').DataTable().clear().destroy();
+        if (Result != null) {
+
+            Data = Result.Data;
+
+            Datas = jQuery.parseJSON(Data);
+
+            var length = Datas.length;
+
+            var table = document.getElementById('addressSearch');
+
+            for (var i = table.rows.length - 1; i > 0; i--) {
+                table.deleteRow(i);
+            }
+
+            for (var i = 0; i < length; i++) {
+
+
+                $('#addressSearch').append(
+                    '<tr id="' + i + '">' +
+                        '<td>' + Datas[i].status_desc + '</td>' +
+                        '<td>' + Datas[i].status_reason_desc + '</td>' +
+                        '<td>' + Datas[i].EM_EMPLOYEE_NAME + '</td>' +
+                        '<td>' + 
+     + '</td>' +
+                   '</tr>');
+
+            }
+
+
+
+            //setTimeout(function () {
+            $('#addressSearch').DataTable({
+
+                "bpaging": false,
+                "bDestroy": true,
+                scrollX: true,
+                "bScrollCollapse": true,
+                dom: 'Blfrtip',
+                buttons: [
+                       {
+                           extend: 'pdf',
+                           footer: true,
+                           exportOptions: {
+                               columns: [0, 2 ],
+                               orthogonal: "export",
+                               rows: function (idx, data, node) {
+                                   number = 1;
+                                   return true;
+                               }
+                           }
+                       },
+                           {
+                               extend: 'csv',
+                               footer: false,
+                               exportOptions: {
+                                   columns: [0, 2 ]
+                               }
+
+                           },
+                           {
+                               extend: 'excelHtml5',
+                               footer: false,
+                               exportOptions: {
+                                   columns: [0, 2 ]
+                               }
+                           }
+                ],
+                columnDefs: [
+                //    {
+                //    render: function (data, type, full, meta) {
+                //        return "<div class='text-wrap width-25'>" + data + "</div>";
+                //    },
+                //    targets: 2
+
+                //},
+            //{ width: "5%", targets: 0 }, { width: "20%", targets: 2 },  { width: "10%", targets: 3 },  { width: "10%", targets: 4 }
+                ]
+
+            })
+
+            $(".dt-button").addClass("btn btn-outline-primary btn-fw");
+            $(".dt-button").removeClass("dt-button");
+
+            //loadergif(0);
+        }
+
+    }
+
+</script>
+
